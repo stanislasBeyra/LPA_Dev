@@ -36,7 +36,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/update/Category',[ProductController::class,'updateCategory']);
     Route::get('/get/vendor/products',[ProductController::class,'getVendorProducts']);
     Route::get('/vendor/products/details/{id}',[ProductController::class,'showPductsDetails']);
-    Route::delete('/destroy/Product/{id}',[ProductController::class, 'destroyProduct']);
+    Route::delete('/destroy/Product/{ProductId}',[ProductController::class, 'destroyProduct']);
 
     // --- 2 category session
     Route::post('/add/vendor/category',[ProductController::class,'addcategory']);

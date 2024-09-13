@@ -124,15 +124,7 @@ public function updateVendorProduct(Request $request, $productId)
             'stock' => 'sometimes|integer|min:1',
             'price' => 'sometimes|numeric|min:0',
             'categorie_id' => 'sometimes|integer',
-            'product_images1' => 'nullable|string', // Base64 image
-            'product_images2' => 'nullable|string', // Base64 image
-            'product_images3' => 'nullable|string', // Base64 image
         ]);
-
-        // Convertir les images Base64 en fichiers et les stocker
-        $image1 = $this->base64ToFile($request->input('product_images1'), 'product_images', $product->product_images1);
-        $image2 = $this->base64ToFile($request->input('product_images2'), 'product_images', $product->product_images2);
-        $image3 = $this->base64ToFile($request->input('product_images3'), 'product_images', $product->product_images3);
 
         // Log de la mise à jour du produit
         Log::info('Updating product', [
@@ -141,19 +133,15 @@ public function updateVendorProduct(Request $request, $productId)
             'product_id' => $productId,
             'product_name' => $validated['product_name'] ?? $product->product_name,
             'categorie_id' => $validated['categorie_id'] ?? $product->categorie_id,
-            'product_images1' => $image1,
         ]);
 
-        // Mise à jour du produit
+        // Mise à jour des champs du produit sans gérer les images
         $product->update([
             'product_name' => $validated['product_name'] ?? $product->product_name,
             'product_description' => $validated['product_description'] ?? $product->product_description,
             'stock' => $validated['stock'] ?? $product->stock,
             'price' => $validated['price'] ?? $product->price,
             'categorie_id' => $validated['categorie_id'] ?? $product->categorie_id,
-            'product_images1' => $image1,
-            'product_images2' => $image2,
-            'product_images3' => $image3,
         ]);
 
         return response()->json(['success' => true, 'message' => 'Product updated successfully', 'product' => $product], 200);
@@ -173,23 +161,76 @@ public function updateVendorProduct(Request $request, $productId)
     }
 }
 
-protected function processBase64Image($base64Image, $directory, $currentImage)
-{
-    if ($base64Image) {
-        // Décoder l'image Base64
-        $image = str_replace('data:image/png;base64,', '', $base64Image);
-        $image = str_replace(' ', '+', $image);
-        $fileName = time() . '.png';
-        $filePath = $directory . '/' . $fileName;
 
-        // Sauvegarder le fichier
-        \File::put(public_path($filePath), base64_decode($image));
+// public function updateVendorProduct(Request $request, $productId)
+// {
+//     try {
+//         $uservendor = Auth::user();
 
-        return $filePath;
-    }
+//         // Vérification du rôle
+//         if ($uservendor->role != 2) {
+//             return response()->json(['success' => false, 'message' => 'Unauthorized access'], 403);
+//         }
 
-    return $currentImage;
-}
+//         // Recherche du produit
+//         $product = Product::where('vendor_id', $uservendor->id)->findOrFail($productId);
+
+//         // Validation des données
+//         $validated = $request->validate([
+//             'product_name' => 'sometimes|string|max:255',
+//             'product_description' => 'sometimes|string',
+//             'stock' => 'sometimes|integer|min:1',
+//             'price' => 'sometimes|numeric|min:0',
+//             'categorie_id' => 'sometimes|integer',
+//             'product_images1' => 'nullable|string', // Base64 image
+//             'product_images2' => 'nullable|string', // Base64 image
+//             'product_images3' => 'nullable|string', // Base64 image
+//         ]);
+
+//         // Convertir les images Base64 en fichiers et les stocker
+//         $image1 = $this->base64ToFile($request->input('product_images1'), 'product_images', $product->product_images1);
+//         $image2 = $this->base64ToFile($request->input('product_images2'), 'product_images', $product->product_images2);
+//         $image3 = $this->base64ToFile($request->input('product_images3'), 'product_images', $product->product_images3);
+
+//         // Log de la mise à jour du produit
+//         Log::info('Updating product', [
+//             'validated_data' => $validated,
+//             'user_id' => $uservendor->id,
+//             'product_id' => $productId,
+//             'product_name' => $validated['product_name'] ?? $product->product_name,
+//             'categorie_id' => $validated['categorie_id'] ?? $product->categorie_id,
+//             'product_images1' => $image1,
+//         ]);
+
+//         // Mise à jour du produit
+//         $product->update([
+//             'product_name' => $validated['product_name'] ?? $product->product_name,
+//             'product_description' => $validated['product_description'] ?? $product->product_description,
+//             'stock' => $validated['stock'] ?? $product->stock,
+//             'price' => $validated['price'] ?? $product->price,
+//             'categorie_id' => $validated['categorie_id'] ?? $product->categorie_id,
+//             'product_images1' => $image1,
+//             'product_images2' => $image2,
+//             'product_images3' => $image3,
+//         ]);
+
+//         return response()->json(['success' => true, 'message' => 'Product updated successfully', 'product' => $product], 200);
+//     } catch (\Illuminate\Validation\ValidationException $e) {
+//         return response()->json([
+//             'success' => false,
+//             'message' => 'Validation failed',
+//             'errors' => $e->errors()
+//         ], 422);
+//     } catch (\Exception $e) {
+//         Log::error('Exception occurred', ['exception' => $e]);
+//         return response()->json([
+//             'success' => false,
+//             'message' => 'An unexpected error occurred. Please try again later.',
+//             'error' => $e->getMessage()
+//         ], 500);
+//     }
+// }
+
 
 
 
@@ -292,6 +333,11 @@ protected function processBase64Image($base64Image, $directory, $currentImage)
                     'message' => 'Product not found.'
                 ], 404);
             }
+
+            Log::info('delete info', [
+                "delete"=>$product
+
+            ]);
 
             // Supprimer le produit
             $product->delete();
