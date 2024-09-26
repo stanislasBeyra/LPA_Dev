@@ -2,7 +2,10 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\EmailController;
+use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\RoleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,11 +23,27 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+//create role
+
+Route::post('reacterole',[RoleController::class,'reacterole']);
+
+Route::delete('/deleterole/{id}',[RoleController::class,'deleterole']);
+Route::put('/restorerole/{id}', [RoleController::class, 'restoreRole']);
+Route::delete('/ForcedeleteRole/{id}',[RoleController::class,'ForcedeleteRole']);
+Route::get('/get/allrole',[RoleController::class,'getallrole']);
 
 //enregistrerment des user
 Route::post('/register', [AuthController::class,'registeuser']);
 Route::post('/login',[AuthController::class,'login']);
+Route::delete('/delectuser/{id}',[AuthController::class,'delectuser']);
+Route::get('/send-test-email', [EmailController::class, 'sendTestEmail']);
+//Employee register
+Route::post('/Employee/Register',[EmployeeController::class,'EmployeeRegister']);
+Route::post('/submit/register',[AuthController::class,'SubmitRegister']);
+
 Route::middleware('auth:sanctum')->group(function () {
+    //get Employyee Info
+    Route::get('/get/employee/all',[EmployeeController::class,'getallEmploye']);
     //securite des route privé
     //-----0 usser info session
     Route::get('/user/info', [AuthController::class,'getUserConnectInfo']);

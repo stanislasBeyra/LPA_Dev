@@ -24,8 +24,8 @@ class CartController extends Controller
 
             // Validation des données de la requête
             $validatedData = $request->validate([
-                'product_id' => 'required|exists:products,id', // Vérifie que le produit existe dans la table products
-                'quantity' => 'required|integer|min:1',        // Vérifie que la quantité est un entier positif
+                'product_id' => 'required|exists:products,id',
+                'quantity' => 'required|integer|min:1',  
             ]);
 
             // Vérifier si le produit est déjà dans le panier de l'utilisateur

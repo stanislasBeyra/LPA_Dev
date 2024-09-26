@@ -26,15 +26,13 @@ return new class extends Migration
             $table->string('agencescode')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->unsignedBigInteger('role_id')->nullable();
-            $table->foreign('role_id')->references('role_id')->on('roles')->onDelete('set null');
             $table->rememberToken();
             $table->softDeletes();
             $table->timestamps();
         });
     }
 
-    
+
     public function down(): void
     {
         Schema::dropIfExists('users');
