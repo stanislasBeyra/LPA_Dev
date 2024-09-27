@@ -43,7 +43,7 @@ Route::post('/submit/register',[AuthController::class,'SubmitRegister']);
 
 Route::get('urltese', function () {
 
-    return "Resolution du probleme de not found";
+    return "mise de teste 2024, par Beyra";
 
 });
 
