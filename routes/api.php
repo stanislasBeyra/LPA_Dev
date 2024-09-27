@@ -41,6 +41,12 @@ Route::get('/send-test-email', [EmailController::class, 'sendTestEmail']);
 Route::post('/Employee/Register',[EmployeeController::class,'EmployeeRegister']);
 Route::post('/submit/register',[AuthController::class,'SubmitRegister']);
 
+Route::get('urltese', function () {
+
+    return "Resolution du probleme de not found";
+
+});
+
 Route::middleware('auth:sanctum')->group(function () {
     //get Employyee Info
     Route::get('/get/employee/all',[EmployeeController::class,'getallEmploye']);
