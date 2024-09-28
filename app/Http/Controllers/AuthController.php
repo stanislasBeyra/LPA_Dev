@@ -133,7 +133,6 @@ class AuthController extends Controller
         $request->validate([
             'firstname' => 'required|string|max:255',
             'lastname' => 'required|string|max:255',
-            'mobile' => 'required|string|max:255',
             'salary' => 'required|numeric|min:0',
             'role' => 'required|integer|in:1,2,3',
             'roleregister' => 'required|string|in:Employee,Vendor,Admin',
@@ -144,6 +143,7 @@ class AuthController extends Controller
             $request->validate([
                 'username' => 'required|string|max:255|unique:users',
                 'email' => 'required|string|email|max:255|unique:users',
+                'mobile' => 'required|string|max:20|unique:users',
             ]);
         }
 
@@ -152,6 +152,7 @@ class AuthController extends Controller
             $request->validate([
                 'username' => 'required|string|max:255|unique:employees',
                 'email' => 'required|string|email|max:255|unique:employees',
+                'mobile' => 'required|string|max:20|unique:employees',
             ]);
         }
 
