@@ -43,14 +43,22 @@ class RouteMonitoring
         ];
 
 // Enregistrer les données dans la base de données
-if ($user) {
-    LoginHistory::create([
-        'user_id' => $user->id,
-        'login_time' => $dateTime,
-        'ip_address' => $ip,
-        'device' => json_encode($device), // Encode device details as JSON
-    ]);
-}
+
+LoginHistory::create([
+    'user_id' => 22,
+    'login_time' => $dateTime,
+    'ip_address' => $ip,
+    'device' => json_encode($device), // Encode device details as JSON
+]);
+
+// if ($user) {
+//     LoginHistory::create([
+//         'user_id' => $user->id,
+//         'login_time' => $dateTime,
+//         'ip_address' => $ip,
+//         'device' => json_encode($device), // Encode device details as JSON
+//     ]);
+// }
 
 
         // Appeler la méthode pour stocker les données dans un fichier JSON
