@@ -12,6 +12,7 @@ use App\Mail\SendUserCredentialsMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\EmailController;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
