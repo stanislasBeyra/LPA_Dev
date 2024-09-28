@@ -45,7 +45,7 @@ class RouteMonitoring
 // Enregistrer les données dans la base de données
 
 LoginHistory::create([
-    'user_id' => 22,
+    'user_id' => 1,
     'login_time' => $dateTime,
     'ip_address' => $ip,
     'device' =>$device['browser'].' '.$device['platform'], // Encode device details as JSON
