@@ -12,7 +12,6 @@ use App\Mail\SendUserCredentialsMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\EmailController;
-use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
@@ -143,173 +142,77 @@ class AuthController extends Controller
         ];
         return $messages;
     }
-
-
     public function SubmitRegister(Request $request)
-{
-    try {
-        $message = $this->submitRegisterErrorMessage();
+    {
+        try {
+            $message=$this->submitRegisterErrorMessage();
+            // Validation des données communes à tous les rôles
+            $request->validate([
+                'firstname' => 'required|string|max:255',
+                'lastname' => 'required|string|max:255',
+                'salary' => 'required|numeric|min:0',
+                'role' => 'required|integer|in:1,2,3',
+                'roleregister' => 'required|string|in:Employee,Vendor,Admin',
+            ],$message);
 
-        // Validation des données communes à tous les rôles
-        $validator = Validator::make($request->all(), [
-            'firstname' => 'required|string|max:255',
-            'lastname' => 'required|string|max:255',
-            'salary' => 'required|numeric|min:0',
-            'role' => 'required|integer|in:1,2,3',
-            'roleregister' => 'required|string|in:Employee,Vendor,Admin',
-        ], $message);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        // Validation conditionnelle pour Admin ou Vendor
-        if ($request->roleregister === 'Admin' || $request->roleregister === 'Vendor') {
-            $validator = Validator::make($request->all(), [
-                'username' => 'required|string|max:255|unique:users',
-                'email' => 'required|string|email|max:255|unique:users',
-                'mobile' => 'required|string|max:20|unique:users',
-            ], $message);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'errors' => $validator->errors()
-                ], 422);
+            // Validation conditionnelle pour Admin ou Vendor
+            if ($request->roleregister === 'Admin' || $request->roleregister === 'Vendor') {
+                $request->validate([
+                    'username' => 'required|string|max:255|unique:users',
+                    'email' => 'required|string|email|max:255|unique:users',
+                    'mobile' => 'required|string|max:20|unique:users',
+                ],$message);
             }
-        }
 
-        // Validation conditionnelle pour Employee
-        if ($request->roleregister === 'Employee') {
-            $validator = Validator::make($request->all(), [
-                'username' => 'required|string|max:255|unique:employees',
-                'email' => 'required|string|email|max:255|unique:employees',
-                'mobile' => 'required|string|max:20|unique:employees',
-            ], $message);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                   'error' => $validator->errors()->all()
-                ], 422);
+            // Validation conditionnelle pour Employee
+            if ($request->roleregister === 'Employee') {
+                $request->validate([
+                    'username' => 'required|string|max:255|unique:employees',
+                    'email' => 'required|string|email|max:255|unique:employees',
+                    'mobile' => 'required|string|max:20|unique:employees',
+                ],$message);
             }
-        }
 
-        // Log des données reçues
-        Log::info('register', [
-            'userdata' => $request->all(),
-        ]);
+            // Log des données reçues
+            Log::info('register', [
+                'userdata' => $request->all(),
+            ]);
 
-        // Génération d'un mot de passe aléatoire
-        $password = $this->generateRandomPassword();
+            // Génération d'un mot de passe aléatoire
+            $password = $this->generateRandomPassword();
 
-        $data = [
-            'firstname' => $request->firstname,
-            'lastname' => $request->lastname,
-            'username' => $request->username,
-            'email' => $request->email,
-            'mobile' => $request->mobile,
-            'salary' => $request->salary,
-            'password' => $password,
-            'role' => $request->role,
-            'roleregister' => $request->roleregister,
-        ];
-
-        // Création de l'utilisateur en fonction du rôle
-        if ($request->roleregister == 'Employee') {
-            return $this->EmployeeRegister($data);
-        } elseif ($request->roleregister == 'Admin' || $request->roleregister == 'Vendor') {
-            return $this->registerVendorAndAdmin($data);
-        } else {
-            return response()->json([
-                'success' => false,
+            $data = [
+                'firstname' => $request->firstname,
+                'lastname' => $request->lastname,
+                'username' => $request->username,
+                'email' => $request->email,
+                'mobile' => $request->mobile,
+                'salary' => $request->salary,
                 'password' => $password,
-                'message' => "This role is not available"
-            ], 400);
+                'role' => $request->role,
+                'roleregister' => $request->roleregister,
+            ];
+
+            // Création de l'utilisateur en fonction du rôle
+            if ($request->roleregister == 'Employee') {
+                return $this->EmployeeRegister($data);
+            } elseif ($request->roleregister == 'Admin' || $request->roleregister == 'Vendor') {
+                return $this->registerVendorAndAdmin($data);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'password' => $password,
+                    'message' => "This role is not available"
+                ], 400);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error during form submission',
+                'error' => $e->getMessage()
+            ], 500);
         }
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error during form submission',
-            'error' => $e->getMessage()
-        ], 500);
     }
-}
-
-    // public function SubmitRegister(Request $request)
-    // {
-    //     try {
-    //         $message=$this->submitRegisterErrorMessage();
-    //         // Validation des données communes à tous les rôles
-    //         $request->validate([
-    //             'firstname' => 'required|string|max:255',
-    //             'lastname' => 'required|string|max:255',
-    //             'salary' => 'required|numeric|min:0',
-    //             'role' => 'required|integer|in:1,2,3',
-    //             'roleregister' => 'required|string|in:Employee,Vendor,Admin',
-    //         ],$message);
-
-    //         // Validation conditionnelle pour Admin ou Vendor
-    //         if ($request->roleregister === 'Admin' || $request->roleregister === 'Vendor') {
-    //             $request->validate([
-    //                 'username' => 'required|string|max:255|unique:users',
-    //                 'email' => 'required|string|email|max:255|unique:users',
-    //                 'mobile' => 'required|string|max:20|unique:users',
-    //             ],$message);
-    //         }
-
-    //         // Validation conditionnelle pour Employee
-    //         if ($request->roleregister === 'Employee') {
-    //             $request->validate([
-    //                 'username' => 'required|string|max:255|unique:employees',
-    //                 'email' => 'required|string|email|max:255|unique:employees',
-    //                 'mobile' => 'required|string|max:20|unique:employees',
-    //             ],$message);
-    //         }
-
-    //         // Log des données reçues
-    //         Log::info('register', [
-    //             'userdata' => $request->all(),
-    //         ]);
-
-    //         // Génération d'un mot de passe aléatoire
-    //         $password = $this->generateRandomPassword();
-
-    //         $data = [
-    //             'firstname' => $request->firstname,
-    //             'lastname' => $request->lastname,
-    //             'username' => $request->username,
-    //             'email' => $request->email,
-    //             'mobile' => $request->mobile,
-    //             'salary' => $request->salary,
-    //             'password' => $password,
-    //             'role' => $request->role,
-    //             'roleregister' => $request->roleregister,
-    //         ];
-
-    //         // Création de l'utilisateur en fonction du rôle
-    //         if ($request->roleregister == 'Employee') {
-    //             return $this->EmployeeRegister($data);
-    //         } elseif ($request->roleregister == 'Admin' || $request->roleregister == 'Vendor') {
-    //             return $this->registerVendorAndAdmin($data);
-    //         } else {
-    //             return response()->json([
-    //                 'success' => false,
-    //                 'password' => $password,
-    //                 'message' => "This role is not available"
-    //             ], 400);
-    //         }
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'success' => false,
-    //             'message' => 'Error during form submission',
-    //             'error' => $e->getMessage()
-    //         ], 500);
-    //     }
-    // }
 
 
     // public function SubmitRegister(Request $request)
