@@ -127,61 +127,133 @@ class AuthController extends Controller
     }
 
     public function SubmitRegister(Request $request)
-    {
-        try {
-            // Validation des données
+{
+    try {
+        // Validation des données communes à tous les rôles
+        $request->validate([
+            'firstname' => 'required|string|max:255',
+            'lastname' => 'required|string|max:255',
+            'mobile' => 'required|string|max:255',
+            'salary' => 'required|numeric|min:0',
+            'role' => 'required|integer|in:1,2,3',
+            'roleregister' => 'required|string|in:Employee,Vendor,Admin',
+        ]);
+
+        // Validation conditionnelle pour Admin ou Vendor
+        if ($request->roleregister === 'Admin' || $request->roleregister === 'Vendor') {
             $request->validate([
-                'firstname' => 'required|string|max:255',
-                'lastname' => 'required|string|max:255',
                 'username' => 'required|string|max:255|unique:users',
                 'email' => 'required|string|email|max:255|unique:users',
-                'mobile' => 'required|string|max:255',
-                'salary' => 'required|numeric|min:0',
-                'role' => 'required|integer|in:1,2,3',
-
-                'roleregister' => 'nullable|string|',
             ]);
-            Log::info('resister', [
-                'usedata' => $request->all(),
+        }
 
+        // Validation conditionnelle pour Employee
+        if ($request->roleregister === 'Employee') {
+            $request->validate([
+                'username' => 'required|string|max:255|unique:employees',
+                'email' => 'required|string|email|max:255|unique:employees',
             ]);
-            $password = $this->generateRandomPassword();
+        }
 
-            $data = [
-                'firstname' => $request->firstname,
-                'lastname' => $request->lastname,
-                'username' => $request->username,
-                'email' => $request->email,
-                'mobile' => $request->mobile,
-                'salary' => $request->salary,
-                'password' => $password,
-                'role' => $request->role,
-                'roleregister' => $request->roleregister,
-            ];
+        // Log des données reçues
+        Log::info('register', [
+            'userdata' => $request->all(),
+        ]);
 
-            // Création de l'utilisateur en fonction du rôle
-            if ($request->roleregister == 'Employee') {
-                return $this->EmployeeRegister($data);
-            }
-            elseif ($request->roleregister == 'Admin' || $request->roleregister == 'Vendor') {
+        // Génération d'un mot de passe aléatoire
+        $password = $this->generateRandomPassword();
 
-                return $this->registerVendorAndAdmin($data);
-            }
-            else {
-                return response()->json([
-                    'success' => false,
-                    'password'=>$password,
-                    'message' => "This role is not available"
-                ],400);
-            }
-        } catch (\Exception $e) {
+        $data = [
+            'firstname' => $request->firstname,
+            'lastname' => $request->lastname,
+            'username' => $request->username,
+            'email' => $request->email,
+            'mobile' => $request->mobile,
+            'salary' => $request->salary,
+            'password' => $password,
+            'role' => $request->role,
+            'roleregister' => $request->roleregister,
+        ];
+
+        // Création de l'utilisateur en fonction du rôle
+        if ($request->roleregister == 'Employee') {
+            return $this->EmployeeRegister($data);
+        } elseif ($request->roleregister == 'Admin' || $request->roleregister == 'Vendor') {
+            return $this->registerVendorAndAdmin($data);
+        } else {
             return response()->json([
                 'success' => false,
-                'message' => 'Error during form submission',
-                'error' => $e->getMessage()
-            ], 500);
+                'password' => $password,
+                'message' => "This role is not available"
+            ], 400);
         }
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error during form submission',
+            'error' => $e->getMessage()
+        ], 500);
     }
+}
+
+
+    // public function SubmitRegister(Request $request)
+    // {
+    //     try {
+    //         // Validation des données
+    //         $request->validate([
+    //             'firstname' => 'required|string|max:255',
+    //             'lastname' => 'required|string|max:255',
+    //             'username' => 'required|string|max:255|unique:users',
+    //             'email' => 'required|string|email|max:255|unique:users',
+    //             'mobile' => 'required|string|max:255',
+    //             'salary' => 'required|numeric|min:0',
+    //             'role' => 'required|integer|in:1,2,3',
+
+    //             'roleregister' => 'nullable|string|in:Employee,Vendor,Admin',
+    //         ]);
+    //         Log::info('resister', [
+    //             'usedata' => $request->all(),
+
+    //         ]);
+    //         $password = $this->generateRandomPassword();
+
+    //         $data = [
+    //             'firstname' => $request->firstname,
+    //             'lastname' => $request->lastname,
+    //             'username' => $request->username,
+    //             'email' => $request->email,
+    //             'mobile' => $request->mobile,
+    //             'salary' => $request->salary,
+    //             'password' => $password,
+    //             'role' => $request->role,
+    //             'roleregister' => $request->roleregister,
+    //         ];
+
+    //         // Création de l'utilisateur en fonction du rôle
+    //         if ($request->roleregister == 'Employee') {
+    //             return $this->EmployeeRegister($data);
+    //         }
+    //         elseif ($request->roleregister == 'Admin' || $request->roleregister == 'Vendor') {
+
+    //             return $this->registerVendorAndAdmin($data);
+    //         }
+    //         else {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'password'=>$password,
+    //                 'message' => "This role is not available"
+    //             ],400);
+    //         }
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Error during form submission',
+    //             'error' => $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
 
     public function login(Request $request)
     {
