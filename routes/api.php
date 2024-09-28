@@ -46,7 +46,7 @@ Route::get('urltese', function () {
     return "mise de teste 2024, par Beyra et Gregoire";
 
 });
-
+Route::get('/get/employee',[EmployeeController::class,'getallEmploye']);
 Route::middleware('auth:sanctum')->group(function () {
     //get Employyee Info
     Route::get('/get/employee/all',[EmployeeController::class,'getallEmploye']);
