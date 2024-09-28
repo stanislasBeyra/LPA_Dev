@@ -43,7 +43,7 @@ Route::post('/submit/register',[AuthController::class,'SubmitRegister']);
 
 Route::get('urltese', function () {
 
-    return "mise de teste 2024, par Beyra";
+    return "mise de teste 2024, par Beyra et Gregoire";
 
 });
 
