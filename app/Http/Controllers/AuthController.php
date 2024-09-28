@@ -24,17 +24,18 @@ class AuthController extends Controller
     }
 
 
-    public function generateusername($characters, $length=10){
+    public function generateusername($characters, $length = 10)
+    {
         $charactersLength = strlen($characters);
-        $username='';
+        $username = '';
         for ($i = 0; $i < $length; $i++) {
             $username .= $characters[rand(0, $charactersLength - 1)];
         }
         return $username;
-
     }
 
-    public function  testeUsernamegerate(){
+    public function  testeUsernamegerate()
+    {
         return $this->generateusername('DidierJean');
     }
 
@@ -73,16 +74,15 @@ class AuthController extends Controller
             ]);
 
             // Envoi de l'email avec les informations d'identification
-         //   Mail::to($employee->email)->send(new SendUserCredentialsMail($employee, $data['password']));
+            //   Mail::to($employee->email)->send(new SendUserCredentialsMail($employee, $data['password']));
 
             // Réponse en cas de succès
             return response()->json([
                 'success' => true,
-                'passwor'=>$data['password'],
+                'passwor' => $data['password'],
                 'message' => 'Employee created successfully',
                 'employee' => $employee
             ], 201);
-
         } catch (\Exception $e) {
             // Réponse en cas d'erreur
             return response()->json([
@@ -107,12 +107,12 @@ class AuthController extends Controller
             ]);
 
             // Envoi de l'email avec les informations d'identification
-          //  Mail::to($user->email)->send(new SendUserCredentialsMail($user, $data['password']));
+            //  Mail::to($user->email)->send(new SendUserCredentialsMail($user, $data['password']));
 
             // Réponse en cas de succès
             return response()->json([
                 'success' => true,
-                'passwor'=>$data['password'],
+                'passwor' => $data['password'],
                 'message' => $data['roleregister'] . ' created successfully',
                 'user' => $user
             ], 201);
@@ -126,77 +126,93 @@ class AuthController extends Controller
         }
     }
 
-    public function SubmitRegister(Request $request)
-{
-    try {
-        // Validation des données communes à tous les rôles
-        $request->validate([
-            'firstname' => 'required|string|max:255',
-            'lastname' => 'required|string|max:255',
-            'salary' => 'required|numeric|min:0',
-            'role' => 'required|integer|in:1,2,3',
-            'roleregister' => 'required|string|in:Employee,Vendor,Admin',
-        ]);
 
-        // Validation conditionnelle pour Admin ou Vendor
-        if ($request->roleregister === 'Admin' || $request->roleregister === 'Vendor') {
-            $request->validate([
-                'username' => 'required|string|max:255|unique:users',
-                'email' => 'required|string|email|max:255|unique:users',
-                'mobile' => 'required|string|max:20|unique:users',
-            ]);
-        }
-
-        // Validation conditionnelle pour Employee
-        if ($request->roleregister === 'Employee') {
-            $request->validate([
-                'username' => 'required|string|max:255|unique:employees',
-                'email' => 'required|string|email|max:255|unique:employees',
-                'mobile' => 'required|string|max:20|unique:employees',
-            ]);
-        }
-
-        // Log des données reçues
-        Log::info('register', [
-            'userdata' => $request->all(),
-        ]);
-
-        // Génération d'un mot de passe aléatoire
-        $password = $this->generateRandomPassword();
-
-        $data = [
-            'firstname' => $request->firstname,
-            'lastname' => $request->lastname,
-            'username' => $request->username,
-            'email' => $request->email,
-            'mobile' => $request->mobile,
-            'salary' => $request->salary,
-            'password' => $password,
-            'role' => $request->role,
-            'roleregister' => $request->roleregister,
+    private function submitRegisterErrorMessage()
+    {
+        $messages = [
+            'firstname.required' => 'First name is required.',
+            'lastname.required' => 'Last name is required.',
+            'salary.required' => 'Salary is required.',
+            'salary.numeric' => 'Salary must be a number.',
+            'role.required' => 'Role is required.',
+            'roleregister.required' => 'Registration type is required.',
+            'username.unique' => 'Username is already taken.',
+            'email.unique' => 'Email address is already in use.',
+            'mobile.unique' => 'Mobile number is already in use.',
         ];
+        return $messages;
+    }
+    public function SubmitRegister(Request $request)
+    {
+        try {
+            $message=$this->submitRegisterErrorMessage();
+            // Validation des données communes à tous les rôles
+            $request->validate([
+                'firstname' => 'required|string|max:255',
+                'lastname' => 'required|string|max:255',
+                'salary' => 'required|numeric|min:0',
+                'role' => 'required|integer|in:1,2,3',
+                'roleregister' => 'required|string|in:Employee,Vendor,Admin',
+            ],$message);
 
-        // Création de l'utilisateur en fonction du rôle
-        if ($request->roleregister == 'Employee') {
-            return $this->EmployeeRegister($data);
-        } elseif ($request->roleregister == 'Admin' || $request->roleregister == 'Vendor') {
-            return $this->registerVendorAndAdmin($data);
-        } else {
+            // Validation conditionnelle pour Admin ou Vendor
+            if ($request->roleregister === 'Admin' || $request->roleregister === 'Vendor') {
+                $request->validate([
+                    'username' => 'required|string|max:255|unique:users',
+                    'email' => 'required|string|email|max:255|unique:users',
+                    'mobile' => 'required|string|max:20|unique:users',
+                ],$$message);
+            }
+
+            // Validation conditionnelle pour Employee
+            if ($request->roleregister === 'Employee') {
+                $request->validate([
+                    'username' => 'required|string|max:255|unique:employees',
+                    'email' => 'required|string|email|max:255|unique:employees',
+                    'mobile' => 'required|string|max:20|unique:employees',
+                ],$$message);
+            }
+
+            // Log des données reçues
+            Log::info('register', [
+                'userdata' => $request->all(),
+            ]);
+
+            // Génération d'un mot de passe aléatoire
+            $password = $this->generateRandomPassword();
+
+            $data = [
+                'firstname' => $request->firstname,
+                'lastname' => $request->lastname,
+                'username' => $request->username,
+                'email' => $request->email,
+                'mobile' => $request->mobile,
+                'salary' => $request->salary,
+                'password' => $password,
+                'role' => $request->role,
+                'roleregister' => $request->roleregister,
+            ];
+
+            // Création de l'utilisateur en fonction du rôle
+            if ($request->roleregister == 'Employee') {
+                return $this->EmployeeRegister($data);
+            } elseif ($request->roleregister == 'Admin' || $request->roleregister == 'Vendor') {
+                return $this->registerVendorAndAdmin($data);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'password' => $password,
+                    'message' => "This role is not available"
+                ], 400);
+            }
+        } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'password' => $password,
-                'message' => "This role is not available"
-            ], 400);
+                'message' => 'Error during form submission',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error during form submission',
-            'error' => $e->getMessage()
-        ], 500);
     }
-}
 
 
     // public function SubmitRegister(Request $request)
