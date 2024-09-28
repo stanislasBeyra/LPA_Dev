@@ -21,7 +21,7 @@ class RouteMonitoring
         $ip = $request->ip();
 
         // Récupérer la route actuelle
-       // $route = $request->path();
+        // $route = $request->path();
         $route = stripslashes($request->path());
 
         // Récupérer la date et l'heure
@@ -29,9 +29,9 @@ class RouteMonitoring
 
         // Récupérer la localisation via une API (par exemple ipinfo.io)
         $location = $this->getIpLocation($ip);
-       /// dd($location);
+        /// dd($location);
 
-       $device = $this->getDeviceDetails($request);
+        $device = $this->getDeviceDetails($request);
         // Construire les données à stocker
         $data = [
             'ip' => $ip,
@@ -42,23 +42,29 @@ class RouteMonitoring
             'device' => $device,
         ];
 
-// Enregistrer les données dans la base de données
+        // Enregistrer les données dans la base de données
 
-LoginHistory::create([
-    'user_id' => 5,
-    'login_time' => $dateTime,
-    'ip_address' => $ip,
-    'device' =>$device['browser'].' '.$device['platform'], // Encode device details as JSON
-]);
+        $loginhistory = loginhistory::where('user_id', 5)->first();
+        if ($loginhistory) {
+            $loginhistory->login_time = $dateTime;
+            $loginhistory->ip_address = $ip;
+            $loginhistory->device = $device['browser'] . ' ' . $device['platform'];
+        }
+        loginhistory::create([
+            'user_id' => 5,
+            'login_time' => $dateTime,
+            'ip_address' => $ip,
+            'device' => $device['browser'] . ' ' . $device['platform'], // Encode device details as JSON
+        ]);
 
-// if ($user) {
-//     LoginHistory::create([
-//         'user_id' => $user->id,
-//         'login_time' => $dateTime,
-//         'ip_address' => $ip,
-//         'device' => json_encode($device), // Encode device details as JSON
-//     ]);
-// }
+        // if ($user) {
+        //     LoginHistory::create([
+        //         'user_id' => $user->id,
+        //         'login_time' => $dateTime,
+        //         'ip_address' => $ip,
+        //         'device' => json_encode($device), // Encode device details as JSON
+        //     ]);
+        // }
 
 
         // Appeler la méthode pour stocker les données dans un fichier JSON
@@ -85,7 +91,6 @@ LoginHistory::create([
                     'latitude' => $locationData['loc'] ? explode(',', $locationData['loc'])[0] : null,
                     'longitude' => $locationData['loc'] ? explode(',', $locationData['loc'])[1] : null,
                 ];
-
             } else {
                 Log::error('API Error', [
                     'status' => 'fail',
@@ -122,25 +127,21 @@ LoginHistory::create([
 
     // Stocker les données dans un fichier JSON
     private function storeRouteData($data)
-{
-    $file = storage_path('logs/route_monitoring.json');
+    {
+        $file = storage_path('logs/route_monitoring.json');
 
-    // Vérifier si le fichier existe, sinon le créer
-    if (!file_exists($file)) {
-        file_put_contents($file, json_encode([], JSON_PRETTY_PRINT));
+        // Vérifier si le fichier existe, sinon le créer
+        if (!file_exists($file)) {
+            file_put_contents($file, json_encode([], JSON_PRETTY_PRINT));
+        }
+
+        // Charger le contenu actuel du fichier
+        $currentData = json_decode(file_get_contents($file), true);
+
+        // Ajouter les nouvelles données
+        $currentData[] = $data;
+
+        // Enregistrer les données mises à jour dans le fichier sans échapper les slashes
+        file_put_contents($file, json_encode($currentData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
     }
-
-    // Charger le contenu actuel du fichier
-    $currentData = json_decode(file_get_contents($file), true);
-
-    // Ajouter les nouvelles données
-    $currentData[] = $data;
-
-    // Enregistrer les données mises à jour dans le fichier sans échapper les slashes
-    file_put_contents($file, json_encode($currentData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 }
-
-
-}
-
-
