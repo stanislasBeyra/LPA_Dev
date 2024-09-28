@@ -48,7 +48,7 @@ LoginHistory::create([
     'user_id' => 22,
     'login_time' => $dateTime,
     'ip_address' => $ip,
-    'device' => json_encode($device), // Encode device details as JSON
+    'device' =>$device['browser'].' '.$device['platform'], // Encode device details as JSON
 ]);
 
 // if ($user) {
