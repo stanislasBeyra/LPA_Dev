@@ -78,10 +78,12 @@ class AuthController extends Controller
             // Réponse en cas de succès
             return response()->json([
                 'success' => true,
+                'passwor'=>$data['password'],
                 'message' => 'Employee created successfully',
                 'employee' => $employee
             ], 201);
-        } catch (Exception $e) {
+
+        } catch (\Exception $e) {
             // Réponse en cas d'erreur
             return response()->json([
                 'success' => false,
@@ -110,10 +112,11 @@ class AuthController extends Controller
             // Réponse en cas de succès
             return response()->json([
                 'success' => true,
+                'passwor'=>$data['password'],
                 'message' => $data['roleregister'] . ' created successfully',
                 'user' => $user
             ], 201);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // Réponse en cas d'erreur
             return response()->json([
                 'success' => false,
@@ -171,7 +174,7 @@ class AuthController extends Controller
                     'message' => "This role is not available"
                 ],400);
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Error during form submission',
