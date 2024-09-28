@@ -23,7 +23,7 @@ class AuthController extends Controller
         $this->emailController = $emailController;
     }
 
-    
+
     public function generateusername($characters, $length=10){
         $charactersLength = strlen($characters);
         $username='';
@@ -73,7 +73,7 @@ class AuthController extends Controller
             ]);
 
             // Envoi de l'email avec les informations d'identification
-            Mail::to($employee->email)->send(new SendUserCredentialsMail($employee, $data['password']));
+         //   Mail::to($employee->email)->send(new SendUserCredentialsMail($employee, $data['password']));
 
             // Réponse en cas de succès
             return response()->json([
@@ -105,7 +105,7 @@ class AuthController extends Controller
             ]);
 
             // Envoi de l'email avec les informations d'identification
-            Mail::to($user->email)->send(new SendUserCredentialsMail($user, $data['password']));
+          //  Mail::to($user->email)->send(new SendUserCredentialsMail($user, $data['password']));
 
             // Réponse en cas de succès
             return response()->json([
@@ -167,6 +167,7 @@ class AuthController extends Controller
             else {
                 return response()->json([
                     'success' => false,
+                    'password'=>$password,
                     'message' => "This role is not available"
                 ],400);
             }
