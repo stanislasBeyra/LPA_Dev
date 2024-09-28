@@ -160,10 +160,10 @@ class AuthController extends Controller
             ];
 
             // Création de l'utilisateur en fonction du rôle
-            if ($request->roleregister == 'Employee') {
+            if ($request->roleregister == 'employee') {
                 return $this->EmployeeRegister($data);
             }
-            elseif ($request->roleregister == 'Admin' || $request->roleregister == 'Vendor') {
+            elseif ($request->roleregister == 'admin' || $request->roleregister == 'vendor') {
 
                 return $this->registerVendorAndAdmin($data);
             }
