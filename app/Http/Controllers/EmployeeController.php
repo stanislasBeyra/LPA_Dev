@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Employee; // Utilisation correcte du modèle Employee
+use App\Models\employee; // Utilisation correcte du modèle Employee
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -25,7 +25,7 @@ class EmployeeController extends Controller
             ]);
 
             // Création d'un nouvel employé
-            $employee = Employee::create([
+            $employee = employee::create([
                 'firstname' => $validatedData['firstname'],
                 'lastname' => $validatedData['lastname'],
                 'username' => $validatedData['username'],
@@ -55,7 +55,7 @@ class EmployeeController extends Controller
 
     public function getallEmploye(){
         try{
-            $employees = Employee::all();
+            $employees = employee::all();
             return response()->json([
                 'success' => true,
                 'employees' => $employees
