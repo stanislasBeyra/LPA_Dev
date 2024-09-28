@@ -139,7 +139,7 @@ class AuthController extends Controller
                 'salary' => 'required|numeric|min:0',
                 'role' => 'required|integer|in:1,2,3',
 
-                'roleregister' => 'nullable|string|in:Employee,Vendor,Admin',
+                'roleregister' => 'nullable|string|',
             ]);
             Log::info('resister', [
                 'usedata' => $request->all(),
@@ -160,10 +160,10 @@ class AuthController extends Controller
             ];
 
             // Création de l'utilisateur en fonction du rôle
-            if ($request->roleregister == 'employee') {
+            if ($request->roleregister == 'Employee') {
                 return $this->EmployeeRegister($data);
             }
-            elseif ($request->roleregister == 'admin' || $request->roleregister == 'vendor') {
+            elseif ($request->roleregister == 'Admin' || $request->roleregister == 'Vendor') {
 
                 return $this->registerVendorAndAdmin($data);
             }
