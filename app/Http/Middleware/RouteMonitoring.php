@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\loginhistory;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -41,24 +42,19 @@ class RouteMonitoring
             'device' => $device,
         ];
 
+// Enregistrer les données dans la base de données
+        loginhistory::create([
+            'user_id' => $user ? $user->id : null,
+            'login_time' => $dateTime,
+            'ip_address' => $ip,
+            'device' => json_encode($device), // Encode device details as JSON
+        ]);
+
         // Appeler la méthode pour stocker les données dans un fichier JSON
         $this->storeRouteData($data);
 
         return $next($request);
     }
-
-
-    // private function getIpLocation($ip)
-    // {
-    //     try {
-    //         $client = new Client();
-    //         $response = $client->get("http://ipinfo.io/{$ip}/json");
-    //         return json_decode($response->getBody(), true);
-    //     } catch (\Exception $e) {
-    //         return ['error' => 'Unable to retrieve location'];
-    //     }
-    // }
-
 
     private function getIpLocation($ip)
     {
@@ -133,7 +129,7 @@ class RouteMonitoring
     file_put_contents($file, json_encode($currentData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 }
 
-   
+
 }
 
 
