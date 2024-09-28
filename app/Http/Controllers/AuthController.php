@@ -161,7 +161,7 @@ class AuthController extends Controller
                     'username' => 'required|string|max:255|unique:users',
                     'email' => 'required|string|email|max:255|unique:users',
                     'mobile' => 'required|string|max:20|unique:users',
-                ],$$message);
+                ],$message);
             }
 
             // Validation conditionnelle pour Employee
@@ -170,7 +170,7 @@ class AuthController extends Controller
                     'username' => 'required|string|max:255|unique:employees',
                     'email' => 'required|string|email|max:255|unique:employees',
                     'mobile' => 'required|string|max:20|unique:employees',
-                ],$$message);
+                ],$message);
             }
 
             // Log des données reçues
