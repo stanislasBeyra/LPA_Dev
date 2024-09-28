@@ -145,7 +145,7 @@ class AuthController extends Controller
     public function SubmitRegister(Request $request)
     {
         try {
-            $message=$this->submitRegisterErrorMessage();
+            $message = $this->submitRegisterErrorMessage();
             // Validation des données communes à tous les rôles
             $request->validate([
                 'firstname' => 'required|string|max:255',
@@ -153,7 +153,7 @@ class AuthController extends Controller
                 'salary' => 'required|numeric|min:0',
                 'role' => 'required|integer|in:1,2,3',
                 'roleregister' => 'required|string|in:Employee,Vendor,Admin',
-            ],$message);
+            ], $message);
 
             // Validation conditionnelle pour Admin ou Vendor
             if ($request->roleregister === 'Admin' || $request->roleregister === 'Vendor') {
@@ -161,7 +161,7 @@ class AuthController extends Controller
                     'username' => 'required|string|max:255|unique:users',
                     'email' => 'required|string|email|max:255|unique:users',
                     'mobile' => 'required|string|max:20|unique:users',
-                ],$message);
+                ], $message);
             }
 
             // Validation conditionnelle pour Employee
@@ -170,7 +170,7 @@ class AuthController extends Controller
                     'username' => 'required|string|max:255|unique:employees',
                     'email' => 'required|string|email|max:255|unique:employees',
                     'mobile' => 'required|string|max:20|unique:employees',
-                ],$message);
+                ], $message);
             }
 
             // Log des données reçues
@@ -215,62 +215,7 @@ class AuthController extends Controller
     }
 
 
-    // public function SubmitRegister(Request $request)
-    // {
-    //     try {
-    //         // Validation des données
-    //         $request->validate([
-    //             'firstname' => 'required|string|max:255',
-    //             'lastname' => 'required|string|max:255',
-    //             'username' => 'required|string|max:255|unique:users',
-    //             'email' => 'required|string|email|max:255|unique:users',
-    //             'mobile' => 'required|string|max:255',
-    //             'salary' => 'required|numeric|min:0',
-    //             'role' => 'required|integer|in:1,2,3',
 
-    //             'roleregister' => 'nullable|string|in:Employee,Vendor,Admin',
-    //         ]);
-    //         Log::info('resister', [
-    //             'usedata' => $request->all(),
-
-    //         ]);
-    //         $password = $this->generateRandomPassword();
-
-    //         $data = [
-    //             'firstname' => $request->firstname,
-    //             'lastname' => $request->lastname,
-    //             'username' => $request->username,
-    //             'email' => $request->email,
-    //             'mobile' => $request->mobile,
-    //             'salary' => $request->salary,
-    //             'password' => $password,
-    //             'role' => $request->role,
-    //             'roleregister' => $request->roleregister,
-    //         ];
-
-    //         // Création de l'utilisateur en fonction du rôle
-    //         if ($request->roleregister == 'Employee') {
-    //             return $this->EmployeeRegister($data);
-    //         }
-    //         elseif ($request->roleregister == 'Admin' || $request->roleregister == 'Vendor') {
-
-    //             return $this->registerVendorAndAdmin($data);
-    //         }
-    //         else {
-    //             return response()->json([
-    //                 'success' => false,
-    //                 'password'=>$password,
-    //                 'message' => "This role is not available"
-    //             ],400);
-    //         }
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'success' => false,
-    //             'message' => 'Error during form submission',
-    //             'error' => $e->getMessage()
-    //         ], 500);
-    //     }
-    // }
 
     public function login(Request $request)
     {
@@ -402,6 +347,24 @@ class AuthController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Une erreur est survenue lors de la mise à jour du profil.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getVendorList()
+    {
+        try {
+            $vendors = User::where('role', 3)
+                ->whereNull('deleted_at')
+                ->get();
+            return response()->json([
+                'success' => true,
+                'employees' => $vendors
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
                 'error' => $e->getMessage()
             ], 500);
         }

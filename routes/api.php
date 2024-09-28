@@ -47,6 +47,7 @@ Route::get('urltese', function () {
 
 });
 Route::get('/get/employee',[EmployeeController::class,'getallEmploye']);
+Route::get('/get/VendorList',[EmployeeController::class,'getVendorList']);
 Route::middleware('auth:sanctum')->group(function () {
     //get Employyee Info
     Route::get('/get/employee/all',[EmployeeController::class,'getallEmploye']);
