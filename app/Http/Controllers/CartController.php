@@ -49,10 +49,11 @@ class CartController extends Controller
 
         if ($existingCart) {
             if ($product->stock < $existingCart->quantity + $validatedData['quantity']) {
+                $productquantity=$product->stock -$existingCart->quantity;
                 return response()->json([
                     'success' => false,
                     'message' => 'Insufficient stock for the requested product after update.',
-                    'available_quantity' => $product->stock -$existingCart->quantity
+                    'available_quantity' => $productquantity==0?"out of stock":$productquantity
                 ], 400);
             }
             $existingCart->quantity += $validatedData['quantity'];
