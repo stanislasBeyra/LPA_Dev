@@ -63,14 +63,14 @@ class CartController extends Controller
 
             // Mettre à jour la quantité dans le panier
             $existingCart->save();
-        }
+        } else {
             // Si le produit n'est pas dans le panier, on l'ajoute
             $cart = Cart::create([
                 'user_id' => $user->id,
                 'product_id' => $validatedData['product_id'],
                 'quantity' => $validatedData['quantity']
             ]);
-       
+        }
 
         // Diminuer le stock du produit
         $product->stock -= $validatedData['quantity'];
