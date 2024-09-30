@@ -41,9 +41,6 @@ class EmployeeappController extends Controller
             ], 401);
         }
 
-        // Authentification réussie
-        Auth::login($user);
-
         // Supprimer les jetons existants pour cet utilisateur
         $user->tokens()->delete();
 
