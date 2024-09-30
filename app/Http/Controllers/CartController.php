@@ -24,14 +24,10 @@ class CartController extends Controller
                 'message' => 'You are not authenticated.'
             ], 401);
         }
-
-        // Validation des données de la requête
         $validatedData = $request->validate([
             'product_id' => 'required|exists:products,id',
             'quantity' => 'required|integer|min:1',
         ]);
-
-        // Récupérer le produit pour vérifier la quantité en stock
         $product = Product::find($validatedData['product_id']);
 
         if(!$product){
@@ -40,8 +36,6 @@ class CartController extends Controller
                 'message' => 'Product not found.'
                 ], 404);
         }
-
-        // Vérifier la quantité en stock
         if ($product->stock < $validatedData['quantity']) {
             return response()->json([
                 'success' => false,
@@ -49,46 +43,20 @@ class CartController extends Controller
                 'available_quantity' => $product->stock == 0 ? "out of stock" : $product->stock // Retourner la quantité disponible
             ], 400);
         }
-
-
-        // Vérifier si le produit est déjà dans le panier de l'utilisateur
         $existingCart = Cart::where('user_id', $user->id)
             ->where('product_id', $validatedData['product_id'])
             ->first();
 
         if ($existingCart) {
-            // Si le produit est déjà dans le panier, on met à jour la quantité
             $existingCart->quantity += $validatedData['quantity'];
-
-            // Vérifier la quantité en stock après mise à jour
-            // if ($product->stock < $existingCart->quantity) {
-            //     return response()->json([
-            //         'success' => false,
-            //         'message' => 'Insufficient stock for the requested product after update.',
-            //         'available_quantity' => $product->stock
-            //     ], 400);
-            // }
-
-            // Mettre à jour la quantité dans le panier
             $existingCart->save();
         } else {
-            // Si le produit n'est pas dans le panier, on l'ajoute
             $cart = Cart::create([
                 'user_id' => $user->id,
                 'product_id' => $validatedData['product_id'],
                 'quantity' => $validatedData['quantity']
             ]);
         }
-
-        // Diminuer le stock du produit
-        $product->stock -= $validatedData['quantity'];
-
-        // Vérifier si le stock est à 0 et mettre le produit en rupture de stock si nécessaire
-        if ($product->stock == 0) {
-            $product->status = 2; // Assurez-vous d'avoir un champ "status" ou quelque chose de similaire
-        }
-
-        // Sauvegarder les changements sur le produit
         $product->save();
 
         return response()->json([
@@ -99,14 +67,12 @@ class CartController extends Controller
         ], 200);
 
     } catch (\Illuminate\Validation\ValidationException $e) {
-        // Gestion des erreurs de validation
         return response()->json([
             'success' => false,
             'message' => 'Validation failed.',
             'errors' => $e->errors()
         ], 422);
     } catch (\Exception $e) {
-        // Gestion des autres exceptions
         return response()->json([
             'success' => false,
             'message' => 'An error has occurred.',
