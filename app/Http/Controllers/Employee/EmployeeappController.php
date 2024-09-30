@@ -36,7 +36,7 @@ class EmployeeappController extends Controller
             // Vérifier si le vendeur existe
             $vendor = User::find($request->vendorId);
 
-            if (!$vendor || $vendor->role !== "3") { // Assure-toi que c'est un vendeur
+            if (!$vendor) { // Assure-toi que c'est un vendeur
                 return response()->json([
                     'success' => false,
                     'message' => 'Vendor not found or not authorized.'
