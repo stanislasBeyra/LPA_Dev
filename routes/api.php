@@ -36,6 +36,7 @@ Route::get('/get/allrole',[RoleController::class,'getallrole']);
 //enregistrerment des user
 Route::post('/register', [AuthController::class,'registeuser']);
 Route::post('/login',[AuthController::class,'login']);
+Route::post('/Clientlogin',[EmployeeappController::class,'Clientlogin']);
 Route::delete('/delectuser/{id}',[AuthController::class,'delectuser']);
 Route::get('/send-test-email', [EmailController::class, 'sendTestEmail']);
 //Employee register

@@ -14,7 +14,7 @@ class EmployeeappController extends Controller
 {
     //
 
-    public function login(Request $request)
+    public function Clientlogin(Request $request)
     {
         // Validation des données d'entrée
         $request->validate([
