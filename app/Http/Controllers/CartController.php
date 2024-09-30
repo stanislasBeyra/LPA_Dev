@@ -12,7 +12,6 @@ class CartController extends Controller
 {
     //
 
-
     public function addToCart(Request $request)
 {
     try {
@@ -89,8 +88,6 @@ class CartController extends Controller
     }
 }
 
-
-
     public function showCartProducts()
 {
     try {
@@ -127,7 +124,6 @@ class CartController extends Controller
         ], 500);
     }
 }
-
 
     public function updateCartProduct(Request $request)
 {
@@ -187,7 +183,7 @@ class CartController extends Controller
 }
 
 
-    public function removeFromCart(Request $request)
+public function removeFromCart(Request $request)
 {
     try {
         // Vérifier si l'utilisateur est authentifié
@@ -201,22 +197,23 @@ class CartController extends Controller
 
         // Validation des données de la requête
         $validatedData = $request->validate([
-            'product_id' => 'required|exists:products,id', // Vérifie que le produit existe dans la table products
+            'product_id' => 'required|exists:products,id',
         ]);
 
-        // Trouver le produit dans le panier de l'utilisateur
+        // Rechercher le produit dans le panier de l'utilisateur
         $cartItem = Cart::where('user_id', $user->id)
                         ->where('product_id', $validatedData['product_id'])
                         ->first();
 
+        // Vérifier si le produit est dans le panier
         if (!$cartItem) {
             return response()->json([
                 'success' => false,
-                'message' => 'Product not found in the cart.'
+                'message' => 'Product not found in cart.'
             ], 404);
         }
 
-        // Supprimer le produit du panier
+        // Supprimer l'élément du panier
         $cartItem->delete();
 
         return response()->json([
@@ -235,11 +232,12 @@ class CartController extends Controller
         // Gestion des autres exceptions
         return response()->json([
             'success' => false,
-            'message' => 'An unexpected error occurred.',
+            'message' => 'An error has occurred.',
             'error' => $e->getMessage()
         ], 500);
     }
 }
+
 
 /// function pour  vider tout le panier du utilise
 

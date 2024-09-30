@@ -16,45 +16,41 @@ class EmployeeappController extends Controller
 
     public function Clientlogin(Request $request)
     {
-        // Validation des données d'entrée
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
+        try {
+            // Validation des données d'entrée
+            $request->validate([
+                'email' => 'required|email',
+                'password' => 'required',
+            ]);
+            $user = employee::where('email', $request->email)->first();
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Adresse email incorrecte',
+                ], 401);
+            }
+            if (!Hash::check($request->password, $user->password)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Les informations d\'identification sont incorrectes',
+                ], 401);
+            }
+            $user->tokens()->delete();
 
-        // Rechercher l'utilisateur par email
-        $user = employee::where('email', $request->email)->first();
+            $token = $user->createToken('auth_token')->plainTextToken;
 
-        // Vérifier si l'utilisateur existe
-        if (!$user) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Connexion réussie',
+                'token' => $token
+            ], 200);
+        } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Adresse email incorrecte',
+                'message' => 'An error has occurred.',
+                'error' => $e->getMessage()
             ], 401);
         }
-
-        // Vérifier le mot de passe
-        if (!Hash::check($request->password, $user->password)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Les informations d\'identification sont incorrectes',
-            ], 401);
-        }
-
-        // Authentification réussie
-        Auth::login($user);
-
-        // Supprimer les jetons existants pour cet utilisateur
-        $user->tokens()->delete();
-
-        // Création d'un nouveau token d'authentification
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Connexion réussie',
-            'token' => $token
-        ], 200);
     }
 
     //liste des vendeur sur la vue des client
@@ -71,6 +67,7 @@ class EmployeeappController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
+                'message' => 'An error has occurred.',
                 'error' => $e->getMessage()
             ], 500);
         }

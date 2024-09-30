@@ -34,13 +34,13 @@ Route::delete('/ForcedeleteRole/{id}',[RoleController::class,'ForcedeleteRole'])
 Route::get('/get/allrole',[RoleController::class,'getallrole']);
 
 //enregistrerment des user
-Route::post('/register', [AuthController::class,'registeuser']);
+//Route::post('/register', [AuthController::class,'registeuser']);
 Route::post('/login',[AuthController::class,'login']);
 Route::post('/Clientlogin',[EmployeeappController::class,'Clientlogin']);
 Route::delete('/delectuser/{id}',[AuthController::class,'delectuser']);
 Route::get('/send-test-email', [EmailController::class, 'sendTestEmail']);
 //Employee register
-Route::post('/Employee/Register',[EmployeeController::class,'EmployeeRegister']);
+//Route::post('/Employee/Register',[EmployeeController::class,'EmployeeRegister']);
 Route::post('/submit/register',[AuthController::class,'SubmitRegister']);
 
 Route::get('urltese', function () {
