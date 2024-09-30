@@ -7,8 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    use HasFactory;
-
+    source /home/softsol4/nodevenv/Dashbord_lpa/10/bin/activate && cd /home/softsol4/Dashbord_lpa
     protected $fillable = [
         'product_name',
         'product_description',
