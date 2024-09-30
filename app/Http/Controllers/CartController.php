@@ -39,9 +39,10 @@ class CartController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Insufficient stock for the requested product.',
-                'available_quantity' => $product->stock // Retourner la quantité disponible
+                'available_quantity' => $product->stock == 0 ? "out of stock" : $product->stock // Retourner la quantité disponible
             ], 400);
         }
+
 
         // Vérifier si le produit est déjà dans le panier de l'utilisateur
         $existingCart = Cart::where('user_id', $user->id)
