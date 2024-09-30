@@ -74,7 +74,7 @@ class AuthController extends Controller
             ]);
 
             // Envoi de l'email avec les informations d'identification
-            //   Mail::to($employee->email)->send(new SendUserCredentialsMail($employee, $data['password']));
+               Mail::to($employee->email)->send(new SendUserCredentialsMail($employee, $data['password']));
 
             // Réponse en cas de succès
             return response()->json([
