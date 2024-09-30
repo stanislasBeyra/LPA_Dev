@@ -48,6 +48,13 @@ class CartController extends Controller
             ->first();
 
         if ($existingCart) {
+            if ($product->stock < $existingCart->quantity + $validatedData['quantity']) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Insufficient stock for the requested product after update.',
+                    'available_quantity' => $product->stock
+                ], 400);
+            }
             $existingCart->quantity += $validatedData['quantity'];
             $existingCart->save();
         } else {
