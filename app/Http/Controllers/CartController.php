@@ -34,6 +34,13 @@ class CartController extends Controller
         // Récupérer le produit pour vérifier la quantité en stock
         $product = Product::find($validatedData['product_id']);
 
+        if(!$product){
+            return response()->json([
+                'success' => false,
+                'message' => 'Product not found.'
+                ], 404);
+        }
+
         // Vérifier la quantité en stock
         if ($product->stock < $validatedData['quantity']) {
             return response()->json([
