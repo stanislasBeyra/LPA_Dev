@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\EmailController;
+use App\Http\Controllers\Employee\EmployeeappController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoleController;
@@ -48,6 +49,10 @@ Route::get('urltese', function () {
 });
 Route::get('/get/employee',[EmployeeController::class,'getallEmploye']);
 Route::get('/get/VendorList',[AuthController::class,'getVendorList']);
+
+Route::get('/products/vendor/', [EmployeeappController::class, 'getProductsByVendorId']);
+Route::get('/get/VendorListapp',[EmployeeappController::class,'getVendorListapp']);
+
 Route::middleware('auth:sanctum')->group(function () {
     //get Employyee Info
     Route::get('/get/employee/all',[EmployeeController::class,'getallEmploye']);
