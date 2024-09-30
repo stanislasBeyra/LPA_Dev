@@ -12,7 +12,7 @@ class OrderController extends Controller
 {
     //
 
-    public function placeOrderFromCart(Request $request)
+    public function placeOrder(Request $request)
 {
     try {
         // Vérifier si l'utilisateur est authentifié

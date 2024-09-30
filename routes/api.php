@@ -5,6 +5,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\Employee\EmployeeappController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoleController;
 use Illuminate\Http\Request;
@@ -82,6 +83,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/remove/From/Cart',[CartController::class,'removeFromCart']);
 
     //--- 4 order session
+    Route::post('/add/order',[OrderController::class,'placeOrder']);
 
 
     Route::post('/deleteAllProducts',[ProductController::class,'deleteAllProducts']);
