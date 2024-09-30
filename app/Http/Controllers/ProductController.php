@@ -110,7 +110,7 @@ public function updateVendorProduct(Request $request, $productId)
         $uservendor = Auth::user();
 
         // Vérification du rôle
-        if ($uservendor->role != 2) {
+        if ($uservendor->role != 3) {
             return response()->json(['success' => false, 'message' => 'Unauthorized access'], 403);
         }
 
