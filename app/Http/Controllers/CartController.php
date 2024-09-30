@@ -52,7 +52,7 @@ class CartController extends Controller
                 return response()->json([
                     'success' => false,
                     'message' => 'Insufficient stock for the requested product after update.',
-                    'available_quantity' => $product->stock
+                    'available_quantity' => $product->stock -$existingCart->quantity
                 ], 400);
             }
             $existingCart->quantity += $validatedData['quantity'];
