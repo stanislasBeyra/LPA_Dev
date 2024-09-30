@@ -3,13 +3,59 @@
 namespace App\Http\Controllers\Employee;
 
 use App\Http\Controllers\Controller;
+use App\Models\employee;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class EmployeeappController extends Controller
 {
     //
+
+    public function login(Request $request)
+    {
+        // Validation des données d'entrée
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        // Rechercher l'utilisateur par email
+        $user = employee::where('email', $request->email)->first();
+
+        // Vérifier si l'utilisateur existe
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Adresse email incorrecte',
+            ], 401);
+        }
+
+        // Vérifier le mot de passe
+        if (!Hash::check($request->password, $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Les informations d\'identification sont incorrectes',
+            ], 401);
+        }
+
+        // Authentification réussie
+        Auth::login($user);
+
+        // Supprimer les jetons existants pour cet utilisateur
+        $user->tokens()->delete();
+
+        // Création d'un nouveau token d'authentification
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Connexion réussie',
+            'token' => $token
+        ], 200);
+    }
 
     //liste des vendeur sur la vue des client
     public function getVendorListapp()
