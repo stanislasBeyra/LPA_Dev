@@ -197,7 +197,7 @@ public function removeFromCart(Request $request)
 
         // Validation des données de la requête
         $validatedData = $request->validate([
-            'product_id' => 'required|integer|exists:cart,id',
+            'product_id' => 'required|integer|exists:carts,product_id',
         ]);
 
         // Rechercher le produit dans le panier de l'utilisateur
