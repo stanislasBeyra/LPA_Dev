@@ -77,7 +77,7 @@ class CartController extends Controller
 
         // Vérifier si le stock est à 0 et mettre le produit en rupture de stock si nécessaire
         if ($product->stock == 0) {
-            $product->status = 'out of stock'; // Assurez-vous d'avoir un champ "status" ou quelque chose de similaire
+            $product->status = 2; // Assurez-vous d'avoir un champ "status" ou quelque chose de similaire
         }
 
         // Sauvegarder les changements sur le produit

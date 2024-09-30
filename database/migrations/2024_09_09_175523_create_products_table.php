@@ -18,7 +18,8 @@ return new class extends Migration
             $table->integer('stock')->default(0);
             $table->double('price');
             $table->integer('vendor_id')->nullable(); // Correction
-            $table->integer('categorie_id')->nullable(); // Correction
+            $table->integer('categorie_id')->nullable();
+            $table->boolean('status')->default(true);
             $table->string('product_images1')->nullable();
             $table->string('product_images2')->nullable();
             $table->string('product_images3')->nullable();
