@@ -53,13 +53,13 @@ class CartController extends Controller
             $existingCart->quantity += $validatedData['quantity'];
 
             // Vérifier la quantité en stock après mise à jour
-            if ($product->stock < $existingCart->quantity) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Insufficient stock for the requested product after update.',
-                    'available_quantity' => $product->stock
-                ], 400);
-            }
+            // if ($product->stock < $existingCart->quantity) {
+            //     return response()->json([
+            //         'success' => false,
+            //         'message' => 'Insufficient stock for the requested product after update.',
+            //         'available_quantity' => $product->stock
+            //     ], 400);
+            // }
 
             // Mettre à jour la quantité dans le panier
             $existingCart->save();
