@@ -50,7 +50,7 @@ Route::get('urltese', function () {
 Route::get('/get/employee',[EmployeeController::class,'getallEmploye']);
 Route::get('/get/VendorList',[AuthController::class,'getVendorList']);
 
-Route::get('/products/vendor/', [EmployeeappController::class, 'getProductsByVendorId']);
+Route::post('/products/vendor/', [EmployeeappController::class, 'getProductsByVendorId']);
 Route::get('/get/VendorListapp',[EmployeeappController::class,'getVendorListapp']);
 
 Route::middleware('auth:sanctum')->group(function () {
