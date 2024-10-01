@@ -84,6 +84,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //--- 4 order session
     Route::post('/add/order',[OrderController::class,'placeOrder']);
+    Route::get('/get/orderproduct',[OrderController::class,'showOrderProducts']);
 
 
     Route::post('/deleteAllProducts',[ProductController::class,'deleteAllProducts']);

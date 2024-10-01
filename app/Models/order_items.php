@@ -21,7 +21,7 @@ class order_items extends Model
     // Relations
     public function order()
     {
-        return $this->belongsTo(Order::class);
+        return $this->belongsTo(order::class);
     }
 
     public function product()
