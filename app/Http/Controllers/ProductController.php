@@ -529,7 +529,7 @@ public function getVendorOrders()
                 'total_price' => $order->total_price,
                 'status' => $order->status,
                 'created_at' => $order->created_at,
-                'products' => $order->items->map(function ($item) {
+                'products' => $order->orderItems->map(function ($item) {
                     return [
                         'product_id' => $item->product->id,
                         'product_name' => $item->product->product_name,
@@ -546,11 +546,12 @@ public function getVendorOrders()
         Log::error('Error fetching vendor orders', ['exception' => $e]);
         return response()->json([
             'success' => false,
-        'message' => 'An error occurred while fetching orders',
-        'error'=>$e->getMessage()
-    ], 500);
+            'message' => 'An error occurred while fetching orders',
+            'error' => $e->getMessage()
+        ], 500);
     }
 }
+
 
 public function VendorvalidateOrder(Request $request)
 {

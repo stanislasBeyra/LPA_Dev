@@ -24,11 +24,6 @@ class order extends Model
         return $this->hasMany(order_items::class, 'order_id'); // Référence au modèle order_items
     }
 
-    public function items()
-    {
-        return $this->hasMany(order_items::class, 'order_id');
-    }
-
     // Relation avec l'utilisateur
     public function user()
     {
