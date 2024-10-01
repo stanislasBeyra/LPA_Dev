@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\employee;
 use App\Models\order;
 use App\Models\order_items;
 use App\Models\Product;
@@ -550,8 +551,8 @@ class ProductController extends Controller
                 ];
             });
 
-            // $user=User::where('id',$order->user_id)->first();
-            // dd($user);
+            $user=employee::where('id',$order->user_id)->first();
+            dd($user);
             return [
                 'order_id' => $order->id,
                 'user_id' => $order->user_id,
