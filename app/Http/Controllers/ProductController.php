@@ -499,83 +499,87 @@ class ProductController extends Controller
     }
 
 
-    public function getVendorOrders()
-    {
-        try {
-            // Récupérer l'utilisateur authentifié
-            $uservendor = Auth::user();
 
-            // Vérifier si l'utilisateur est bien un vendeur
-            if (!$uservendor) {
-                return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+    public function getVendorOrders()
+{
+    try {
+        // Récupérer l'utilisateur authentifié
+        $uservendor = Auth::user();
+
+        // Vérifier si l'utilisateur est bien un vendeur
+        if (!$uservendor) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+        }
+
+        // Récupérer les produits du vendeur
+        $products = Product::where('vendor_id', $uservendor->id)->pluck('id');
+
+        // Récupérer les commandes associées aux produits du vendeur
+        $orders = Order::whereHas('orderItems', function ($query) use ($products) {
+            $query->whereIn('product_id', $products);
+        })->with('orderItems.product')->get();
+
+        // Parcourir chaque commande pour ajouter les produits associés et les détails de l'utilisateur
+        $orderDetails = $orders->map(function ($order) {
+            // Récupérer manuellement les informations de l'utilisateur en fonction de user_id
+            $user = User::where('id', $order->user_id)->first();
+            if (!$user) {
+                $userDetails = ['id' => null, 'name' => 'Unknown', 'email' => 'Unknown'];
+            } else {
+                $userDetails = [
+                    'id' => $user->id,
+                    'username' => $user->username,
+                    'email' => $user->email,
+                ];
             }
 
-            // Récupérer les produits du vendeur
-            $products = Product::where('vendor_id', $uservendor->id)->pluck('id');
-
-            // Récupérer les commandes associées aux produits du vendeur
-            $orders = Order::whereHas('orderItems', function ($query) use ($products) {
-                $query->whereIn('product_id', $products);
-            })->with(['orderItems.product', 'user'])->get();
-
-            // Parcourir chaque commande pour ajouter les produits associés
-            $orderDetails = $orders->map(function ($order) {
-                // Vérifier si l'utilisateur est associé à la commande
-                $user = User::find($order->user_id);
-                if (!$user) {
-                    $userDetails = ['id' => null, 'name' => 'Unknown', 'email' => 'Unknown'];
-                } else {
-                    $userDetails = [
-                        'id' => $user->id,
-                        'username' => $user->username,
-                        'email' => $user->email,
-                    ];
-                }
-
-                // Parcourir les produits de la commande
-                $products = $order->orderItems->map(function ($item) {
-                    // Vérifier si le produit est associé à l'item
-                    $product = $item->product;
-                    if (!$product) {
-                        return [
-                            'product_id' => null,
-                            'product_name' => 'Unknown',
-                            'quantity' => $item->quantity,
-                            'price' => $item->total,
-                        ];
-                    }
+            // Parcourir les produits de la commande
+            $products = $order->orderItems->map(function ($item) {
+                // Vérifier si le produit est associé à l'item
+                $product = $item->product;
+                if (!$product) {
                     return [
-                        'product_id' => $product->id,
-                        'product_name' => $product->product_name,
+                        'product_id' => null,
+                        'product_name' => 'Unknown',
                         'quantity' => $item->quantity,
                         'price' => $item->total,
-                        "product_images1" => $item->product->product_images1,
-                        "product_images2" => $item->product->product_images1,
-                        "product_images3" => $item->product->product_images3,
+                        'product_images1' => null,
+                        'product_images2' => null,
+                        'product_images3' => null,
                     ];
-                });
-
+                }
                 return [
-                    'order_id' => $order->id,
-                    'user' => $userDetails,
-                    'total_price' => $order->total_price,
-                    'status' => $order->status,
-                    'created_at' => $order->created_at,
-                    'products' => $products
+                    'product_id' => $product->id,
+                    'product_name' => $product->product_name,
+                    'quantity' => $item->quantity,
+                    'price' => $item->total,
+                    'product_images1' => $product->product_images1,
+                    'product_images2' => $product->product_images2,
+                    'product_images3' => $product->product_images3,
                 ];
             });
 
-            // Retourner les détails des commandes avec les produits
-            return response()->json(['success' => true, 'orders' => $orderDetails], 200);
-        } catch (\Exception $e) {
-            Log::error('Error fetching vendor orders', ['exception' => $e]);
-            return response()->json([
-                'success' => false,
-                'message' => 'An error occurred while fetching orders',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+            return [
+                'order_id' => $order->id,
+                'user' => $userDetails,
+                'total_price' => $order->total_price,
+                'status' => $order->status,
+                'created_at' => $order->created_at,
+                'products' => $products
+            ];
+        });
+
+        // Retourner les détails des commandes avec les produits
+        return response()->json(['success' => true, 'orders' => $orderDetails], 200);
+    } catch (\Exception $e) {
+        Log::error('Error fetching vendor orders', ['exception' => $e]);
+        return response()->json([
+            'success' => false,
+            'message' => 'An error occurred while fetching orders',
+            'error' => $e->getMessage()
+        ], 500);
     }
+}
 
     // public function getVendorOrders()
     // {
@@ -598,24 +602,48 @@ class ProductController extends Controller
 
     //         // Parcourir chaque commande pour ajouter les produits associés
     //         $orderDetails = $orders->map(function ($order) {
+    //             // Vérifier si l'utilisateur est associé à la commande
+    //             $user = $order->user;
+    //             if (!$user) {
+    //                 $userDetails = ['id' => null, 'name' => 'Unknown', 'email' => 'Unknown'];
+    //             } else {
+    //                 $userDetails = [
+    //                     'id' => $user->id,
+    //                     'name' => $user->name,
+    //                     'email' => $user->email,
+    //                 ];
+    //             }
+
+    //             // Parcourir les produits de la commande
+    //             $products = $order->orderItems->map(function ($item) {
+    //                 // Vérifier si le produit est associé à l'item
+    //                 $product = $item->product;
+    //                 if (!$product) {
+    //                     return [
+    //                         'product_id' => null,
+    //                         'product_name' => 'Unknown',
+    //                         'quantity' => $item->quantity,
+    //                         'price' => $item->total,
+    //                     ];
+    //                 }
+    //                 return [
+    //                     'product_id' => $product->id,
+    //                     'product_name' => $product->product_name,
+    //                     'quantity' => $item->quantity,
+    //                     'price' => $item->total,
+    //                     "product_images1" => $item->product->product_images1,
+    //                     "product_images2" => $item->product->product_images1,
+    //                     "product_images3" => $item->product->product_images3,
+    //                 ];
+    //             });
+
     //             return [
     //                 'order_id' => $order->id,
-    //                 'user' => [
-    //                     'id' => $order->user->id,
-    //                     'name' => $order->user->name,
-    //                     'email' => $order->user->email,
-    //                 ],
+    //                 'user' => $userDetails,
     //                 'total_price' => $order->total_price,
     //                 'status' => $order->status,
     //                 'created_at' => $order->created_at,
-    //                 'products' => $order->orderItems->map(function ($item) {
-    //                     return [
-    //                         'product_id' => $item->product->id,
-    //                         'product_name' => $item->product->product_name,
-    //                         'quantity' => $item->quantity,
-    //                         'price' => $item->price,
-    //                     ];
-    //                 })
+    //                 'products' => $products
     //             ];
     //         });
 
@@ -630,6 +658,7 @@ class ProductController extends Controller
     //         ], 500);
     //     }
     // }
+
 
 
     public function VendorvalidateOrder(Request $request)
