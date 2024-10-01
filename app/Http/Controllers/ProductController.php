@@ -540,14 +540,14 @@ public function getVendorOrders()
                         'product_id' => null,
                         'product_name' => 'Unknown',
                         'quantity' => $item->quantity,
-                        'price' => $item->price,
+                        'price' => $item->total,
                     ];
                 }
                 return [
                     'product_id' => $product->id,
                     'product_name' => $product->product_name,
                     'quantity' => $item->quantity,
-                    'price' => $item->price,
+                    'price' => $item->total,
                 ];
             });
 
