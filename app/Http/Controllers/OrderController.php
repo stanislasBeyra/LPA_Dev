@@ -93,12 +93,15 @@ class OrderController extends Controller
 }
 
 
-public function showOrderProducts($orderId)
+public function showOrderProducts()
 {
     try {
-        $user=Auth::user();
-        // Récupérer la commande par son ID
-        $order = Order::with('orderItems.product')->where('user_id',$user->id)->get();
+        $user = Auth::user();
+
+        // Récupérer la commande par son ID et s'assurer qu'elle appartient à l'utilisateur
+        $order = Order::with('orderItems.product')
+            ->where('user_id', $user->id)
+            ->firstOrFail(); // Cela lancera une exception si la commande n'est pas trouvée
 
         // Retourner les détails de la commande avec les produits
         return response()->json([
@@ -129,6 +132,7 @@ public function showOrderProducts($orderId)
         ], 500);
     }
 }
+
 
 
 }
