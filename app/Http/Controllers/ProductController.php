@@ -544,7 +544,11 @@ public function getVendorOrders()
         return response()->json(['success' => true, 'orders' => $orderDetails], 200);
     } catch (\Exception $e) {
         Log::error('Error fetching vendor orders', ['exception' => $e]);
-        return response()->json(['success' => false, 'message' => 'An error occurred while fetching orders'], 500);
+        return response()->json([
+            'success' => false,
+        'message' => 'An error occurred while fetching orders',
+        'error'=>$e->getMessage()
+    ], 500);
     }
 }
 
