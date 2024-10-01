@@ -51,6 +51,7 @@ class OrderController extends Controller
         // Créer une commande principale (table 'orders')
         $order = new Order();
         $order->user_id = $user->id;
+        $order->product_id = $user->id;
         $order->total = $totalAmount;
         $order->status = 1; // Commande en attente
         $order->save();
