@@ -522,16 +522,7 @@ class ProductController extends Controller
         // Parcourir chaque commande pour ajouter les produits associés et les détails de l'utilisateur
         $orderDetails = $orders->map(function ($order) {
             // Récupérer manuellement les informations de l'utilisateur en fonction de user_id
-            $user = User::where('id', $order->user_id)->first();
-            if (!$user) {
-                $userDetails = ['id' => null, 'name' => 'Unknown', 'email' => 'Unknown'];
-            } else {
-                $userDetails = [
-                    'id' => $user->id,
-                    'username' => $user->username,
-                    'email' => $user->email,
-                ];
-            }
+
 
             // Parcourir les produits de la commande
             $products = $order->orderItems->map(function ($item) {
@@ -561,7 +552,6 @@ class ProductController extends Controller
 
             return [
                 'order_id' => $order->id,
-                'user' => $userDetails,
                 'total_price' => $order->total_price,
                 'status' => $order->status,
                 'created_at' => $order->created_at,
