@@ -59,6 +59,7 @@ class OrderController extends Controller
         foreach ($cartItems as $item) {
             $product = Product::find($item->product_id);
 
+            dd($product->id);
             $orderItem = new order_items();
             $orderItem->order_id = $order->id;
             $orderItem->product_id = $product->id;
