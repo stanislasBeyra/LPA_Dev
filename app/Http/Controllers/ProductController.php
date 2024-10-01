@@ -497,6 +497,57 @@ public function updateVendorProduct(Request $request, $productId)
     }
 }
 
+
+public function getVendorOrders()
+{
+    try {
+        // Récupérer l'utilisateur authentifié
+        $uservendor = Auth::user();
+
+        // Vérifier si l'utilisateur est bien un vendeur
+        if (!$uservendor) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+        }
+
+        // Récupérer les produits du vendeur
+        $products = Product::where('vendor_id', $uservendor->id)->pluck('id');
+
+        // Récupérer les commandes associées aux produits du vendeur
+        $orders = Order::whereHas('items', function ($query) use ($products) {
+            $query->whereIn('product_id', $products);
+        })->with(['items.product', 'user'])->get();
+
+        // Parcourir chaque commande pour ajouter les produits associés
+        $orderDetails = $orders->map(function ($order) {
+            return [
+                'order_id' => $order->id,
+                'user' => [
+                    'id' => $order->user->id,
+                    'name' => $order->user->name,
+                    'email' => $order->user->email,
+                ],
+                'total_price' => $order->total_price,
+                'status' => $order->status,
+                'created_at' => $order->created_at,
+                'products' => $order->items->map(function ($item) {
+                    return [
+                        'product_id' => $item->product->id,
+                        'product_name' => $item->product->product_name,
+                        'quantity' => $item->quantity,
+                        'price' => $item->price,
+                    ];
+                })
+            ];
+        });
+
+        // Retourner les détails des commandes avec les produits
+        return response()->json(['success' => true, 'orders' => $orderDetails], 200);
+    } catch (\Exception $e) {
+        Log::error('Error fetching vendor orders', ['exception' => $e]);
+        return response()->json(['success' => false, 'message' => 'An error occurred while fetching orders'], 500);
+    }
+}
+
 public function VendorvalidateOrder(Request $request)
 {
     try {
