@@ -18,4 +18,10 @@ class order extends Model
         'total',
         'status',
     ];
+
+    public function orderItems()
+    {
+        return $this->hasMany(order_items::class, 'order_id'); // Référence au modèle order_items
+    }
+
 }
