@@ -513,9 +513,9 @@ public function getVendorOrders()
         $products = Product::where('vendor_id', $uservendor->id)->pluck('id');
 
         // Récupérer les commandes associées aux produits du vendeur
-        $orders = Order::whereHas('items', function ($query) use ($products) {
+        $orders = Order::whereHas('orderItems', function ($query) use ($products) {
             $query->whereIn('product_id', $products);
-        })->with(['items.product', 'user'])->get();
+        })->with(['orderItems.product', 'user'])->get();
 
         // Parcourir chaque commande pour ajouter les produits associés
         $orderDetails = $orders->map(function ($order) {
