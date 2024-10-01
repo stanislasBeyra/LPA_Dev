@@ -586,13 +586,16 @@ public function VendorvalidateOrder(Request $request)
         }
 
         // Récupérer la commande par son ID
-        $order = order::where('id', $request->orderId)->firstOrFail();
-        if(!$order){
+        $order = Order::where('id', $request->orderId)->firstOrFail();
+
+        // Vérifiez si la commande est trouvée
+        if (!$order) {
             return response()->json([
                 'success' => false,
                 'message' => 'Order not found.',
-                ], 404);
+            ], 404);
         }
+
         // Récupérer les éléments de la commande
         $orderItems = order_items::where('order_id', $order->id)->get();
 
@@ -604,14 +607,16 @@ public function VendorvalidateOrder(Request $request)
             ], 404);
         }
 
-
         // Mettre à jour le statut de la commande pour la valider
-        //2 = valider par le forunisseur
+        // 2 = validé par le fournisseur
         $order->status = 2;
         $order->save();
-        //2 = valider par le forunisseur
-        $orderItems->status=2;
-        $orderItems->save();
+
+        // Mettre à jour le statut des éléments de la commande
+        foreach ($orderItems as $item) {
+            $item->status = 2;
+            $item->save();
+        }
 
         return response()->json([
             'success' => true,
@@ -631,5 +636,6 @@ public function VendorvalidateOrder(Request $request)
         ], 500);
     }
 }
+
 
 }
