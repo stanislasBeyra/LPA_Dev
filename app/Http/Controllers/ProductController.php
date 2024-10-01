@@ -526,7 +526,7 @@ class ProductController extends Controller
                 } else {
                     $userDetails = [
                         'id' => $user->id,
-                        'name' => $user->name,
+                        'username' => $user->username,
                         'email' => $user->email,
                     ];
                 }
