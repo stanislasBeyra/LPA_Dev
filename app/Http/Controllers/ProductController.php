@@ -569,4 +569,8 @@ public function updateVendorProduct(Request $request, $productId)
     }
 }
 
+public function ValidatedOrders(){
+    
+}
+
 }
