@@ -552,6 +552,7 @@ class ProductController extends Controller
 
             return [
                 'order_id' => $order->id,
+                'user_id' => $order->user_id,
                 'total_price' => $order->total_price,
                 'status' => $order->status,
                 'created_at' => $order->created_at,
