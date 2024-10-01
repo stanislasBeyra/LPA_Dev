@@ -115,7 +115,7 @@ public function showOrderProducts()
                     'product_id' => $item->product_id,
                     'quantity' => $item->quantity,
                     'total' => $item->total,
-                    'product_name' => $item->product->name, // Assurez-vous que le champ `name` existe dans votre modèle `Product`
+                    'product_name' => $item->product->product_name, // Assurez-vous que le champ `name` existe dans votre modèle `Product`
                 ];
             }),
         ]);
