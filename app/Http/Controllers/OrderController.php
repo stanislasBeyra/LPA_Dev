@@ -105,8 +105,8 @@ class OrderController extends Controller
             // Retourner les détails de la commande avec les produits
             return response()->json([
                 'success' => true,
-                'order_id' => $order->id,
-                'user_id' => $order->user_id,
+                // 'order_id' => $order->id,
+                // 'user_id' => $order->user_id,
                 'total' => $order->total,
                 'status' => $order->status,
                 'products' => $order->orderItems->map(function ($item) {
