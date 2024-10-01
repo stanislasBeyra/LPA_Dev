@@ -96,7 +96,7 @@ class OrderController extends Controller
 public function showOrderProducts($orderId)
 {
     try {
-        $user=>Auth::user();
+        $user=Auth::user();
         // Récupérer la commande par son ID
         $order = Order::with('orderItems.product')->where('user_id',$user->id)->get();
 
