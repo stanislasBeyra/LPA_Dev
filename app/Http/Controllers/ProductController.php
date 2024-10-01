@@ -6,6 +6,7 @@ use App\Models\order;
 use App\Models\order_items;
 use App\Models\Product;
 use App\Models\ProductCategory;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -520,13 +521,13 @@ class ProductController extends Controller
             // Parcourir chaque commande pour ajouter les produits associés
             $orderDetails = $orders->map(function ($order) {
                 // Vérifier si l'utilisateur est associé à la commande
-                $user = $order->user;
+                $user = User::find($order->user_id);
                 if (!$user) {
                     $userDetails = ['id' => null, 'name' => 'Unknown', 'email' => 'Unknown'];
                 } else {
                     $userDetails = [
                         'id' => $user->id,
-                        'name' => $user->name,
+                        'username' => $user->username,
                         'email' => $user->email,
                     ];
                 }
