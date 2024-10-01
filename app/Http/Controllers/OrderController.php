@@ -98,7 +98,7 @@ public function showOrderProducts($orderId)
     try {
         $user=>Auth::user();
         // Récupérer la commande par son ID
-        $order = Order::with('orderItems.product')->where('user_id',$user->id);
+        $order = Order::with('orderItems.product')->where('user_id',$user->id)->get();
 
         // Retourner les détails de la commande avec les produits
         return response()->json([
