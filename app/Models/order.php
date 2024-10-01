@@ -30,4 +30,8 @@ class order extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function employee(){
+        return $this->belongsTo(employee::class, 'user_id');
+    }
+
 }
