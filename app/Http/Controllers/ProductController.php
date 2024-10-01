@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\order;
+use App\Models\order_items;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use Illuminate\Http\Request;
@@ -569,8 +571,65 @@ public function updateVendorProduct(Request $request, $productId)
     }
 }
 
-public function ValidatedOrders(){
-    
+public function VendorvalidateOrder(Request $request)
+{
+    try {
+        // Récupérer l'utilisateur authentifié
+        $user = Auth::user();
+
+        // Vérifiez que l'utilisateur est authentifié
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized action.',
+            ], 403);
+        }
+
+        // Récupérer la commande par son ID
+        $order = order::where('id', $request->orderId)->firstOrFail();
+        if(!$order){
+            return response()->json([
+                'success' => false,
+                'message' => 'Order not found.',
+                ], 404);
+        }
+        // Récupérer les éléments de la commande
+        $orderItems = order_items::where('order_id', $order->id)->get();
+
+        // Vérifiez si la commande est vide
+        if ($orderItems->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Order is empty.',
+            ], 404);
+        }
+
+
+        // Mettre à jour le statut de la commande pour la valider
+        //2 = valider par le forunisseur
+        $order->status = 2;
+        $order->save();
+        //2 = valider par le forunisseur
+        $orderItems->status=2;
+        $orderItems->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Order validated successfully.',
+            'order' => $order, // Retourner la commande mise à jour si nécessaire
+        ]);
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Order not found.',
+        ], 404);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'An unexpected error occurred.',
+            'error' => $e->getMessage(),
+        ], 500);
+    }
 }
 
 }

@@ -86,7 +86,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/add/order',[OrderController::class,'placeOrder']);
     Route::get('/get/orderproduct',[OrderController::class,'showOrderProducts']);
 
+    //vendor validation
+    Route::post('/Vendor/validateOrder',[ProductController::class,'VendorvalidateOrder']);
 
+
+
+
+    
     Route::post('/deleteAllProducts',[ProductController::class,'deleteAllProducts']);
 
 
