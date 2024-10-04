@@ -17,7 +17,6 @@ class RouteMonitoring
     {
         $user = Auth::user();
 
-        // Récupérer l'adresse IP de l'utilisateur
         $ip = $request->ip();
 
         // Récupérer la route actuelle

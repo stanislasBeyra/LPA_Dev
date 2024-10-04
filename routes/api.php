@@ -92,7 +92,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 
-
     Route::post('/deleteAllProducts',[ProductController::class,'deleteAllProducts']);
 
 
