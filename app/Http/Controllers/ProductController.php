@@ -515,7 +515,9 @@ class ProductController extends Controller
             // Récupérer les commandes associées aux produits du vendeur
             $orders = Order::whereHas('orderItems', function ($query) use ($products) {
                 $query->whereIn('product_id', $products);
-            })->with(['orderItems.product', 'user'])->get();
+            })->with(['orderItems.product', 'user'])
+            ->orderByDesc('id')
+            ->get();
 
             // Parcourir chaque commande pour ajouter les produits associés
             $orderDetails = $orders->map(function ($order) {
