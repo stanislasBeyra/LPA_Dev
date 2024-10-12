@@ -59,7 +59,7 @@
                     <p><strong>Password:</strong> {{ $password }}</p>
                 </div>
                 <p>To begin exploring the full features of the LPA app, simply click the link below to access your personalized dashboard:</p>
-                <p><a href="http://192.168.1.4:1206">Access Your Dashboard</a></p>
+                <p><a href="https://frontend-lpa.vercel.app">Access Your Dashboard</a></p>
                 <p>Should you have any questions or need any support, our dedicated team is here for you. Don’t hesitate to reach out if you need any assistance.</p>
                 <p>Thank you for choosing LPA. We’re excited to have you with us!</p>
             </div>
