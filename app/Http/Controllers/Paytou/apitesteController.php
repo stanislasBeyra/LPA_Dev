@@ -89,6 +89,18 @@ class apitesteController extends Controller
             $response = Http::withBasicAuth($username, $password)
                 ->withOptions(['verify' => false]) // À utiliser avec précaution en production
                 ->post($url,$data);
+                if ($response->successful()) {
+                    return response()->json([
+                        'response' => $response->json(),
+                    ]);
+                } else {
+                    // Gérer les réponses non réussies
+                    return response()->json([
+                        'error' => 'Request failed',
+                        'status' => $response->status(),
+                        'message' => $response->body()
+                    ], $response->status());
+                }
         }catch(\Exception $e){
             return response()->json([
                 'error' => $e->getMessage()
