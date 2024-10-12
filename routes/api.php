@@ -6,6 +6,7 @@ use App\Http\Controllers\EmailController;
 use App\Http\Controllers\Employee\EmployeeappController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\Paytou\apitesteController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoleController;
 use Illuminate\Http\Request;
@@ -96,3 +97,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 });
+
+
+Route::get('testeapi',[apitesteController::class,'testeapi']);
+Route::post('paytou/user',[apitesteController::class,'getUser']);
