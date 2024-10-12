@@ -102,3 +102,4 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::get('testeapi',[apitesteController::class,'testeapi']);
 Route::post('paytou/user',[apitesteController::class,'getUser']);
 Route::post('/payfrais/dossier',[apitesteController::class,'fraisdossier']);
+Route::get('getHistoriqueCommission',[apitesteController::class,'getHistoriqueCommission']);
