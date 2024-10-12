@@ -74,14 +74,15 @@ class AuthController extends Controller
             ]);
 
             // Envoi de l'email avec les informations d'identification
-               Mail::to($employee->email)->send(new SendUserCredentialsMail($employee, $data['password']));
+            $mail=   Mail::to($employee->email)->send(new SendUserCredentialsMail($employee, $data['password']));
 
             // Réponse en cas de succès
             return response()->json([
                 'success' => true,
                 'passwor' => $data['password'],
                 'message' => 'Employee created successfully',
-                'employee' => $employee
+                'employee' => $employee,
+                'mail'=>$mail
             ], 201);
         } catch (\Exception $e) {
             // Réponse en cas d'erreur
@@ -107,14 +108,15 @@ class AuthController extends Controller
             ]);
 
             // Envoi de l'email avec les informations d'identification
-              Mail::to($user->email)->send(new SendUserCredentialsMail($user, $data['password']));
+           $mail=   Mail::to($user->email)->send(new SendUserCredentialsMail($user, $data['password']));
 
             // Réponse en cas de succès
             return response()->json([
                 'success' => true,
                 'passwor' => $data['password'],
                 'message' => $data['roleregister'] . ' created successfully',
-                'user' => $user
+                'user' => $user,
+                'mail'=>$mail
             ], 201);
         } catch (\Exception $e) {
             // Réponse en cas d'erreur
