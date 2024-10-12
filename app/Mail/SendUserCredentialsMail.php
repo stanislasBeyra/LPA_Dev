@@ -46,7 +46,7 @@ class SendUserCredentialsMail extends Mailable
     public function build()
     {
         return $this->subject('Login Details')
-                    ->from('lpacenter63@gmail.com', 'LPA Center')
+                    ->from('lpa@softsolutionsdev.com', 'LPA Center')
                     ->to($this->user->email)
                     ->view('emails.plaintext');
     }
