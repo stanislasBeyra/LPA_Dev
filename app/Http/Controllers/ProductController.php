@@ -518,7 +518,6 @@ class ProductController extends Controller
             })->with(['orderItems.product', 'user'])
             ->orderByDesc('id')
             ->get();
-
             // Parcourir chaque commande pour ajouter les produits associés
             $orderDetails = $orders->map(function ($order) {
                 // Vérifier si l'utilisateur est associé à la commande
