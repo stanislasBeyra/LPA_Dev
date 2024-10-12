@@ -111,5 +111,41 @@ class apitesteController extends Controller
                 ], 500);
         }
     }
+    //get/Historique/Commission
+
+    public function getHistoriqueCommission(){
+        try{
+            $url = 'https://api.officepartnerspaytou.com/api/get/Historique/Commission';
+            $username = 'ITQVFAZONG';
+            $password = 'GhEf8Iunl1';
+
+            // Envoi de la requête avec authentification de base
+            $response = Http::withBasicAuth($username, $password)
+                ->withOptions(['verify' => false]) // À utiliser avec précaution en production
+                ->get($url);
+
+            // Vérification du statut de la réponse
+            if ($response->successful()) {
+                return response()->json([
+                    'response' => $response->json(),
+                ]);
+            } else {
+                // Gérer les réponses non réussies
+                return response()->json([
+                    'error' => 'Request failed',
+                    'status' => $response->status(),
+                    'message' => $response->body()
+                ], $response->status());
+            }
+        }catch(\Exception $e){
+            return response()->json([
+                'error' => $e->getMessage()
+                ], 500);
+        }catch(\Throwable $t){
+            return response()->json([
+                'error' => $t->getMessage()
+                ], 500);
+        }
+    }
 
 }
