@@ -77,4 +77,27 @@ class apitesteController extends Controller
         }
     }
 
+    public function fraisdossier(Request $request){
+        try{
+            $url = 'https://api.officepartnerspaytou.com/api/send/Code/FraisDossier';
+            $username = 'ITQVFAZONG';
+            $password = 'GhEf8Iunl1';
+            $data=[
+                'mobile'=>$request->mobile,
+                'amount'=>$request->montant
+            ];
+            $response = Http::withBasicAuth($username, $password)
+                ->withOptions(['verify' => false]) // À utiliser avec précaution en production
+                ->post($url,$data);
+        }catch(\Exception $e){
+            return response()->json([
+                'error' => $e->getMessage()
+                ], 500);
+        }catch(\Throwable $t){
+            return response()->json([
+                'error' => $t->getMessage()
+                ], 500);
+        }
+    }
+
 }
