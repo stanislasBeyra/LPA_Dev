@@ -74,7 +74,7 @@ class AuthController extends Controller
             ]);
 
             // Envoi de l'email avec les informations d'identification
-            $mail=   Mail::to($employee->email)->send(new SendUserCredentialsMail($employee, $data['password']));
+            $mail =   Mail::to($employee->email)->send(new SendUserCredentialsMail($employee, $data['password']));
 
             // Réponse en cas de succès
             return response()->json([
@@ -82,7 +82,7 @@ class AuthController extends Controller
                 'passwor' => $data['password'],
                 'message' => 'Employee created successfully',
                 'employee' => $employee,
-                'mail'=>$mail
+                'mail' => $mail
             ], 201);
         } catch (\Exception $e) {
             // Réponse en cas d'erreur
@@ -108,7 +108,7 @@ class AuthController extends Controller
             ]);
 
             // Envoi de l'email avec les informations d'identification
-           $mail=   Mail::to($user->email)->send(new SendUserCredentialsMail($user, $data['password']));
+            $mail =   Mail::to($user->email)->send(new SendUserCredentialsMail($user, $data['password']));
 
             // Réponse en cas de succès
             return response()->json([
@@ -116,7 +116,7 @@ class AuthController extends Controller
                 'passwor' => $data['password'],
                 'message' => $data['roleregister'] . ' created successfully',
                 'user' => $user,
-                'mail'=>$mail
+                'mail' => $mail
             ], 201);
         } catch (\Exception $e) {
             // Réponse en cas d'erreur
@@ -144,6 +144,7 @@ class AuthController extends Controller
         ];
         return $messages;
     }
+
     public function SubmitRegister(Request $request)
     {
         try {
@@ -250,7 +251,7 @@ class AuthController extends Controller
         Auth::login($user);
 
         // Supprimer les jetons existants pour cet utilisateur
-        $user->tokens()->delete();
+       // $user->tokens()->delete();
 
         // Création d'un nouveau token d'authentification
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -293,50 +294,54 @@ class AuthController extends Controller
 
 
 
+
     public function updateProfile(Request $request)
     {
         try {
             // Validation des données
             $validatedData = $request->validate([
-                'firstname' => 'sometimes|required|string|max:255',
-                'lastname' => 'sometimes|required|string|max:255',
-                'username' => 'sometimes|required|string|max:255|unique:users,username,' . Auth::id(),
-                'email' => 'sometimes|required|string|email|max:255|unique:users,email,' . Auth::id(),
-                'mobile' => 'sometimes|required|string|max:15',
-                'password' => 'sometimes|required|string|min:8|confirmed',
+                'firstname' => 'nullable|string|max:255',
+                'lastname' => 'nullable|string|max:255',
+                'username' => 'nullable|string|max:255|unique:users,username,' . Auth::id(),
+                'email' => 'nullable|string|email|max:255|unique:users,email,' . Auth::id(),
+                'mobile' => 'nullable|string|max:15',
                 'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:1024'],
             ]);
 
-            $user = $request->user(); // Obtient l'utilisateur actuel
-
-            //dd($validatedData);
+            $user = Auth::user(); // Obtient l'utilisateur actuel
+            if(!$user){
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You are not authenticated.',
+                ]);
+            }
             // Gestion de l'avatar
             if ($request->hasFile('avatar')) {
                 $avatar = $request->file('avatar');
-                $avatarPath = $avatar->store('avatars', 'public'); // Stockage dans le répertoire 'images' du disque 'public'
-                $user->avatar = $avatarPath;
+                $avatarName = time() . '_' . $avatar->getClientOriginalName();
+                $destinationPath = public_path('app/avatars');
+                if (!file_exists($destinationPath)) {
+                    mkdir($destinationPath, 0755, true);
+                }
+                $avatar->move($destinationPath, $avatarName);
+                $user->avatar = 'avatars/' . $avatarName;
             }
 
-            // Mise à jour des données utilisateur
-            if (isset($validatedData['firstname'])) {
+            if (!empty($validatedData['firstname'])) {
                 $user->firstname = $validatedData['firstname'];
             }
-            if (isset($validatedData['lastname'])) {
+            if (!empty($validatedData['lastname'])) {
                 $user->lastname = $validatedData['lastname'];
             }
-            if (isset($validatedData['username'])) {
+            if (!empty($validatedData['username'])) {
                 $user->username = $validatedData['username'];
             }
-            if (isset($validatedData['email'])) {
+            if (!empty($validatedData['email'])) {
                 $user->email = $validatedData['email'];
             }
-            if (isset($validatedData['mobile'])) {
+            if (!empty($validatedData['mobile'])) {
                 $user->mobile = $validatedData['mobile'];
             }
-            if (isset($validatedData['password'])) {
-                $user->password = Hash::make($validatedData['password']);
-            }
-
             $user->save();
 
             return response()->json([
@@ -351,8 +356,65 @@ class AuthController extends Controller
                 'message' => 'Une erreur est survenue lors de la mise à jour du profil.',
                 'error' => $e->getMessage()
             ], 500);
+        }catch(\Throwable $t){
+            return response()->json([
+                'success' => false,
+                'message' => 'Une erreur est survenue lors de la mise à jour du profil.',
+                'error' => $t->getMessage()
+            ], 500);
         }
     }
+
+    public function updateUserPassword(Request $request)
+{
+    try {
+        // Valider les données de la requête
+        $validatedData = $request->validate([
+            'current_password' => 'required|string', // Mot de passe actuel requis
+            'password' => 'required|string|min:8|different:current_password|confirmed', // Nouveau mot de passe requis, différent de l'ancien et confirmé
+        ]);
+
+        $user = Auth::user(); // Obtient l'utilisateur actuel
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You are not authenticated.',
+            ], 401); // Retourner un code de statut 401 pour l'authentification
+        }
+
+        // Vérifier le mot de passe actuel
+        if (!Hash::check($validatedData['current_password'], $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'The current password is incorrect.',
+            ], 403); // Retourner un code de statut 403 pour une erreur de validation
+        }
+
+        // Mettre à jour le mot de passe de l'utilisateur
+        $user->password = Hash::make($validatedData['password']); // Utiliser Hash pour hacher le mot de passe
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Password updated successfully.',
+        ]);
+
+    } catch (\Exception $e) {
+        // Gestion des erreurs
+        return response()->json([
+            'success' => false,
+            'message' => 'An error occurred while updating the profile.',
+            'error' => $e->getMessage()
+        ], 500);
+    } catch (\Throwable $t) {
+        return response()->json([
+            'success' => false,
+            'message' => 'An error occurred while updating the profile.',
+            'error' => $t->getMessage()
+        ], 500);
+    }
+}
+
 
     public function getVendorList()
     {
@@ -374,64 +436,7 @@ class AuthController extends Controller
 
 
 
-    // public function updateProfile(Request $request)
-    // {
-    //     try {
-    //         // Validation des données
-    //         $request->validate([
-    //             'firstname' => 'sometimes|required|string|max:255',
-    //             'lastname' => 'sometimes|required|string|max:255',
-    //             'username' => 'sometimes|required|string|max:255|unique:users,username,' . Auth::id(),
-    //             'email' => 'sometimes|required|string|email|max:255|unique:users,email,' . Auth::id(),
-    //             'mobile' => 'sometimes|required|string|max:255',
-    //             'password' => 'sometimes|required|string|min:8|confirmed',
-    //             'avatar' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048', // Validation pour l'avatar
-    //         ]);
 
-    //       //  dd($request->avatar);
-    //         // Récupération de l'utilisateur authentifié
-    //         $user = Auth::user();
-
-    //         // Mise à jour des informations de l'utilisateur
-    //         $user->firstname = $request->input('firstname', $user->firstname);
-    //         $user->lastname = $request->input('lastname', $user->lastname);
-    //         $user->username = $request->input('username', $user->username);
-    //         $user->email = $request->input('email', $user->email);
-    //         $user->mobile = $request->input('mobile', $user->mobile);
-
-    //         if ($request->filled('password')) {
-    //             $user->password = Hash::make($request->password);
-    //         }
-
-    //         // Gestion de l'avatar
-    //         if ($request->hasFile('avatar')) {
-    //             // Supprimer l'ancien avatar s'il existe
-    //             $this->deleteOldAvatar($user->avatar);
-
-    //             // Stockage du nouveau fichier
-    //             $filename = $request->file('avatar')->store('avatars', 'public');
-    //             $user->avatar = $filename;
-    //         }
-
-    //         // Sauvegarde des modifications
-    //         $user->save();
-
-    //         // Réponse en cas de succès
-    //         return response()->json([
-    //             'success' => true,
-    //             'message' => 'Profil mis à jour avec succès',
-    //             'user' => $user
-    //         ], 200);
-
-    //     } catch (\Exception $e) {
-    //         // Réponse en cas d'erreur
-    //         return response()->json([
-    //             'success' => false,
-    //             'message' => 'Erreur lors de la mise à jour du profil',
-    //             'error' => $e->getMessage()
-    //         ], 500);
-    //     }
-    // }
 
     private function deleteOldAvatar($avatarPath)
     {

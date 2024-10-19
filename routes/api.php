@@ -9,6 +9,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\Paytou\apitesteController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SalaryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -63,6 +64,7 @@ Route::middleware('auth:sanctum')->group(function () {
     //-----0 usser info session
     Route::get('/user/info', [AuthController::class,'getUserConnectInfo']);
     Route::post('/update/Profile',[AuthController::class,'updateProfile']);
+    Route::post('/update/User/Password/',[AuthController::class,'updateUserPassword']);
     //-----1 product session
 
     Route::post('/add/vendor/porduct',[ProductController::class,'AddVendorProduct']);
@@ -97,7 +99,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 });
-
+//travail de restant
+Route::post('assignMinimumSalary',[SalaryController::class,'assignMinimumSalary']);
+Route::post('payement',[ProductController::class,'createPayment']);
+Route::get('Rhvalidatedorder',[SalaryController::class,'Rhvalidatedorder']);
+Route::get('getAllOrders',[SalaryController::class,'getAllOrders']);
+Route::get('getProductsByCategory/{id}',[ProductController::class,'getProductsByCategory']);
 
 Route::get('testeapi',[apitesteController::class,'testeapi']);
 Route::post('paytou/user',[apitesteController::class,'getUser']);

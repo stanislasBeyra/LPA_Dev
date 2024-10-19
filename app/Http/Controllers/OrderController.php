@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Cart;
 use App\Models\order;
 use App\Models\order_items;
+use App\Models\payementperiodemode;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -68,6 +69,12 @@ class OrderController extends Controller
 
                 // Réduire le stock du produit
                 $product->stock -= $item->quantity;
+
+                // generation du mode de paiemt
+                // $modepaiement=new payementperiodemode();
+                // $modepaiement->payement(2000,3);
+
+
                 $product->save();
             }
 

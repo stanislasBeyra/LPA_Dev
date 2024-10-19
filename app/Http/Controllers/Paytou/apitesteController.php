@@ -55,7 +55,7 @@ class apitesteController extends Controller
             ];
             // Envoi de la requête avec authentification de base
             $response = Http::withBasicAuth($username, $password)
-                ->withOptions(['verify' => false]) // À utiliser avec précaution en production
+                ->withOptions(['verify' => false]) 
                 ->post($url,$data);
                 if ($response->successful()) {
                     return response()->json([
