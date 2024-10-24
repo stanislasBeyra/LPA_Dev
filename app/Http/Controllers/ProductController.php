@@ -733,6 +733,7 @@ public function getCategory()
                 'id' => $user->id ?? null,
                 'username' => $user->username ?? 'Unknown',
                 'email' => $user->email ?? 'Unknown',
+                'orderitem' => $order->status ?? 0
             ];
 
             // Filtrer les produits qui appartiennent au vendeur dans cette commande
