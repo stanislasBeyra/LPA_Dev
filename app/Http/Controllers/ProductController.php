@@ -705,91 +705,73 @@ public function getCategory()
 
 
     public function getVendorOrders()
-{
-    try {
-        // Récupérer l'utilisateur authentifié
-        $uservendor = Auth::user();
+    {
+        try {
+            // Récupérer l'utilisateur authentifié
+            $uservendor = Auth::user();
 
-        // Vérifier si l'utilisateur est bien un vendeur
-        if (!$uservendor) {
-            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
-        }
+            // Vérifier si l'utilisateur est bien un vendeur
+            if (!$uservendor) {
+                return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+            }
 
-        // Récupérer les produits du vendeur
-        $products = Product::where('vendor_id', $uservendor->id)->pluck('id');
+            // Récupérer les produits du vendeur
+            $products = Product::where('vendor_id', $uservendor->id)->pluck('id');
 
-        // Récupérer les commandes associées aux produits du vendeur
-        $orders = Order::whereHas('orderItems', function ($query) use ($products) {
-            $query->whereIn('product_id', $products);
-        })->with(['orderItems.product', 'user'])
-            ->orderByDesc('id')
-            ->get();
+            // Récupérer les commandes associées aux produits du vendeur
+            $orders = Order::whereHas('orderItems', function ($query) use ($products) {
+                $query->whereIn('product_id', $products);
+            })->with(['orderItems.product', 'user'])
+                ->orderByDesc('id')
+                ->get();
 
-        // Parcourir chaque commande pour ajouter les produits associés
-        $orderDetails = $orders->map(function ($order) use ($products) {
-            // Vérifier si l'utilisateur est associé à la commande
-            $user = $order->employee;
-            if (!$user) {
-                $userDetails = ['id' => null, 'name' => 'Unknown', 'email' => 'Unknown'];
-            } else {
-                $userDetails = [
+            // Parcourir chaque commande pour formater les données
+            $orderDetails = $orders->map(function ($order) {
+                // Détails de l'utilisateur associé à la commande
+                $user = $order->user;
+                $userDetails = $user ? [
                     'id' => $user->id,
                     'username' => $user->username,
                     'email' => $user->email,
-                ];
-            }
+                ] : ['id' => null, 'name' => 'Unknown', 'email' => 'Unknown'];
 
-            // Filtrer les produits de la commande pour n'inclure que ceux du vendeur
-            $filteredProducts = $order->orderItems->filter(function ($item) use ($products) {
-                return $products->contains($item->product_id);
-            })->map(function ($item) {
-                $product = $item->product;
-                if (!$product) {
+                // Formatage des produits de la commande
+                $products = $order->orderItems->map(function ($item) {
+                    $product = $item->product;
                     return [
-                        'product_id' => null,
-                        'product_name' => 'Unknown',
+                        'product_id' => $product ? $product->id : null,
+                        'product_name' => $product ? $product->product_name : 'Unknown',
                         'quantity' => $item->quantity,
                         'price' => $item->total,
+                        'product_images1' => $product ? $product->product_images1 : null,
+                        'product_images2' => $product ? $product->product_images2 : null,
+                        'product_images3' => $product ? $product->product_images3 : null,
                     ];
-                }
+                });
+
+                // Retourner les détails de la commande avec les produits sous forme de tableau
                 return [
-                    'product_id' => $product->id,
-                    'product_name' => $product->product_name,
-                    'quantity' => $item->quantity,
-                    'price' => $item->total,
-                    'product_images1' => $product->product_images1,
-                    'product_images2' => $product->product_images2,
-                    'product_images3' => $product->product_images3,
+                    'order_id' => $order->id,
+                    'username' => $userDetails['username'],
+                    'useremail' => $userDetails['email'],
+                    'total_price' => $order->total,
+                    'status' => $order->status,
+                    'created_at' => $order->created_at,
+                    'products' => $products->values() // Utilisation de values() pour s'assurer que les produits sont un tableau sans clé d'index
                 ];
             });
 
-            // Ne retourner que les commandes ayant au moins un produit du vendeur
-            if ($filteredProducts->isEmpty()) {
-                return null;
-            }
-
-            return [
-                'order_id' => $order->id,
-                'username' => $userDetails['username'],
-                'useremail' => $userDetails['email'],
-                'total_price' => $order->total,
-                'status' => $order->status,
-                'created_at' => $order->created_at,
-                'products' => $filteredProducts
-            ];
-        })->filter(); // Filtrer les commandes qui n'ont pas de produits valides pour ce vendeur
-
-        // Retourner les détails des commandes avec les produits filtrés
-        return response()->json(['success' => true, 'orders' => $orderDetails], 200);
-    } catch (\Exception $e) {
-        Log::error('Error fetching vendor orders', ['exception' => $e]);
-        return response()->json([
-            'success' => false,
-            'message' => 'An error occurred while fetching orders',
-            'error' => $e->getMessage()
-        ], 500);
+            // Retourner les détails des commandes avec les produits
+            return response()->json(['success' => true, 'orders' => $orderDetails], 200);
+        } catch (\Exception $e) {
+            Log::error('Error fetching vendor orders', ['exception' => $e]);
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while fetching orders',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
-}
 
 
 
