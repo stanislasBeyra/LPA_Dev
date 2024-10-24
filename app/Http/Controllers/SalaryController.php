@@ -70,9 +70,10 @@ class SalaryController extends Controller
 
             // Calculer la moyenne des salaires sur 3 mois
             $averageSalary = $totalSalaries / 3;
+            $newamountsalarie=$averageSalary/3;
 
             // Vérifier si la moyenne des salaires est supérieure ou égale au montant de la commande
-            if ($averageSalary < $order->total) {
+            if ($newamountsalarie < $order->total) {
                 return response()->json([
                     'success' => false,
                     'message' => 'La moyenne des salaires est inférieure au montant de la commande.',
