@@ -94,7 +94,6 @@ Route::get('Rhvalidatedorder',[SalaryController::class,'Rhvalidatedorder']);
 Route::get('getAllOrders',[SalaryController::class,'getAllOrders']);
 Route::get('getProductsByCategory/{id}',[ProductController::class,'getProductsByCategory']);
 
-
 //paytou teste
 Route::get('testeapi',[apitesteController::class,'testeapi']);
 Route::post('paytou/user',[apitesteController::class,'getUser']);
