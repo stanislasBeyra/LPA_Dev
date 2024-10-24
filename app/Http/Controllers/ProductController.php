@@ -727,13 +727,13 @@ public function getCategory()
 
             // Parcourir chaque commande pour formater les données
             $orderDetails = $orders->map(function ($order) {
-                // Détails de l'utilisateur associé à la commande
+                // Vérifier si l'utilisateur associé à la commande existe
                 $user = $order->user;
-                $userDetails = $user ? [
-                    'id' => $user->id,
-                    'username' => $user->username,
-                    'email' => $user->email,
-                ] : ['id' => null, 'name' => 'Unknown', 'email' => 'Unknown'];
+                $userDetails = [
+                    'id' => $user->id ?? null,
+                    'username' => $user->username ?? 'Unknown',
+                    'email' => $user->email ?? 'Unknown',
+                ];
 
                 // Formatage des produits de la commande
                 $products = $order->orderItems->map(function ($item) {
@@ -772,6 +772,7 @@ public function getCategory()
             ], 500);
         }
     }
+
 
 
 
