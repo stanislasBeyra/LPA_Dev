@@ -63,6 +63,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // --- 2 category session
     Route::post('/add/vendor/category',[ProductController::class,'addcategory']);
+    Route::post('/get/category/foradmin/',[ProductController::class,'getCategoryforadmin']);
     Route::put('update/Category',[ProductController::class,'updateCategory']);
     Route::delete('/destroy/Category/{id}',[ProductController::class,'destroyCategory']);
 
@@ -86,7 +87,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
 });
 Route::get('/get/Category',[ProductController::class,'getCategory']);
-
 //travail de restant
 Route::post('assignMinimumSalary',[SalaryController::class,'assignMinimumSalary']);
 Route::post('payement',[ProductController::class,'createPayment']);
@@ -94,6 +94,8 @@ Route::get('Rhvalidatedorder',[SalaryController::class,'Rhvalidatedorder']);
 Route::get('getAllOrders',[SalaryController::class,'getAllOrders']);
 Route::get('getProductsByCategory/{id}',[ProductController::class,'getProductsByCategory']);
 
+
+//paytou teste
 Route::get('testeapi',[apitesteController::class,'testeapi']);
 Route::post('paytou/user',[apitesteController::class,'getUser']);
 Route::post('/payfrais/dossier',[apitesteController::class,'fraisdossier']);

@@ -402,7 +402,7 @@ class ProductController extends Controller
     }
 }
 
-public function getCategory()
+public function getCategoryforadmin()
 {
     try {
         $UserVendor = Auth::user();
@@ -412,6 +412,48 @@ public function getCategory()
                 'message' => 'You are not authenticated.'
             ], 401); // Changement du code d'état à 401
         }
+
+        // Récupération des catégories actives
+        $categories = productcategories::where('status', 1)
+        ->orderBy('categories_name','asc')
+        ->get();
+
+        // Vérification si des catégories sont trouvées
+        if ($categories->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No categories found.'
+            ], 404);
+        }
+
+        // Préparation de la réponse
+        $response = $categories->map(function ($category) {
+            return [
+                'id' => $category->id,
+                'name' => $category->categories_name,
+                'description' => $category->categories_description,
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Categories retrieved successfully.',
+            'categories' => $response // Renvoie toutes les catégories
+        ], 200);
+    } catch (\Exception $e) {
+        // Gestion des autres exceptions
+        return response()->json([
+            'success' => false,
+            'message' => 'An unexpected error occurred.',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
+public function getCategory()
+{
+    try {
+
 
         // Récupération des catégories actives
         $categories = productcategories::where('status', 1)
