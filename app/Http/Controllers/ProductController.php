@@ -728,7 +728,7 @@ public function getCategory()
         // Parcourir chaque commande pour formater les données
         $orderDetails = $orders->map(function ($order) use ($products) {
             // Vérifier si l'utilisateur associé à la commande existe
-            $user = $order->user;
+            $user = $order->employee;
             $userDetails = [
                 'id' => $user->id ?? null,
                 'username' => $user->username ?? 'Unknown',
