@@ -13,20 +13,7 @@ use App\Http\Controllers\SalaryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
 //create role
 
 Route::post('reacterole',[RoleController::class,'reacterole']);
@@ -76,7 +63,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // --- 2 category session
     Route::post('/add/vendor/category',[ProductController::class,'addcategory']);
-    Route::get('/get/Category',[ProductController::class,'getCategory']);
     Route::put('update/Category',[ProductController::class,'updateCategory']);
     Route::delete('/destroy/Category/{id}',[ProductController::class,'destroyCategory']);
 
@@ -99,6 +85,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 });
+Route::get('/get/Category',[ProductController::class,'getCategory']);
+
 //travail de restant
 Route::post('assignMinimumSalary',[SalaryController::class,'assignMinimumSalary']);
 Route::post('payement',[ProductController::class,'createPayment']);
