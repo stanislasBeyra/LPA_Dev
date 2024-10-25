@@ -704,77 +704,7 @@ public function getCategory()
     // }
 
 
-//     public function getVendorOrders()
-// {
-//     try {
-//         // Récupérer l'utilisateur authentifié
-//         $uservendor = Auth::user();
-
-//         // Vérifier si l'utilisateur est bien un vendeur
-//         if (!$uservendor) {
-//             return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
-//         }
-
-//         // Récupérer les produits du vendeur
-//         $products = Product::where('vendor_id', $uservendor->id)->pluck('id')->toArray();
-
-//         // Récupérer les commandes associées aux produits du vendeur
-//         $orders = Order::whereHas('orderItems', function ($query) use ($products) {
-//             $query->whereIn('product_id', $products);
-//         })->with(['orderItems.product', 'user'])
-//             ->orderByDesc('id')
-//             ->get();
-
-//         // Parcourir chaque commande pour formater les données
-//         $orderDetails = $orders->map(function ($order) use ($products) {
-//             // Vérifier si l'utilisateur associé à la commande existe
-//             $user = $order->employee;
-//             $userDetails = [
-//                 'id' => $user->id ?? null,
-//                 'username' => $user->username ?? 'Unknown',
-//                 'email' => $user->email ?? 'Unknown',
-//             ];
-
-//             // Filtrer les produits qui appartiennent au vendeur dans cette commande
-//             $filteredProducts = $order->orderItems->filter(function ($item) use ($products) {
-//                 return in_array($item->product_id, $products); // Garder seulement les produits appartenant au vendeur
-//             })->map(function ($item) {
-//                 $product = $item->product;
-//                 return [
-//                     'product_id' => $product ? $product->id : null,
-//                     'product_name' => $product ? $product->product_name : 'Unknown',
-//                     'quantity' => $item->quantity,
-//                     'price' => $item->total,
-//                     'product_images1' => $product ? $product->product_images1 : null,
-//                     'product_images2' => $product ? $product->product_images2 : null,
-//                     'product_images3' => $product ? $product->product_images3 : null,
-//                 ];
-//             });
-
-//             return [
-//                 'order_id' => $order->id,
-//                 'username' => $userDetails['username'],
-//                 'useremail' => $userDetails['email'],
-//                 'total_price' => $order->total,
-//                 'status' => $order->status,
-//                 'created_at' => $order->created_at,
-//                 'products' => $filteredProducts->values() // S'assurer que les produits sont retournés comme un tableau sans clés d'index
-//             ];
-//         });
-
-//         // Retourner les détails des commandes avec les produits filtrés
-//         return response()->json(['success' => true, 'orders' => $orderDetails], 200);
-//     } catch (\Exception $e) {
-//         Log::error('Error fetching vendor orders', ['exception' => $e]);
-//         return response()->json([
-//             'success' => false,
-//             'message' => 'An error occurred while fetching orders',
-//             'error' => $e->getMessage()
-//         ], 500);
-//     }
-// }
-
-public function getVendorOrders()
+    public function getVendorOrders()
 {
     try {
         // Récupérer l'utilisateur authentifié
@@ -798,12 +728,11 @@ public function getVendorOrders()
         // Parcourir chaque commande pour formater les données
         $orderDetails = $orders->map(function ($order) use ($products) {
             // Vérifier si l'utilisateur associé à la commande existe
-            $user = $order->user;
+            $user = $order->employee;
             $userDetails = [
                 'id' => $user->id ?? null,
                 'username' => $user->username ?? 'Unknown',
                 'email' => $user->email ?? 'Unknown',
-                'orderitems' => [] // Initialiser un tableau pour les statuts des éléments de commande
             ];
 
             // Filtrer les produits qui appartiennent au vendeur dans cette commande
@@ -819,21 +748,14 @@ public function getVendorOrders()
                     'product_images1' => $product ? $product->product_images1 : null,
                     'product_images2' => $product ? $product->product_images2 : null,
                     'product_images3' => $product ? $product->product_images3 : null,
-                    'status' => $item->status // Récupérer le statut de l'élément de commande
                 ];
             });
-
-            // Remplir le tableau orderitems avec les statuts des produits
-            foreach ($filteredProducts as $product) {
-                $userDetails['orderitems'][] = $product['status']; // Ajouter le statut à l'array
-            }
 
             return [
                 'order_id' => $order->id,
                 'username' => $userDetails['username'],
                 'useremail' => $userDetails['email'],
                 'total_price' => $order->total,
-                'orderitems'=>$userDetails['orderitems'],
                 'status' => $order->status,
                 'created_at' => $order->created_at,
                 'products' => $filteredProducts->values() // S'assurer que les produits sont retournés comme un tableau sans clés d'index
@@ -851,7 +773,6 @@ public function getVendorOrders()
         ], 500);
     }
 }
-
 
 
 
