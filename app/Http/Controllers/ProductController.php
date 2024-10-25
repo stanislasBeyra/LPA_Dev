@@ -833,6 +833,7 @@ public function getVendorOrders()
                 'username' => $userDetails['username'],
                 'useremail' => $userDetails['email'],
                 'total_price' => $order->total,
+                'orderitems'=>$userDetails['orderitems'],
                 'status' => $order->status,
                 'created_at' => $order->created_at,
                 'products' => $filteredProducts->values() // S'assurer que les produits sont retournés comme un tableau sans clés d'index
