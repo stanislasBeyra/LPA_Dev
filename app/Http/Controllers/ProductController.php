@@ -802,6 +802,12 @@ public function getCategory()
                     'message' => 'Order not found.',
                 ], 404);
             }
+            if($order->status!=1){
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Order is already processing.',
+                    ], 400);
+            }
 
             // Récupérer les éléments de la commande
             $orderItems = order_items::where('order_id', $order->id)->get();
