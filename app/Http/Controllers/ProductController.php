@@ -733,7 +733,8 @@ public function getCategory()
                 'id' => $user->id ?? null,
                 'username' => $user->username ?? 'Unknown',
                 'email' => $user->email ?? 'Unknown',
-                'orderitem' => $order->status ?? 0
+                // 'orderitem' => $order->orderItems->status ?? 0
+                'orderitems' => []
             ];
 
             // Filtrer les produits qui appartiennent au vendeur dans cette commande
@@ -751,12 +752,16 @@ public function getCategory()
                     'product_images3' => $product ? $product->product_images3 : null,
                 ];
             });
+            foreach ($filteredProducts as $product) {
+                $userDetails['orderitems'][] = $product['status']; // Ajouter le statut à l'array
+            }
 
             return [
                 'order_id' => $order->id,
                 'username' => $userDetails['username'],
                 'useremail' => $userDetails['email'],
                 'total_price' => $order->total,
+                'orderitem'=>$userDetails['orderitems'],
                 'status' => $order->status,
                 'created_at' => $order->created_at,
                 'products' => $filteredProducts->values() // S'assurer que les produits sont retournés comme un tableau sans clés d'index
