@@ -780,48 +780,125 @@ public function getCategory()
 
 
 
+    // public function VendorvalidateOrder(Request $request)
+    // {
+    //     try {
+    //         // Récupérer l'utilisateur authentifié
+    //         $user = Auth::user();
+
+    //         // Vérifiez que l'utilisateur est authentifié
+    //         if (!$user) {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => 'Unauthorized action.',
+    //             ], 403);
+    //         }
+    //         // Récupérer la commande par son ID
+    //         $order = Order::where('id', $request->orderId)->firstOrFail();
+    //         // Vérifiez si la commande est trouvée
+    //         if (!$order) {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => 'Order not found.',
+    //             ], 404);
+    //         }
+
+    //         // Récupérer les éléments de la commande
+    //         $orderItems = order_items::where('order_id', $order->id)->get();
+
+    //         // Vérifiez si la commande est vide
+    //         if ($orderItems->isEmpty()) {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => 'Order is empty.',
+    //             ], 404);
+    //         }
+
+    //         // Mettre à jour le statut de la commande pour la valider
+    //         // 2 = validé par le fournisseur
+    //         $order->status = 2;
+    //         $order->save();
+
+    //         // Mettre à jour le statut des éléments de la commande
+    //         foreach ($orderItems as $item) {
+    //             $item->status = 2;
+    //             $item->save();
+    //         }
+
+    //         return response()->json([
+    //             'success' => true,
+    //             'message' => 'Order validated successfully.',
+    //             'order' => $order, // Retourner la commande mise à jour si nécessaire
+    //         ]);
+    //     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Order not found.',
+    //         ], 404);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'An unexpected error occurred.',
+    //             'error' => $e->getMessage(),
+    //         ], 500);
+    //     }
+    // }
+
     public function VendorvalidateOrder(Request $request)
-    {
-        try {
-            // Récupérer l'utilisateur authentifié
-            $user = Auth::user();
+{
+    try {
+        // Récupérer l'utilisateur authentifié
+        $user = Auth::user();
 
-            // Vérifiez que l'utilisateur est authentifié
-            if (!$user) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Unauthorized action.',
-                ], 403);
+        // Vérifiez que l'utilisateur est authentifié
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized action.',
+            ], 403);
+        }
+
+        // Récupérer la commande par son ID
+        $order = Order::where('id', $request->orderId)->firstOrFail();
+
+        // Vérifiez si la commande est trouvée
+        if (!$order) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Order not found.',
+            ], 404);
+        }
+
+        // Récupérer les éléments de la commande
+        $orderItems = order_items::where('order_id', $order->id)->get();
+
+        // Vérifiez si la commande est vide
+        if ($orderItems->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Order is empty.',
+            ], 404);
+        }
+
+        // Mettre à jour le statut de la commande uniquement si l'utilisateur est le fournisseur de tous les produits
+        $canValidate = true; // Flag pour vérifier si tous les produits appartiennent au fournisseur
+
+        foreach ($orderItems as $item) {
+            // Vérifiez si le produit appartient à l'utilisateur
+            if ($item->vendor_id !== $user->id) { // Assurez-vous que 'vendor_id' est le bon champ
+                $canValidate = false;
+                break; // Sortir de la boucle si un produit n'appartient pas à l'utilisateur
             }
-            // Récupérer la commande par son ID
-            $order = Order::where('id', $request->orderId)->firstOrFail();
-            // Vérifiez si la commande est trouvée
-            if (!$order) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Order not found.',
-                ], 404);
-            }
+        }
 
-            // Récupérer les éléments de la commande
-            $orderItems = order_items::where('order_id', $order->id)->get();
-
-            // Vérifiez si la commande est vide
-            if ($orderItems->isEmpty()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Order is empty.',
-                ], 404);
-            }
-
+        if ($canValidate) {
             // Mettre à jour le statut de la commande pour la valider
-            // 2 = validé par le fournisseur
-            $order->status = 2;
+            $order->status = 2; // 2 = validé par le fournisseur
             $order->save();
 
             // Mettre à jour le statut des éléments de la commande
             foreach ($orderItems as $item) {
-                $item->status = 2;
+                $item->status = 2; // 2 = validé
                 $item->save();
             }
 
@@ -830,19 +907,26 @@ public function getCategory()
                 'message' => 'Order validated successfully.',
                 'order' => $order, // Retourner la commande mise à jour si nécessaire
             ]);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        } else {
             return response()->json([
                 'success' => false,
-                'message' => 'Order not found.',
-            ], 404);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'An unexpected error occurred.',
-                'error' => $e->getMessage(),
-            ], 500);
+                'message' => 'Unauthorized to validate order items not owned by you.',
+            ], 403);
         }
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Order not found.',
+        ], 404);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'An unexpected error occurred.',
+            'error' => $e->getMessage(),
+        ], 500);
     }
+}
+
 
 
 
