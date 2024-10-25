@@ -748,6 +748,7 @@ public function getCategory()
                     'product_images1' => $product ? $product->product_images1 : null,
                     'product_images2' => $product ? $product->product_images2 : null,
                     'product_images3' => $product ? $product->product_images3 : null,
+                    'status' => $item->status ?? 'Unknown'
                 ];
             });
 
