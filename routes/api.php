@@ -44,6 +44,7 @@ Route::get('/get/VendorList',[AuthController::class,'getVendorList']);
 Route::post('/products/vendor/', [EmployeeappController::class, 'getProductsByVendorId']);
 Route::get('/get/VendorListapp',[EmployeeappController::class,'getVendorListapp']);
 
+
 Route::middleware('auth:sanctum')->group(function () {
     //get Employyee Info
     Route::get('/get/employee/all',[EmployeeController::class,'getallEmploye']);
