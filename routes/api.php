@@ -50,6 +50,7 @@ Route::middleware('auth:sanctum')->group(function () {
     //securite des route privé
     //-----0 usser info session
     Route::get('/user/info', [AuthController::class,'getUserConnectInfo']);
+    Route::get('/get/Count/user',[AuthController::class,'getCountUser']);
     Route::post('/update/Profile',[AuthController::class,'updateProfile']);
     Route::post('/update/User/Password/',[AuthController::class,'updateUserPassword']);
     //-----1 product session

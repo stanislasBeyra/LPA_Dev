@@ -258,7 +258,7 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Connexion réussie',
+            'message' => 'You are connected succeful',
             'token' => $token
         ], 200);
     }
@@ -460,4 +460,42 @@ class AuthController extends Controller
             'message' => 'Utilisateur supprimé avec succès',
         ], 200);
     }
+
+    public function getCountUser() {
+        try {
+            // Authentification de l'utilisateur (peut être utilisé si nécessaire)
+            $user = Auth::user();
+
+            // Initialisation de la réponse
+            $response = [];
+
+            // Comptage des utilisateurs par rôle
+            $countVendor = User::where('role', 3)->count();
+            $countEmployer = Employee::count(); // Correction de la capitalisation de la classe
+            $countAdmin = User::where('role', 1)->count();
+
+            // Préparation des données de réponse
+            $response = [
+                'countVendor' => $countVendor,
+                'countEmployer' => $countEmployer,
+                'countAdmin' => $countAdmin,
+            ];
+
+            // Retour de la réponse en JSON
+            return response()->json([
+                'success' => true, // Corrigé pour refléter le succès
+                'message' => 'User count successful', // Correction de la faute de frappe
+                'data' => $response
+            ], 200);
+
+        } catch (\Exception $e) {
+            // Gestion des exceptions
+            return response()->json([
+                'success' => false,
+                'message' => 'Une erreur est survenue',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 }
