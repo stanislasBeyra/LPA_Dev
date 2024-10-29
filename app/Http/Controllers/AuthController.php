@@ -438,13 +438,6 @@ class AuthController extends Controller
 
 
 
-    private function deleteOldAvatar($avatarPath)
-    {
-        if ($avatarPath && Facade::getFacadeApplication()['files']->exists('public/avatars/' . $avatarPath)) {
-            Facade::getFacadeApplication()['files']->delete('public/avatars/' . $avatarPath);
-        }
-    }
-
     public function delectuser($id)
     {
         $user = User::find($id);

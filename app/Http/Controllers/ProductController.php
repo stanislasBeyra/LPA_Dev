@@ -345,152 +345,152 @@ class ProductController extends Controller
     }
 
     public function addCategory(Request $request)
-{
-    try {
-        // Vérifie si l'utilisateur est authentifié
-        $userVendor = Auth::user();
-        if (!$userVendor) {
+    {
+        try {
+            // Vérifie si l'utilisateur est authentifié
+            $userVendor = Auth::user();
+            if (!$userVendor) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You are not authenticated.'
+                ], 401); // Code de statut 401 pour une authentification requise
+            }
+
+            // Validation des données de la requête
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:255', // Le nom de la catégorie est requis
+                'description' => 'nullable|string|max:500', // La description est optionnelle
+            ]);
+
+            // Vérification de l'existence de la catégorie en ignorant la casse
+            $category = ProductCategories::whereRaw('LOWER(categories_name) = ?', [strtolower($validatedData['name'])])
+                ->first();
+
+            if ($category) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Category already exists.'
+                ], 409);  // Conflit HTTP
+            }
+
+            // Création de la catégorie avec les données validées
+            $category = new ProductCategories();
+            $category->categories_name = $validatedData['name'];
+            $category->categories_description = $validatedData['description'] ?? null; // Ajouter la description si fournie
+            $category->save();
+
+            // Retourner une réponse JSON après la création réussie
+            return response()->json([
+                'success' => true,
+                'message' => 'Category added successfully.',
+                'category' => $category
+            ], 201); // Code de statut 201 pour une création réussie
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Gestion des erreurs de validation
             return response()->json([
                 'success' => false,
-                'message' => 'You are not authenticated.'
-            ], 401); // Code de statut 401 pour une authentification requise
-        }
-
-        // Validation des données de la requête
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255', // Le nom de la catégorie est requis
-            'description' => 'nullable|string|max:500', // La description est optionnelle
-        ]);
-
-        // Vérification de l'existence de la catégorie en ignorant la casse
-        $category = ProductCategories::whereRaw('LOWER(categories_name) = ?', [strtolower($validatedData['name'])])
-            ->first();
-
-        if ($category) {
+                'message' => 'Validation failed.',
+                'errors' => $e->errors()
+            ], 422); // Code de statut 422 pour une erreur de validation
+        } catch (\Exception $e) {
+            // Gestion des autres exceptions
             return response()->json([
                 'success' => false,
-                'message' => 'Category already exists.'
-            ], 409);  // Conflit HTTP
+                'message' => 'An unexpected error occurred.',
+                'error' => $e->getMessage()
+            ], 500); // Code de statut 500 pour une erreur interne du serveur
         }
-
-        // Création de la catégorie avec les données validées
-        $category = new ProductCategories();
-        $category->categories_name = $validatedData['name'];
-        $category->categories_description = $validatedData['description'] ?? null; // Ajouter la description si fournie
-        $category->save();
-
-        // Retourner une réponse JSON après la création réussie
-        return response()->json([
-            'success' => true,
-            'message' => 'Category added successfully.',
-            'category' => $category
-        ], 201); // Code de statut 201 pour une création réussie
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        // Gestion des erreurs de validation
-        return response()->json([
-            'success' => false,
-            'message' => 'Validation failed.',
-            'errors' => $e->errors()
-        ], 422); // Code de statut 422 pour une erreur de validation
-    } catch (\Exception $e) {
-        // Gestion des autres exceptions
-        return response()->json([
-            'success' => false,
-            'message' => 'An unexpected error occurred.',
-            'error' => $e->getMessage()
-        ], 500); // Code de statut 500 pour une erreur interne du serveur
     }
-}
 
-public function getCategoryforadmin()
-{
-    try {
-        $UserVendor = Auth::user();
-        if (!$UserVendor) {
+    public function getCategoryforadmin()
+    {
+        try {
+            $UserVendor = Auth::user();
+            if (!$UserVendor) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You are not authenticated.'
+                ], 401); // Changement du code d'état à 401
+            }
+
+            // Récupération des catégories actives
+            $categories = productcategories::where('status', 1)
+                ->orderBy('categories_name', 'asc')
+                ->get();
+
+            // Vérification si des catégories sont trouvées
+            if ($categories->isEmpty()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No categories found.'
+                ], 404);
+            }
+
+            // Préparation de la réponse
+            $response = $categories->map(function ($category) {
+                return [
+                    'id' => $category->id,
+                    'name' => $category->categories_name,
+                    'description' => $category->categories_description,
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Categories retrieved successfully.',
+                'categories' => $response // Renvoie toutes les catégories
+            ], 200);
+        } catch (\Exception $e) {
+            // Gestion des autres exceptions
             return response()->json([
                 'success' => false,
-                'message' => 'You are not authenticated.'
-            ], 401); // Changement du code d'état à 401
+                'message' => 'An unexpected error occurred.',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        // Récupération des catégories actives
-        $categories = productcategories::where('status', 1)
-        ->orderBy('categories_name','asc')
-        ->get();
-
-        // Vérification si des catégories sont trouvées
-        if ($categories->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No categories found.'
-            ], 404);
-        }
-
-        // Préparation de la réponse
-        $response = $categories->map(function ($category) {
-            return [
-                'id' => $category->id,
-                'name' => $category->categories_name,
-                'description' => $category->categories_description,
-            ];
-        });
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Categories retrieved successfully.',
-            'categories' => $response // Renvoie toutes les catégories
-        ], 200);
-    } catch (\Exception $e) {
-        // Gestion des autres exceptions
-        return response()->json([
-            'success' => false,
-            'message' => 'An unexpected error occurred.',
-            'error' => $e->getMessage()
-        ], 500);
     }
-}
 
-public function getCategory()
-{
-    try {
+    public function getCategory()
+    {
+        try {
 
 
-        // Récupération des catégories actives
-        $categories = productcategories::where('status', 1)
-        ->orderBy('categories_name','asc')
-        ->get();
+            // Récupération des catégories actives
+            $categories = productcategories::where('status', 1)
+                ->orderBy('categories_name', 'asc')
+                ->get();
 
-        // Vérification si des catégories sont trouvées
-        if ($categories->isEmpty()) {
+            // Vérification si des catégories sont trouvées
+            if ($categories->isEmpty()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No categories found.'
+                ], 404);
+            }
+
+            // Préparation de la réponse
+            $response = $categories->map(function ($category) {
+                return [
+                    'id' => $category->id,
+                    'name' => $category->categories_name,
+                    'description' => $category->categories_description,
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Categories retrieved successfully.',
+                'categories' => $response // Renvoie toutes les catégories
+            ], 200);
+        } catch (\Exception $e) {
+            // Gestion des autres exceptions
             return response()->json([
                 'success' => false,
-                'message' => 'No categories found.'
-            ], 404);
+                'message' => 'An unexpected error occurred.',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        // Préparation de la réponse
-        $response = $categories->map(function ($category) {
-            return [
-                'id' => $category->id,
-                'name' => $category->categories_name,
-                'description' => $category->categories_description,
-            ];
-        });
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Categories retrieved successfully.',
-            'categories' => $response // Renvoie toutes les catégories
-        ], 200);
-    } catch (\Exception $e) {
-        // Gestion des autres exceptions
-        return response()->json([
-            'success' => false,
-            'message' => 'An unexpected error occurred.',
-            'error' => $e->getMessage()
-        ], 500);
     }
-}
 
 
     public function destroyCategory($id)
@@ -705,75 +705,75 @@ public function getCategory()
 
 
     public function getVendorOrders()
-{
-    try {
-        // Récupérer l'utilisateur authentifié
-        $uservendor = Auth::user();
+    {
+        try {
+            // Récupérer l'utilisateur authentifié
+            $uservendor = Auth::user();
 
-        // Vérifier si l'utilisateur est bien un vendeur
-        if (!$uservendor) {
-            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
-        }
+            // Vérifier si l'utilisateur est bien un vendeur
+            if (!$uservendor) {
+                return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+            }
 
-        // Récupérer les produits du vendeur
-        $products = Product::where('vendor_id', $uservendor->id)->pluck('id')->toArray();
+            // Récupérer les produits du vendeur
+            $products = Product::where('vendor_id', $uservendor->id)->pluck('id')->toArray();
 
-        // Récupérer les commandes associées aux produits du vendeur
-        $orders = Order::whereHas('orderItems', function ($query) use ($products) {
-            $query->whereIn('product_id', $products);
-        })->with(['orderItems.product', 'user'])
-            ->orderByDesc('id')
-            ->get();
+            // Récupérer les commandes associées aux produits du vendeur
+            $orders = Order::whereHas('orderItems', function ($query) use ($products) {
+                $query->whereIn('product_id', $products);
+            })->with(['orderItems.product', 'user'])
+                ->orderByDesc('id')
+                ->get();
 
-        // Parcourir chaque commande pour formater les données
-        $orderDetails = $orders->map(function ($order) use ($products) {
-            // Vérifier si l'utilisateur associé à la commande existe
-            $user = $order->employee;
-            $userDetails = [
-                'id' => $user->id ?? null,
-                'username' => $user->username ?? 'Unknown',
-                'email' => $user->email ?? 'Unknown',
-            ];
+            // Parcourir chaque commande pour formater les données
+            $orderDetails = $orders->map(function ($order) use ($products) {
+                // Vérifier si l'utilisateur associé à la commande existe
+                $user = $order->employee;
+                $userDetails = [
+                    'id' => $user->id ?? null,
+                    'username' => $user->username ?? 'Unknown',
+                    'email' => $user->email ?? 'Unknown',
+                ];
 
-            // Filtrer les produits qui appartiennent au vendeur dans cette commande
-            $filteredProducts = $order->orderItems->filter(function ($item) use ($products) {
-                return in_array($item->product_id, $products); // Garder seulement les produits appartenant au vendeur
-            })->map(function ($item) {
-                $product = $item->product;
+                // Filtrer les produits qui appartiennent au vendeur dans cette commande
+                $filteredProducts = $order->orderItems->filter(function ($item) use ($products) {
+                    return in_array($item->product_id, $products); // Garder seulement les produits appartenant au vendeur
+                })->map(function ($item) {
+                    $product = $item->product;
+                    return [
+                        'product_id' => $product ? $product->id : null,
+                        'product_name' => $product ? $product->product_name : 'Unknown',
+                        'quantity' => $item->quantity,
+                        'price' => $item->total,
+                        'product_images1' => $product ? $product->product_images1 : null,
+                        'product_images2' => $product ? $product->product_images2 : null,
+                        'product_images3' => $product ? $product->product_images3 : null,
+                        'status' => $item->status ?? 'Unknown'
+                    ];
+                });
+
                 return [
-                    'product_id' => $product ? $product->id : null,
-                    'product_name' => $product ? $product->product_name : 'Unknown',
-                    'quantity' => $item->quantity,
-                    'price' => $item->total,
-                    'product_images1' => $product ? $product->product_images1 : null,
-                    'product_images2' => $product ? $product->product_images2 : null,
-                    'product_images3' => $product ? $product->product_images3 : null,
-                    'status' => $item->status ?? 'Unknown'
+                    'order_id' => $order->id,
+                    'username' => $userDetails['username'],
+                    'useremail' => $userDetails['email'],
+                    'total_price' => $order->total,
+                    'status' => $order->status,
+                    'created_at' => $order->created_at,
+                    'products' => $filteredProducts->values() // S'assurer que les produits sont retournés comme un tableau sans clés d'index
                 ];
             });
 
-            return [
-                'order_id' => $order->id,
-                'username' => $userDetails['username'],
-                'useremail' => $userDetails['email'],
-                'total_price' => $order->total,
-                'status' => $order->status,
-                'created_at' => $order->created_at,
-                'products' => $filteredProducts->values() // S'assurer que les produits sont retournés comme un tableau sans clés d'index
-            ];
-        });
-
-        // Retourner les détails des commandes avec les produits filtrés
-        return response()->json(['success' => true, 'orders' => $orderDetails], 200);
-    } catch (\Exception $e) {
-        Log::error('Error fetching vendor orders', ['exception' => $e]);
-        return response()->json([
-            'success' => false,
-            'message' => 'An error occurred while fetching orders',
-            'error' => $e->getMessage()
-        ], 500);
+            // Retourner les détails des commandes avec les produits filtrés
+            return response()->json(['success' => true, 'orders' => $orderDetails], 200);
+        } catch (\Exception $e) {
+            Log::error('Error fetching vendor orders', ['exception' => $e]);
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while fetching orders',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
-}
 
 
 
@@ -802,11 +802,11 @@ public function getCategory()
                     'message' => 'Order not found.',
                 ], 404);
             }
-            if($order->status!=1){
+            if ($order->status != 1) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Order is already processing.',
-                    ], 400);
+                ], 400);
             }
 
             // Récupérer les éléments de la commande
@@ -855,233 +855,296 @@ public function getCategory()
 
 
     //
-//     public function payement(Request $request)
-// {
-//     // Validation des données
-//     $validatedData = $request->validate([
-//         'total_amount' => 'required|numeric|min:0',
-//         'period' => 'required|integer|min:0|max:6', // La période peut être de 0 à 6
-//         'month_1' => 'nullable|numeric|min:0',
-//         'month_2' => 'nullable|numeric|min:0',
-//         'month_3' => 'nullable|numeric|min:0',
-//         'month_4' => 'nullable|numeric|min:0',
-//         'month_5' => 'nullable|numeric|min:0',
-//         'month_6' => 'nullable|numeric|min:0',
-//     ]);
+    //     public function payement(Request $request)
+    // {
+    //     // Validation des données
+    //     $validatedData = $request->validate([
+    //         'total_amount' => 'required|numeric|min:0',
+    //         'period' => 'required|integer|min:0|max:6', // La période peut être de 0 à 6
+    //         'month_1' => 'nullable|numeric|min:0',
+    //         'month_2' => 'nullable|numeric|min:0',
+    //         'month_3' => 'nullable|numeric|min:0',
+    //         'month_4' => 'nullable|numeric|min:0',
+    //         'month_5' => 'nullable|numeric|min:0',
+    //         'month_6' => 'nullable|numeric|min:0',
+    //     ]);
 
-//     // Si la période est 0, définissons la période à 6 par défaut
-//     $period = $validatedData['period'] === 0 ? 6 : $validatedData['period'];
+    //     // Si la période est 0, définissons la période à 6 par défaut
+    //     $period = $validatedData['period'] === 0 ? 6 : $validatedData['period'];
 
-//     // Créer un paiement
-//     $payment = new payementperiodemode();
-//     $payment->user_id = 1; // Utilisateur connecté
-//     $payment->total_amount = $validatedData['total_amount'];
-//     $payment->period = $period;
+    //     // Créer un paiement
+    //     $payment = new payementperiodemode();
+    //     $payment->user_id = 1; // Utilisateur connecté
+    //     $payment->total_amount = $validatedData['total_amount'];
+    //     $payment->period = $period;
 
-//     // Répartition des montants
-//     if ($period === 0 || (empty($validatedData['month_1']) &&
-//         empty($validatedData['month_2']) &&
-//         empty($validatedData['month_3']) &&
-//         empty($validatedData['month_4']) &&
-//         empty($validatedData['month_5']) &&
-//         empty($validatedData['month_6']))) {
+    //     // Répartition des montants
+    //     if ($period === 0 || (empty($validatedData['month_1']) &&
+    //         empty($validatedData['month_2']) &&
+    //         empty($validatedData['month_3']) &&
+    //         empty($validatedData['month_4']) &&
+    //         empty($validatedData['month_5']) &&
+    //         empty($validatedData['month_6']))) {
 
-//         // Utilisation de la méthode pour répartir le montant
-//         $payment->distributeAmountOverMonths($validatedData['total_amount'], $period);
-//     } else {
-//         // Affectation des montants saisis par l'utilisateur
-//         $payment->month_1 = $validatedData['month_1'] ?? 0; // Prendre la valeur ou 0 si vide
-//         if ($period >= 2) $payment->month_2 = $validatedData['month_2'] ?? 0;
-//         if ($period >= 3) $payment->month_3 = $validatedData['month_3'] ?? 0;
-//         if ($period >= 4) $payment->month_4 = $validatedData['month_4'] ?? 0;
-//         if ($period >= 5) $payment->month_5 = $validatedData['month_5'] ?? 0;
-//         if ($period == 6) $payment->month_6 = $validatedData['month_6'] ?? 0;
-//     }
+    //         // Utilisation de la méthode pour répartir le montant
+    //         $payment->distributeAmountOverMonths($validatedData['total_amount'], $period);
+    //     } else {
+    //         // Affectation des montants saisis par l'utilisateur
+    //         $payment->month_1 = $validatedData['month_1'] ?? 0; // Prendre la valeur ou 0 si vide
+    //         if ($period >= 2) $payment->month_2 = $validatedData['month_2'] ?? 0;
+    //         if ($period >= 3) $payment->month_3 = $validatedData['month_3'] ?? 0;
+    //         if ($period >= 4) $payment->month_4 = $validatedData['month_4'] ?? 0;
+    //         if ($period >= 5) $payment->month_5 = $validatedData['month_5'] ?? 0;
+    //         if ($period == 6) $payment->month_6 = $validatedData['month_6'] ?? 0;
+    //     }
 
-//     $totalMonthsAmount = $payment->month_1 + $payment->month_2 + $payment->month_3 + $payment->month_4 + $payment->month_5 + $payment->month_6;
+    //     $totalMonthsAmount = $payment->month_1 + $payment->month_2 + $payment->month_3 + $payment->month_4 + $payment->month_5 + $payment->month_6;
 
-//     if ($totalMonthsAmount < $payment->total_amount) {
-//         return response()->json([
-//             'message' => 'La somme est inferieur au montant dachat.Veuillez bien renseignez les champ.',
-//             'data' => $payment
-//         ], 400); // 400 Bad Request
-//     }
-//     // Sauvegarder le paiement
-//     $payment->save();
+    //     if ($totalMonthsAmount < $payment->total_amount) {
+    //         return response()->json([
+    //             'message' => 'La somme est inferieur au montant dachat.Veuillez bien renseignez les champ.',
+    //             'data' => $payment
+    //         ], 400); // 400 Bad Request
+    //     }
+    //     // Sauvegarder le paiement
+    //     $payment->save();
 
-//     // Retourner une réponse JSON avec le paiement créé
-//     return response()->json([
-//         'message' => 'Paiement ajouté avec succès.',
-//         'data' => $payment
-//     ], 201); // 201 Created
-// }
-public function createPayment(Request $request)
-{
-    // Validation des données reçues depuis la requête
-    $validatedData = $request->validate([
-        'order_id'=>'required',
-        'total_amount' => 'required|numeric|min:0',
-        'period' => 'required|integer|min:0|max:6',
-        'month_1' => 'nullable|numeric|min:0',
-        'month_2' => 'nullable|numeric|min:0',
-        'month_3' => 'nullable|numeric|min:0',
-        'month_4' => 'nullable|numeric|min:0',
-        'month_5' => 'nullable|numeric|min:0',
-        'month_6' => 'nullable|numeric|min:0',
-    ]);
-
-    // Appel de la méthode payement avec les données validées
-    return $this->payement(
-        $validatedData['total_amount'],
-        $validatedData['period'],
-        $validatedData['month_1'] ?? null,
-        $validatedData['month_2'] ?? null,
-        $validatedData['month_3'] ?? null,
-        $validatedData['month_4'] ?? null,
-        $validatedData['month_5'] ?? null,
-        $validatedData['month_6'] ?? null
-    );
-}
-
-public function payement($total_amount, $period, $month_1 = null, $month_2 = null, $month_3 = null, $month_4 = null, $month_5 = null, $month_6 = null)
-{
-    // Validation des données
-    if (is_null($total_amount) || !is_numeric($total_amount) || $total_amount < 0) {
-        return response()->json(['message' => 'Le montant total est requis et doit être un nombre positif.'], 400);
-    }
-
-    if (is_null($period) || !is_integer($period) || $period < 0 || $period > 6) {
-        return response()->json(['message' => 'La période est requise et doit être un entier entre 0 et 6.'], 400);
-    }
-
-    // Si la période est 0, définissons la période à 6 par défaut
-    $period = $period === 0 ? 6 : $period;
-
-    $user=Auth::user();
-    if(!$user){
-        return response()->json([
-            'success'=>false,
-            'message' => 'Vous devez être connecté pour effectuer un paiement.',
-
+    //     // Retourner une réponse JSON avec le paiement créé
+    //     return response()->json([
+    //         'message' => 'Paiement ajouté avec succès.',
+    //         'data' => $payment
+    //     ], 201); // 201 Created
+    // }
+    public function createPayment(Request $request)
+    {
+        // Validation des données reçues depuis la requête
+        $validatedData = $request->validate([
+            'order_id' => 'required',
+            'total_amount' => 'required|numeric|min:0',
+            'period' => 'required|integer|min:0|max:6',
+            'month_1' => 'nullable|numeric|min:0',
+            'month_2' => 'nullable|numeric|min:0',
+            'month_3' => 'nullable|numeric|min:0',
+            'month_4' => 'nullable|numeric|min:0',
+            'month_5' => 'nullable|numeric|min:0',
+            'month_6' => 'nullable|numeric|min:0',
         ]);
-    }
-    // Créer un paiement
-    $payment = new payementperiodemode();
-    $payment->user_id = $user->id; // Utilisateur connecté
-    $payment->total_amount = $total_amount;
-    $payment->period = $period;
 
-    // Récupération des montants des mois
-    $months = [
-        $month_1 ?? 0,
-        $month_2 ?? 0,
-        $month_3 ?? 0,
-        $month_4 ?? 0,
-        $month_5 ?? 0,
-        $month_6 ?? 0,
-    ];
-
-    // Vérifier si la somme des montants est supérieure au total_amount
-
-    $totalMonthsAmount = array_sum($months);
-
-    // Si la somme des montants pour chaque mois est nulle, répartir le montant
-    if ($totalMonthsAmount === 0) {
-        $payment->distributeAmountOverMonths($total_amount, $period);
-    } else {
-        // Affectation des montants
-        $payment->month_1 = $month_1;
-        if ($period >= 2) $payment->month_2 = $month_2;
-        if ($period >= 3) $payment->month_3 = $month_3;
-        if ($period >= 4) $payment->month_4 = $month_4;
-        if ($period >= 5) $payment->month_5 = $month_5;
-        if ($period == 6) $payment->month_6 = $month_6;
+        // Appel de la méthode payement avec les données validées
+        return $this->payement(
+            $validatedData['total_amount'],
+            $validatedData['period'],
+            $validatedData['month_1'] ?? null,
+            $validatedData['month_2'] ?? null,
+            $validatedData['month_3'] ?? null,
+            $validatedData['month_4'] ?? null,
+            $validatedData['month_5'] ?? null,
+            $validatedData['month_6'] ?? null
+        );
     }
 
-    if ($totalMonthsAmount < $total_amount) {
+    public function payement($total_amount, $period, $month_1 = null, $month_2 = null, $month_3 = null, $month_4 = null, $month_5 = null, $month_6 = null)
+    {
+        // Validation des données
+        if (is_null($total_amount) || !is_numeric($total_amount) || $total_amount < 0) {
+            return response()->json(['message' => 'Le montant total est requis et doit être un nombre positif.'], 400);
+        }
+
+        if (is_null($period) || !is_integer($period) || $period < 0 || $period > 6) {
+            return response()->json(['message' => 'La période est requise et doit être un entier entre 0 et 6.'], 400);
+        }
+
+        // Si la période est 0, définissons la période à 6 par défaut
+        $period = $period === 0 ? 6 : $period;
+
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Vous devez être connecté pour effectuer un paiement.',
+
+            ]);
+        }
+        // Créer un paiement
+        $payment = new payementperiodemode();
+        $payment->user_id = $user->id; // Utilisateur connecté
+        $payment->total_amount = $total_amount;
+        $payment->period = $period;
+
+        // Récupération des montants des mois
+        $months = [
+            $month_1 ?? 0,
+            $month_2 ?? 0,
+            $month_3 ?? 0,
+            $month_4 ?? 0,
+            $month_5 ?? 0,
+            $month_6 ?? 0,
+        ];
+
+        // Vérifier si la somme des montants est supérieure au total_amount
+
+        $totalMonthsAmount = array_sum($months);
+
+        // Si la somme des montants pour chaque mois est nulle, répartir le montant
+        if ($totalMonthsAmount === 0) {
+            $payment->distributeAmountOverMonths($total_amount, $period);
+        } else {
+            // Affectation des montants
+            $payment->month_1 = $month_1;
+            if ($period >= 2) $payment->month_2 = $month_2;
+            if ($period >= 3) $payment->month_3 = $month_3;
+            if ($period >= 4) $payment->month_4 = $month_4;
+            if ($period >= 5) $payment->month_5 = $month_5;
+            if ($period == 6) $payment->month_6 = $month_6;
+        }
+
+        if ($totalMonthsAmount < $total_amount) {
+            return response()->json([
+                'message' => 'La somme est inferieur au montant dachat.Veuillez bien renseignez les champ.',
+                'data' => $payment
+            ], 400); // 400 Bad Request
+        }
+
+        // Sauvegarder le paiement
+        $payment->save();
+
+        // Retourner une réponse JSON avec le paiement créé
         return response()->json([
-            'message' => 'La somme est inferieur au montant dachat.Veuillez bien renseignez les champ.',
+            'message' => 'Paiement ajouté avec succès.',
             'data' => $payment
-        ], 400); // 400 Bad Request
+        ], 201); // 201 Created
     }
 
-    // Sauvegarder le paiement
-    $payment->save();
-
-    // Retourner une réponse JSON avec le paiement créé
-    return response()->json([
-        'message' => 'Paiement ajouté avec succès.',
-        'data' => $payment
-    ], 201); // 201 Created
-}
 
 
+    // public function getProductsByCategory($id) {
+    //     try {
+    //         // Récupérer la catégorie par ID avec ses produits associés
+    //         $category = productcategories::with('products')->findOrFail($id);
 
-// public function getProductsByCategory($id) {
-//     try {
-//         // Récupérer la catégorie par ID avec ses produits associés
-//         $category = productcategories::with('products')->findOrFail($id);
+    //         // Vérifier si des produits existent
+    //         if ($category->products->isEmpty()) {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => 'Aucun produit trouvé dans cette catégorie.',
+    //             ], 404); // 404 Not Found
+    //         }
 
-//         // Vérifier si des produits existent
-//         if ($category->products->isEmpty()) {
-//             return response()->json([
-//                 'success' => false,
-//                 'message' => 'Aucun produit trouvé dans cette catégorie.',
-//             ], 404); // 404 Not Found
-//         }
+    //         // Retourner les produits de la catégorie
+    //         return response()->json([
+    //             'success' => true,
+    //             'products' => $category->products,
+    //         ], 200); // 200 OK
 
-//         // Retourner les produits de la catégorie
-//         return response()->json([
-//             'success' => true,
-//             'products' => $category->products,
-//         ], 200); // 200 OK
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Erreur lors de la récupération des produits par catégorie',
+    //             'error' => $e->getMessage(),
+    //         ], 500); // 500 Internal Server Error
+    //     } catch (\Throwable $t) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Erreur lors de la récupération des produits par catégorie',
+    //             'error' => $t->getMessage(),
+    //         ], 500); // 500 Internal Server Error
+    //     }
+    // }
 
-//     } catch (\Exception $e) {
-//         return response()->json([
-//             'success' => false,
-//             'message' => 'Erreur lors de la récupération des produits par catégorie',
-//             'error' => $e->getMessage(),
-//         ], 500); // 500 Internal Server Error
-//     } catch (\Throwable $t) {
-//         return response()->json([
-//             'success' => false,
-//             'message' => 'Erreur lors de la récupération des produits par catégorie',
-//             'error' => $t->getMessage(),
-//         ], 500); // 500 Internal Server Error
-//     }
-// }
+    public function getProductsByCategory($id)
+    {
+        try {
+            // Récupérer la catégorie par ID avec ses produits associés
+            $category = productcategories::with(['products.vendor'])->find($id); // Utiliser find au lieu de findOrFail
 
-public function getProductsByCategory($id) {
+            // Vérifier si la catégorie existe
+            if (!$category) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Catégorie non trouvée.',
+                ], 404); // 404 Not Found
+            }
+
+            // Vérifier si des produits existent
+            if ($category->products->isEmpty()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Aucun produit trouvé dans cette catégorie.',
+                ], 404); // 404 Not Found
+            }
+
+            // Formater les produits pour inclure les informations souhaitées
+            $formattedProducts = $category->products->map(function ($product) use ($category) {
+                return [
+                    'id' => $product->id,
+                    'product_name' => $product->product_name,
+                    'product_description' => $product->product_description,
+                    'stock' => $product->stock,
+                    'price' => $product->price,
+                    'vendor_name' => $product->vendor ? $product->vendor->username : '', // Nom d'utilisateur du vendeur
+                    'categorie_name' => $category->categories_name, // Nom de la catégorie
+                    'status' => $product->status,
+                    'product_images1' => $product->product_images1,
+                    'product_images2' => $product->product_images2,
+                    'product_images3' => $product->product_images3,
+                    'deleted_at' => $product->deleted_at,
+                    'created_at' => $product->created_at,
+                    'updated_at' => $product->updated_at,
+                ];
+            });
+
+            // Retourner les produits formatés
+            return response()->json([
+                'success' => true,
+                'products' => $formattedProducts,
+            ], 200); // 200 OK
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la récupération des produits par catégorie',
+                'error' => $e->getMessage(),
+            ], 500); // 500 Internal Server Error
+        } catch (\Throwable $t) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la récupération des produits par catégorie',
+                'error' => $t->getMessage(),
+            ], 500); // 500 Internal Server Error
+        }
+    }
+
+    public function fetchAllVendorProducts()
+{
+    // $user = Auth::user();
+    // if (!$user) {
+    //     return response()->json([
+    //         'success' => false,
+    //         'message' => 'Vous devez être connecté pour accéder à cette fonctionnalité'
+    //     ], 401); // 401 Unauthorized
+    // }
+
     try {
-        // Récupérer la catégorie par ID avec ses produits associés
-        $category = productcategories::with(['products.vendor'])->find($id); // Utiliser find au lieu de findOrFail
+        $products = Product::with(['category', 'vendor']) // Charge également la catégorie et le vendeur
+            ->latest()
+            ->take(20)
+            ->get();
 
-        // Vérifier si la catégorie existe
-        if (!$category) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Catégorie non trouvée.',
-            ], 404); // 404 Not Found
-        }
-
-        // Vérifier si des produits existent
-        if ($category->products->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Aucun produit trouvé dans cette catégorie.',
-            ], 404); // 404 Not Found
-        }
-
-        // Formater les produits pour inclure les informations souhaitées
-        $formattedProducts = $category->products->map(function($product) use ($category) {
+        // Mapper les produits pour inclure le nom de la catégorie et les informations du vendeur
+        $responseProducts = $products->map(function ($product) {
             return [
                 'id' => $product->id,
                 'product_name' => $product->product_name,
                 'product_description' => $product->product_description,
                 'stock' => $product->stock,
                 'price' => $product->price,
-                'vendor_name' => $product->vendor ? $product->vendor->username : '', // Nom d'utilisateur du vendeur
-                'categorie_name' => $category->categories_name, // Nom de la catégorie
+                'vendor_id' => $product->vendor_id,
+                'vendor_name' => $product->vendor?$product->vendor->username:null ,
+                'vendor_mobile' => $product->vendor?$product->vendor->mobile:null ,
+                'vendor_email' => $product->vendor?$product->vendor->email:null ,
+                'vendor_avatar' => $product->vendor?$product->vendor->avatar:null ,
+                'vendor_status' => $product->vendor?$product->vendor->status:null ,
+                'categorie_id' => $product->categorie_id,
                 'status' => $product->status,
                 'product_images1' => $product->product_images1,
                 'product_images2' => $product->product_images2,
@@ -1089,31 +1152,23 @@ public function getProductsByCategory($id) {
                 'deleted_at' => $product->deleted_at,
                 'created_at' => $product->created_at,
                 'updated_at' => $product->updated_at,
+                'categories_name' => $product->category ? $product->category->categories_name : null, // Vérifie si la catégorie existe
             ];
         });
 
-        // Retourner les produits formatés
         return response()->json([
             'success' => true,
-            'products' => $formattedProducts,
+            'products' => $responseProducts,
         ], 200); // 200 OK
 
     } catch (\Exception $e) {
+        // Gérer l'exception et retourner une réponse d'erreur
         return response()->json([
             'success' => false,
-            'message' => 'Erreur lors de la récupération des produits par catégorie',
-            'error' => $e->getMessage(),
-        ], 500); // 500 Internal Server Error
-    } catch (\Throwable $t) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Erreur lors de la récupération des produits par catégorie',
-            'error' => $t->getMessage(),
+            'message' => 'Une erreur est survenue lors de la récupération des produits.',
+            'error' => $e->getMessage(), // Vous pouvez également retourner le message d'erreur
         ], 500); // 500 Internal Server Error
     }
 }
-
-
-
 
 }
