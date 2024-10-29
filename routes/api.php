@@ -83,6 +83,8 @@ Route::middleware('auth:sanctum')->group(function () {
     //vendor session
     Route::post('/Vendor/validateOrder',[ProductController::class,'VendorvalidateOrder']);
     Route::get('/get/VendorOrders',[ProductController::class,'getVendorOrders']);
+    Route::get('/fetchAll/Vendor/Products',[ProductController::class,'fetchAllVendorProducts']);
+
 
 
 
@@ -98,7 +100,10 @@ Route::post('payement',[ProductController::class,'createPayment']);
 Route::get('Rhvalidatedorder',[SalaryController::class,'Rhvalidatedorder']);
 Route::get('getAllOrders',[SalaryController::class,'getAllOrders']);
 Route::get('getProductsByCategory/{id}',[ProductController::class,'getProductsByCategory']);
-Route::get('fetchAllVendorProducts',[ProductController::class,'fetchAllVendorProducts']);
+
+
+
+
 //paytou teste
 Route::get('testeapi',[apitesteController::class,'testeapi']);
 Route::post('paytou/user',[apitesteController::class,'getUser']);
