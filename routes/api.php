@@ -85,7 +85,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     Route::post('/deleteAllProducts',[ProductController::class,'deleteAllProducts']);
-
+    Route::post('/set/mode/payement',[ProductController::class,'createPayment']);
 
 });
 Route::get('/get/Category',[ProductController::class,'getCategory']);

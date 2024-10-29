@@ -919,6 +919,7 @@ public function createPayment(Request $request)
 {
     // Validation des données reçues depuis la requête
     $validatedData = $request->validate([
+        'order_id'=>'required',
         'total_amount' => 'required|numeric|min:0',
         'period' => 'required|integer|min:0|max:6',
         'month_1' => 'nullable|numeric|min:0',
@@ -956,9 +957,17 @@ public function payement($total_amount, $period, $month_1 = null, $month_2 = nul
     // Si la période est 0, définissons la période à 6 par défaut
     $period = $period === 0 ? 6 : $period;
 
+    $user=Auth::user();
+    if(!$user){
+        return response()->json([
+            'success'=>false,
+            'message' => 'Vous devez être connecté pour effectuer un paiement.',
+
+        ]);
+    }
     // Créer un paiement
     $payment = new payementperiodemode();
-    $payment->user_id = 1; // Utilisateur connecté
+    $payment->user_id = $user->id; // Utilisateur connecté
     $payment->total_amount = $total_amount;
     $payment->period = $period;
 
