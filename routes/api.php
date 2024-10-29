@@ -74,8 +74,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/get/cart',[CartController::class,'showCartProducts']);
     Route::delete('/remove/From/Cart',[CartController::class,'removeFromCart']);
 
-    //--- 4 order session
-    Route::post('/add/order',[OrderController::class,'placeOrder']);
+    //--- 4 order sessionb lastplaceOrder
+    Route::post('/add/order',[OrderController::class,'lastplaceOrder']);
+    Route::post('/add/new/order',[OrderController::class,'placeOrder']);
+
     Route::get('/get/orderproduct',[OrderController::class,'showOrderProducts']);
 
     //vendor session

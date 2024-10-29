@@ -11,6 +11,7 @@ class payementperiodemode extends Model
     use HasFactory,SoftDeletes;
     protected $fillable = [
         'user_id',
+        'order_id',
         'total_amount',
         'period',
         'month_1',
@@ -38,7 +39,7 @@ class payementperiodemode extends Model
         if ($period == 6) $this->month_6 = $monthlyAmount;
     }
 
-    
+
 
     public function payement($total_amount, $period, $month_1 = null, $month_2 = null, $month_3 = null, $month_4 = null, $month_5 = null, $month_6 = null)
     {

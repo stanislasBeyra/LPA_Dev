@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('payementperiodemodes', function (Blueprint $table) {
             $table->id();
             $table->integer('user_id');
+            $table->integer('order_id');
             $table->decimal('total_amount', 10, 2);
             $table->integer('period')->default(6); // Période par défaut à 6 mois
             $table->decimal('month_1', 10, 2);
