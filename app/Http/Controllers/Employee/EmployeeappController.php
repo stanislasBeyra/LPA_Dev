@@ -132,7 +132,7 @@ class EmployeeappController extends Controller
         // Créer un tableau de réponse avec les détails des produits
         $response = $products->map(function ($product) {
             return [
-                "product_id" => $product->id,
+                "id" => $product->id,
                 'product_name' => $product->product_name,
                 "product_description" => $product->product_description,
                 'stock' => $product->stock,
