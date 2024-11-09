@@ -135,35 +135,35 @@ class OrderController extends Controller
                 $totalAmount += $product->price * $item->quantity;
             }
             // Récupérer les salaires des trois derniers mois
-            $salaries = payementsalaires::where('user_id', $user->id)
-            ->where('created_at', '>=', now()->subMonths(3))
-            ->where('created_at', '<=', now())
-            ->orderBy('created_at', 'desc')
-            ->take(3)
-            ->pluck('amount');
+            // $salaries = payementsalaires::where('user_id', $user->id)
+            // ->where('created_at', '>=', now()->subMonths(3))
+            // ->where('created_at', '<=', now())
+            // ->orderBy('created_at', 'desc')
+            // ->take(3)
+            // ->pluck('amount');
 
-            // Vérifier s'il y a au moins 3 salaires
-            if ($salaries->count() < 3) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'You should have obtained at least 3 salaries.',
-                ], 400);
-            }
+            // // Vérifier s'il y a au moins 3 salaires
+            // if ($salaries->count() < 3) {
+            //     return response()->json([
+            //         'success' => false,
+            //         'message' => 'You should have obtained at least 3 salaries.',
+            //     ], 400);
+            // }
 
-            // Calculer la somme des salaires
-            $totalSalaries = $salaries->sum();
+            // // Calculer la somme des salaires
+            // $totalSalaries = $salaries->sum();
 
-            // Calculer la moyenne des salaires sur 3 mois
-            $averageSalary = $totalSalaries / 3;
-            $newamountsalarie=$averageSalary/3;
+            // // Calculer la moyenne des salaires sur 3 mois
+            // $averageSalary = $totalSalaries / 3;
+            // $newamountsalarie=$averageSalary/3;
 
-            // Vérifier si la moyenne des salaires est supérieure ou égale au montant de la commande
-            if ($newamountsalarie < $totalAmount) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Your salary does not allow you to exceed the order amount.',
-                ], 400);
-            }
+            // // Vérifier si la moyenne des salaires est supérieure ou égale au montant de la commande
+            // if ($newamountsalarie < $totalAmount) {
+            //     return response()->json([
+            //         'success' => false,
+            //         'message' => 'Your salary does not allow you to exceed the order amount.',
+            //     ], 400);
+            // }
 
             // Créer une commande principale (table 'orders')
             $order = new Order();
