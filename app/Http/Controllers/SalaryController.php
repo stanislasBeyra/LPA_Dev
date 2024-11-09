@@ -33,75 +33,147 @@ class SalaryController extends Controller
     }
 
 
+    // public function Rhvalidatedorder(Request $request) {
+    //     try {
+    //         // Récupérer la dernière commande validée pour un utilisateur donné
+    //         $order = Order::where('user_id', 1)
+    //             ->where('status', 2)
+    //             ->latest()
+    //             ->first();
+
+    //         // Vérifier si la commande existe
+    //         if (!$order) {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => 'Aucune commande validée trouvée.',
+    //             ], 404);
+    //         }
+
+    //         // Récupérer les salaires des trois derniers mois
+    //         $salaries = Payementsalaires::where('user_id', $order->user_id)
+    //         ->where('created_at', '>=', now()->subMonths(3))
+    //         ->where('created_at', '<=', now())
+    //         ->orderBy('created_at', 'desc')
+    //         ->take(3)
+    //         ->pluck('amount');
+
+    //         // Vérifier s'il y a au moins 3 salaires
+    //         if ($salaries->count() < 3) {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => 'L\'utilisateur doit avoir au moins 3 salaires pour valider la commande.',
+    //             ], 400);
+    //         }
+
+    //         // Calculer la somme des salaires
+    //         $totalSalaries = $salaries->sum();
+
+    //         // Calculer la moyenne des salaires sur 3 mois
+    //         $averageSalary = $totalSalaries / 3;
+    //         $newamountsalarie=$averageSalary/3;
+
+    //         // Vérifier si la moyenne des salaires est supérieure ou égale au montant de la commande
+    //         if ($newamountsalarie < $order->total) {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => 'La moyenne des salaires est inférieure au montant de la commande.',
+    //             ], 400);
+    //         }
+
+    //         $order->status=3;
+    //         $order->save();
+    //         // Retourner la commande trouvée
+    //         return response()->json([
+    //             'success' => true,
+    //             'data' => $order,
+    //         ], 200);
+
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Erreur de validation de l\'ordre',
+    //             'error' => $e->getMessage(),
+    //         ], 500);
+    //     } catch (\Throwable $t) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Erreur de validation de l\'ordre',
+    //             'error' => $t->getMessage(),
+    //         ], 500);
+    //     }
+    // }
+
     public function Rhvalidatedorder(Request $request) {
         try {
-            // Récupérer la dernière commande validée pour un utilisateur donné
+            // Retrieve the last validated order for a given user
             $order = Order::where('user_id', 1)
                 ->where('status', 2)
                 ->latest()
                 ->first();
-
-            // Vérifier si la commande existe
+    
+            // Check if the order exists
             if (!$order) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Aucune commande validée trouvée.',
+                    'message' => 'No validated order found.',
                 ], 404);
             }
-
-            // Récupérer les salaires des trois derniers mois
+    
+            // Retrieve salaries from the last three months
             $salaries = Payementsalaires::where('user_id', $order->user_id)
-            ->where('created_at', '>=', now()->subMonths(3))
-            ->where('created_at', '<=', now())
-            ->orderBy('created_at', 'desc')
-            ->take(3)
-            ->pluck('amount');
-
-            // Vérifier s'il y a au moins 3 salaires
+                ->where('created_at', '>=', now()->subMonths(3))
+                ->where('created_at', '<=', now())
+                ->orderBy('created_at', 'desc')
+                ->take(3)
+                ->pluck('amount');
+    
+            // Check if there are at least 3 salaries
             if ($salaries->count() < 3) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'L\'utilisateur doit avoir au moins 3 salaires pour valider la commande.',
+                    'message' => 'The user must have at least 3 salaries to validate the order.',
                 ], 400);
             }
-
-            // Calculer la somme des salaires
+    
+            // Calculate the sum of the salaries
             $totalSalaries = $salaries->sum();
-
-            // Calculer la moyenne des salaires sur 3 mois
+    
+            // Calculate the average salary over 3 months
             $averageSalary = $totalSalaries / 3;
-            $newamountsalarie=$averageSalary/3;
-
-            // Vérifier si la moyenne des salaires est supérieure ou égale au montant de la commande
-            if ($newamountsalarie < $order->total) {
+            $newAmountSalary = $averageSalary / 3;
+    
+            // Check if the average salary is greater than or equal to the order amount
+            if ($newAmountSalary < $order->total) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'La moyenne des salaires est inférieure au montant de la commande.',
+                    'message' => 'Your salary does not allow you to exceed the order amount.',
                 ], 400);
             }
-
-            $order->status=3;
+    
+            $order->status = 3;
             $order->save();
-            // Retourner la commande trouvée
+            
+            // Return the found order
             return response()->json([
                 'success' => true,
                 'data' => $order,
             ], 200);
-
+    
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Erreur de validation de l\'ordre',
+                'message' => 'Order validation error.',
                 'error' => $e->getMessage(),
             ], 500);
         } catch (\Throwable $t) {
             return response()->json([
                 'success' => false,
-                'message' => 'Erreur de validation de l\'ordre',
+                'message' => 'Order validation error.',
                 'error' => $t->getMessage(),
             ], 500);
         }
     }
+    
 
     public function getAllOrders(Request $request) {
         try {
