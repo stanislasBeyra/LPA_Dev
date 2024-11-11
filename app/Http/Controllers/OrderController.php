@@ -545,14 +545,17 @@ public function getallvendororder()
             // Déterminer le statut de la commande sous forme de texte
             $statusText = match ($order->status) {
                 '1' => 'Pending',
-                '2' => 'Validated',
-                '3' => 'En cours de livraison',
-                default => 'Inconnu',
+                '2' => 'Processing',
+                '3' => 'Validated',
+                '4'=>'Delivered',
+                '5'=>'Cancelled',
+                default => 'Unknown',
             };
 
             // Récupérer les données de chaque commande
             $orderData = [
                 'order_id' => $order->id,
+                'order_user_id'=>$order->user_id,
                 'order_total' => $order->total,
                 'order_status' => $order->status,
                 'order_status_text' => $statusText, // Ajouter le texte du statut

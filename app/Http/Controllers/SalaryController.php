@@ -106,7 +106,7 @@ class SalaryController extends Controller
     public function Rhvalidatedorder(Request $request) {
         try {
             // Retrieve the last validated order for a given user
-            $order = Order::where('user_id', 1)
+            $order = Order::where('user_id', $request->userid)
                 ->where('status', 2)
                 ->latest()
                 ->first();
