@@ -265,7 +265,7 @@ class SalaryController extends Controller
             });
 
             return response()->json([
-                "payment_data" => $formattedPayments
+                "paiementdata" => $formattedPayments
             ], 200);
         } catch (\Throwable $t) {
             return response()->json([
