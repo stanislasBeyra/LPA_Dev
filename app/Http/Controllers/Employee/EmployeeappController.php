@@ -14,19 +14,58 @@ class EmployeeappController extends Controller
 {
     //
 
+    // public function Clientlogin(Request $request)
+    // {
+    //     try {
+    //         // Validation des données d'entrée
+    //         $request->validate([
+    //             'email' => 'required|email',
+    //             'password' => 'required',
+    //         ]);
+    //         $user = employee::where('email', $request->email)->first();
+    //         if (!$user) {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => 'Adresse email incorrecte',
+    //             ], 401);
+    //         }
+    //         if (!Hash::check($request->password, $user->password)) {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => 'Les informations d\'identification sont incorrectes',
+    //             ], 401);
+    //         }
+    //         $user->tokens()->delete();
+
+    //         $token = $user->createToken('auth_token')->plainTextToken;
+
+    //         return response()->json([
+    //             'success' => true,
+    //             'message' => 'Connexion réussie',
+    //             'token' => $token
+    //         ], 200);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'An error has occurred.',
+    //             'error' => $e->getMessage()
+    //         ], 401);
+    //     }
+    // }
+
     public function Clientlogin(Request $request)
     {
         try {
             // Validation des données d'entrée
             $request->validate([
-                'email' => 'required|email',
+                'username' => 'required|username',
                 'password' => 'required',
             ]);
-            $user = employee::where('email', $request->email)->first();
+            $user = employee::where('username', $request->username)->first();
             if (!$user) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Adresse email incorrecte',
+                    'message' => 'Adresse username incorrecte',
                 ], 401);
             }
             if (!Hash::check($request->password, $user->password)) {

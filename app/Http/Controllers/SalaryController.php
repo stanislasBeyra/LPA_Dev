@@ -230,7 +230,7 @@ class SalaryController extends Controller
             if ($newAmountSalary < $order->total) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Your salary does not allow you to exceed the order amount.',
+                    'message' => "The customer's salary does not allow you to exceed the order amount.",
                 ], 400);
             }
     
