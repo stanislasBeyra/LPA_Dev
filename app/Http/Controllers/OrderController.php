@@ -555,6 +555,10 @@ public function getallvendororder()
                 'order_status_text' => $statusText, // Ajouter le texte du statut
                 'order_created_at' => $order->created_at,
                 'customer_name' => $order->employee ? $order->employee->username : null,
+                'customer_fisrtaname' => $order->employee ? $order->employee->firstname : null,
+                'customer_lastname' => $order->employee ? $order->employee->lastname : null,
+                'customer_mobile' => $order->employee ? $order->employee->mobile : null,
+                'customer_email' => $order->employee ? $order->employee->email : null,
                 'products' => [],
             ];
 
