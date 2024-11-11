@@ -93,6 +93,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/deleteAllProducts',[ProductController::class,'deleteAllProducts']);
     Route::post('/set/mode/payement',[ProductController::class,'createPayment']);
+    //admin
+    Route::post('/valided/customer/order',[SalaryController::class,'Rhvalidatedorder']);
 
 });
 
