@@ -118,6 +118,12 @@ class SalaryController extends Controller
                     'message' => 'No validated order found.',
                 ], 404);
             }
+            if($order->status==3){
+                return response()->json([
+                    'success'=>false,
+                    'message'=>"order is already validated"
+                ]);
+            }
     
             // Retrieve salaries from the last three months
             $salaries = Payementsalaires::where('user_id', $order->user_id)
