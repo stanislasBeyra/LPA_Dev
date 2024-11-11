@@ -58,7 +58,7 @@ class EmployeeappController extends Controller
         try {
             // Validation des données d'entrée
             $request->validate([
-                'username' => 'required|username',
+                'username' => 'required|',
                 'password' => 'required',
             ]);
             $user = employee::where('username', $request->username)->first();
