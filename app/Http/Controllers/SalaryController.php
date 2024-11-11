@@ -163,6 +163,7 @@ class SalaryController extends Controller
             return response()->json([
                 'success' => true,
                 'data' => $order,
+                'message'=>'the order is validated'
             ], 200);
     
         } catch (\Exception $e) {
