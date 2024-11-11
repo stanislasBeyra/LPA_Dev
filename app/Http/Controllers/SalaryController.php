@@ -184,47 +184,93 @@ class SalaryController extends Controller
     //     }
     // }
 
+    // public function getCutomerPaiement()
+    // {
+    //     try {
+    //         // Récupérer les paiements avec les utilisateurs associés
+    //         $paies = payementperiodemode::with('users')
+    //         ->orderby('id','desc')
+    //         ->get();
+
+    //         // Formater chaque paiement avec les données de l'utilisateur
+    //         $formattedPaies = $paies->map(function ($paie) {
+    //             return [
+    //                 "id" => $paie->id,
+    //                 "user_id" => $paie->user_id,
+    //                 "order_id" => $paie->order_id,
+    //                 "total_amount" => $paie->total_amount,
+    //                 "period" => $paie->period,
+    //                 "month_1" => $paie->month_1,
+    //                 "month_2" => $paie->month_2,
+    //                 "month_3" => $paie->month_3,
+    //                 "month_4" => $paie->month_4,
+    //                 "month_5" => $paie->month_5,
+    //                 "month_6" => $paie->month_6,
+    //                 "user_firstname" => $paie->users->firstname??null,
+    //                 "user_lastname" => $paie->users->lastname??null,
+    //                 "user_username" => $paie->users->username??null,
+    //                 "user_email" => $paie->users->email??null,
+    //                 "user_mobile" => $paie->users->mobile??null,
+    //                 "user_status" => $paie->users->status??null,
+    //                 "user_net_salary" => $paie->users->net_salary??0,
+    //                 "created_at" => $paie->created_at,
+
+    //             ];
+    //         });
+
+    //         return response()->json([
+    //             "paiementdata" => $formattedPaies
+    //         ], 200);
+    //     } catch (\Throwable $t) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Erreur lors de la récupération des commandes',
+    //             'error' => $t->getMessage(),
+    //             'line' => $t->getLine()
+    //         ], 500);
+    //     }
+    // }
+
     public function getCutomerPaiement()
     {
         try {
-            // Récupérer les paiements avec les utilisateurs associés
-            $paies = payementperiodemode::with('paiementusers')
-            ->orderby('id','desc')
-            ->get();
+            // Retrieve payments with associated 'paiementUser' (Employee model)
+            $payments = payementperiodemode::with('paiementUser') // Use 'paiementUser' here
+                ->orderBy('id', 'desc')
+                ->get();
 
-            // Formater chaque paiement avec les données de l'utilisateur
-            $formattedPaies = $paies->map(function ($paie) {
+            // Format each payment with the associated 'paiementUser' data
+            $formattedPayments = $payments->map(function ($payment) {
                 return [
-                    "id" => $paie->id,
-                    "user_id" => $paie->user_id,
-                    "order_id" => $paie->order_id,
-                    "total_amount" => $paie->total_amount,
-                    "period" => $paie->period,
-                    "month_1" => $paie->month_1,
-                    "month_2" => $paie->month_2,
-                    "month_3" => $paie->month_3,
-                    "month_4" => $paie->month_4,
-                    "month_5" => $paie->month_5,
-                    "month_6" => $paie->month_6,
-                    "user_firstname" => $paie->user->firstname??null,
-                    "user_lastname" => $paie->user->lastname??null,
-                    "user_username" => $paie->user->username??null,
-                    "user_email" => $paie->user->email??null,
-                    "user_mobile" => $paie->user->mobile??null,
-                    "user_status" => $paie->user->status??null,
-                    "user_net_salary" => $paie->user->net_salary??0,
-                    "created_at" => $paie->created_at,
-
+                    "id" => $payment->id,
+                    "user_id" => $payment->user_id,
+                    "order_id" => $payment->order_id,
+                    "total_amount" => $payment->total_amount,
+                    "period" => $payment->period,
+                    "month_1" => $payment->month_1,
+                    "month_2" => $payment->month_2,
+                    "month_3" => $payment->month_3,
+                    "month_4" => $payment->month_4,
+                    "month_5" => $payment->month_5,
+                    "month_6" => $payment->month_6,
+                    "user_firstname" => $payment->paiementUser->firstname ?? null, // Access paiementUser relationship
+                    "user_lastname" => $payment->paiementUser->lastname ?? null, 
+                    "user_username" => $payment->paiementUser->username ?? null,
+                    "user_email" => $payment->paiementUser->email ?? null,
+                    "user_mobile" => $payment->paiementUser->mobile ?? null,
+                    "user_status" => $payment->paiementUser->status ?? null,
+                    "user_net_salary" => $payment->paiementUser->net_salary ?? 0,
+                    "created_at" => $payment->created_at,
                 ];
             });
 
             return response()->json([
-                "paiementdata" => $formattedPaies
+                "payment_data" => $formattedPayments
             ], 200);
         } catch (\Throwable $t) {
             return response()->json([
                 'success' => false,
-                'message' => 'Erreur lors de la récupération des commandes',
+                'message' => 'Error retrieving payments',
                 'error' => $t->getMessage(),
                 'line' => $t->getLine()
             ], 500);

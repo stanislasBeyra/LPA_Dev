@@ -22,13 +22,22 @@ class payementperiodemode extends Model
         'month_6',
     ];
 
+    public function paiementUser()
+    {
+        return $this->belongsTo(employee::class, 'user_id');
+    }
+
     public function paiementusers(){
-        return $this->belongsTo(employee::class);
+        return $this->belongsTo(employee::class,'user_id');
     }
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+    public function users()
+    {
+        return $this->belongsTo(employee::class);
     }
 
     public function distributeAmountOverMonths($totalAmount, $period)
