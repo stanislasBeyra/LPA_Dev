@@ -22,6 +22,10 @@ class payementperiodemode extends Model
         'month_6',
     ];
 
+    public function paiementusers(){
+        return $this->belongsTo(User::class);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

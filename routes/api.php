@@ -47,6 +47,8 @@ Route::get('/get/VendorListapp',[EmployeeappController::class,'getVendorListapp'
 Route::get('/all/app/product', [EmployeeappController::class, 'appAllproduct']);
 Route::post('Admin/update/Customer/info',[AuthController::class,'AdminupdateCustomerinfo']);
 Route::post('Admin/update/vendor/info',[AuthController::class,'Adminupdatevendorinfo']);
+// recuperer les methodes de paiement
+Route::get('getCutomerPaiement',[SalaryController::class,'getCutomerPaiement']);
 
 Route::middleware('auth:sanctum')->group(function () {
     //get Employyee Info
