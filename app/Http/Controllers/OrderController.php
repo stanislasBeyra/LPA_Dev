@@ -473,6 +473,61 @@ class OrderController extends Controller
 //     }
 // }
 
+// public function getallvendororder()
+// {
+//     try {
+//         // Récupérer les orders avec leurs items et produits associés
+//         $orders = Order::with(['orderItems.product', 'employee'])->get();
+
+//         $response = [];
+
+//         // Itérer sur chaque commande
+//         foreach ($orders as $order) {
+
+//             // Récupérer les données de chaque commande
+//             $orderData = [
+//                 'order_id' => $order->id,
+//                 'order_total' => $order->total,
+//                 'order_status' => $order->status,
+//                 'order_created_at' => $order->created_at,
+//                 'customer_name' => $order->employee ? $order->employee->username : null,
+//                 'products' => [],
+//             ];
+
+//             // Itérer sur chaque order_item pour récupérer les produits
+//             foreach ($order->orderItems as $orderItem) {
+//                 $orderData['products'][] = [
+//                     'product1' => $orderItem->product ? $orderItem->product->product_images1 : null,
+//                     'product2' => $orderItem->product ? $orderItem->product->product_images2 : null,
+//                     'product3' => $orderItem->product ? $orderItem->product->product_images3 : null,
+//                     'product_name' => $orderItem->product ? $orderItem->product->product_name : null,
+//                     'product_price'=>$orderItem->product ? $orderItem->product->price : null,
+//                     'produ_quanty'=>$orderItem->quantity
+//                 ];
+//             }
+
+//             // Ajouter la commande avec les produits à la réponse
+//             $response[] = $orderData;
+//         }
+
+//         // Retourner la réponse au format JSON
+//         return response()->json([
+//             'success' => true,
+//             'data' => $response
+//         ]);
+
+//     } catch (\Exception $e) {
+//         // Gestion des erreurs
+//         return response()->json([
+//             'success' => false,
+//             'message' => 'Une erreur est survenue',
+//             'error' => $e->getMessage(),
+//             'line' => $e->getLine()
+//         ], 500);
+//     }
+// }
+
+
 public function getallvendororder()
 {
     try {
@@ -484,11 +539,20 @@ public function getallvendororder()
         // Itérer sur chaque commande
         foreach ($orders as $order) {
 
+            // Déterminer le statut de la commande sous forme de texte
+            $statusText = match ($order->status) {
+                '1' => 'Pending',
+                '2' => 'Validated',
+                '3' => 'En cours de livraison',
+                default => 'Inconnu',
+            };
+
             // Récupérer les données de chaque commande
             $orderData = [
                 'order_id' => $order->id,
                 'order_total' => $order->total,
                 'order_status' => $order->status,
+                'order_status_text' => $statusText, // Ajouter le texte du statut
                 'order_created_at' => $order->created_at,
                 'customer_name' => $order->employee ? $order->employee->username : null,
                 'products' => [],
@@ -501,8 +565,8 @@ public function getallvendororder()
                     'product2' => $orderItem->product ? $orderItem->product->product_images2 : null,
                     'product3' => $orderItem->product ? $orderItem->product->product_images3 : null,
                     'product_name' => $orderItem->product ? $orderItem->product->product_name : null,
-                    'product_price'=>$orderItem->product ? $orderItem->product->price : null,
-                    'produ_quanty'=>$orderItem->quantity
+                    'product_price' => $orderItem->product ? $orderItem->product->price : null,
+                    'produ_quanty' => $orderItem->quantity,
                 ];
             }
 

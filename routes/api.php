@@ -98,11 +98,15 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::get('getallvendororder',[OrderController::class,'getallvendororder']);
 
+
+
+
 Route::get('/get/Category',[ProductController::class,'getCategory']);
 //travail de restant
 Route::post('assignMinimumSalary',[SalaryController::class,'assignMinimumSalary']);
 Route::post('payement',[ProductController::class,'createPayment']);
 Route::get('Rhvalidatedorder',[SalaryController::class,'Rhvalidatedorder']);
+
 Route::get('getAllOrders',[SalaryController::class,'getAllOrders']);
 Route::get('getProductsByCategory/{id}',[ProductController::class,'getProductsByCategory']);
 
