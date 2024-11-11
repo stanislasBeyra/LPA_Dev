@@ -107,7 +107,7 @@ class SalaryController extends Controller
         try {
             // Retrieve the last validated order for a given user
             $order = Order::where('user_id', $request->userid)
-                ->where('status', 2)
+                // ->where('status', 2)
                 ->latest()
                 ->first();
     
