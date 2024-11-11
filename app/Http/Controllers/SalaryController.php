@@ -122,7 +122,7 @@ class SalaryController extends Controller
                 return response()->json([
                     'success'=>false,
                     'message'=>"order is already validated"
-                ]);
+                ],403);
             }
     
             // Retrieve salaries from the last three months
