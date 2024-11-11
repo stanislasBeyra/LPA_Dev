@@ -565,7 +565,7 @@ public function getallvendororder()
                     'product2' => $orderItem->product ? $orderItem->product->product_images2 : null,
                     'product3' => $orderItem->product ? $orderItem->product->product_images3 : null,
                     'product_name' => $orderItem->product ? $orderItem->product->product_name : null,
-                    'product_price' => $orderItem->product ? $orderItem->product->price : null,
+                    'product_price' => $orderItem->product ? $orderItem->product->price : 0,
                     'produ_quanty' => $orderItem->quantity,
                 ];
             }
