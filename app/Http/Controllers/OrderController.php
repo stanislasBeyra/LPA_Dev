@@ -533,6 +533,7 @@ public function getallvendororder()
     try {
         // Récupérer les orders avec leurs items et produits associés
         $orders = Order::with(['orderItems.product', 'employee'])
+        ->where('status','!=',1)
         ->orderby('id','desc')
         ->get();
 
