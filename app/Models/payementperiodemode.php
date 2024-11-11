@@ -23,7 +23,7 @@ class payementperiodemode extends Model
     ];
 
     public function paiementusers(){
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(employee::class);
     }
 
     public function user()
