@@ -44,6 +44,9 @@ Route::get('/get/VendorList',[AuthController::class,'getVendorList']);
 Route::post('/products/vendor/', [EmployeeappController::class, 'getProductsByVendorId']);
 Route::get('/get/VendorListapp',[EmployeeappController::class,'getVendorListapp']);
 
+Route::get('/all/app/product', [EmployeeappController::class, 'appAllproduct']);
+Route::post('Admin/update/Customer/info',[AuthController::class,'AdminupdateCustomerinfo']);
+Route::post('Admin/update/vendor/info',[AuthController::class,'Adminupdatevendorinfo']);
 
 Route::middleware('auth:sanctum')->group(function () {
     //get Employyee Info
@@ -92,6 +95,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/set/mode/payement',[ProductController::class,'createPayment']);
 
 });
+
+Route::get('getallvendororder',[OrderController::class,'getallvendororder']);
 
 Route::get('/get/Category',[ProductController::class,'getCategory']);
 //travail de restant

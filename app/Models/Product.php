@@ -31,4 +31,8 @@ class Product extends Model
     {
         return $this->belongsTo(User::class, 'vendor_id'); // Ajoutez cette ligne pour la relation avec le vendeur
     }
+    public function orderItems()
+{
+    return $this->hasMany(order_items::class);
+}
 }

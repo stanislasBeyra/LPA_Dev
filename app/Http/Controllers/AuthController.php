@@ -491,4 +491,120 @@ class AuthController extends Controller
         }
     }
 
+
+    public function AdminupdateCustomerinfo(Request $request)
+    {
+        try {
+            // Vérifier si l'ID de l'employé est passé dans la requête
+            if (!$request->has('employeeId')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Employee ID is required'
+                ], 400);
+            }
+
+            // Trouver l'employé par son ID
+            $customer = employee::find($request->employeeId);
+
+            // Vérifier si l'employé existe
+            if (!$customer) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Employee not found'
+                ], 404);
+            }
+
+            // Validation des données (vous pouvez adapter les règles de validation selon les besoins)
+            $validated = $request->validate([
+                'firstname' => 'nullable|string|max:255',
+                'lastname' => 'nullable|string|max:255',
+                'username' => 'nullable|string|max:255|unique:employees,username,' . $customer->id,
+                'email' => 'nullable|email|unique:employees,email,' . $customer->id,
+                'mobile' => 'nullable|string|max:255',
+                'avatar' => 'nullable|image|max:2048', // Assurez-vous que l'avatar est une image si vous voulez le mettre à jour
+                'status' => 'nullable|boolean',
+                'net_salary' => 'nullable|numeric',
+                'agencescode' => 'nullable|string|max:255',
+                'role' => 'nullable|integer|exists:roles,id', // Assurez-vous que le rôle existe dans la table roles
+            ]);
+
+            // Mise à jour des informations de l'employé
+            $customer->update($validated);
+
+            // Retourner la réponse de succès avec les nouvelles données de l'employé
+            return response()->json([
+                'success' => true,
+                'message' => 'Employee information updated successfully',
+                'data' => $customer
+            ]);
+
+        } catch (\Exception $e) {
+            // Gestion des erreurs
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while updating the employee',
+                'error' => $e->getMessage(),
+                'line' => $e->getLine()
+            ], 500);
+        }
+    }
+
+
+    public function Adminupdatevendorinfo(Request $request)
+    {
+        try {
+            // Vérifier si l'ID de l'employé est passé dans la requête
+            if (!$request->has('employeeId')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Employee ID is required'
+                ], 400);
+            }
+
+            // Trouver l'employé par son ID
+            $customer = User::find($request->employeeId);
+
+            // Vérifier si l'employé existe
+            if (!$customer) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Employee not found'
+                ], 404);
+            }
+
+            // Validation des données (vous pouvez adapter les règles de validation selon les besoins)
+            $validated = $request->validate([
+                'firstname' => 'nullable|string|max:255',
+                'lastname' => 'nullable|string|max:255',
+                'username' => 'nullable|string|max:255|unique:employees,username,' . $customer->id,
+                'email' => 'nullable|email|unique:employees,email,' . $customer->id,
+                'mobile' => 'nullable|string|max:255',
+                'avatar' => 'nullable|image|max:2048', // Assurez-vous que l'avatar est une image si vous voulez le mettre à jour
+                'status' => 'nullable|boolean',
+                'net_salary' => 'nullable|numeric',
+                'agencescode' => 'nullable|string|max:255',
+                'role' => 'nullable|integer|exists:roles,id', // Assurez-vous que le rôle existe dans la table roles
+            ]);
+
+            // Mise à jour des informations de l'employé
+            $customer->update($validated);
+
+            // Retourner la réponse de succès avec les nouvelles données de l'employé
+            return response()->json([
+                'success' => true,
+                'message' => 'Employee information updated successfully',
+                'data' => $customer
+            ]);
+
+        } catch (\Exception $e) {
+            // Gestion des erreurs
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while updating the employee',
+                'error' => $e->getMessage(),
+                'line' => $e->getLine()
+            ], 500);
+        }
+    }
+
 }

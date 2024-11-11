@@ -10,6 +10,7 @@ use App\Models\payementsalaires;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -353,4 +354,183 @@ class OrderController extends Controller
             ], 500);
         }
     }
+
+//     public function getallvendororder()
+// {
+//     try {
+//         // Effectuer une jointure avec 'users' et 'products' pour récupérer les informations de l'utilisateur et du produit
+//         $orders = DB::table('orders')
+//             ->join('users', 'orders.user_id', '=', 'users.id')  // Jointure avec 'users' sur 'user_id'
+//             ->join('order_items', 'orders.id', '=', 'order_items.order_id')  // Jointure avec 'order_items' pour récupérer les produits
+//             ->join('products', 'order_items.product_id', '=', 'products.id')  // Jointure avec 'products' pour récupérer les informations du produit
+//             ->select(
+//                 'orders.id as order_id',
+//                 'orders.total',
+//                 'orders.status',
+//                 'orders.created_at as order_created_at',
+//                 'users.id as user_id',
+//                 'users.username', 
+//                 'users.email',
+//                 'products.id as product_id',
+//                 'products.product_name', 
+//                 'products.price as product_price',
+//                 'products.product_images1',
+//                 'products.product_images2',
+//                 'products.product_images3'
+//             )
+//             ->get();
+
+//         // Retourner les commandes avec les informations de l'utilisateur et des produits
+//         return response()->json([
+//             'success' => true,
+//             'data' => $orders,
+//         ]);
+//     } catch (\Exception $e) {
+//         return response()->json([
+//             'success' => false,
+//             'message' => 'Une erreur est survenue',
+//         ], 500);
+//     }
+// }
+
+// public function getallvendororder()
+// {
+//     try {
+//         // Charger les commandes avec les relations 'orderItems.product' et 'user'
+//         $orders = Order::with(['orderItems.product', 'employee'])->get(); 
+
+
+//         // Retourner les commandes avec les informations de l'utilisateur
+//         return response()->json([
+//             'success' => true,
+//             'data' => $orders,
+//         ]);
+//     } catch (\Exception $e) {
+//         return response()->json([
+//             'success' => false,
+//             'message' => 'Une erreur est survenue',
+//         ], 500);
+//     }
+// }
+
+// public function order_items()
+// {
+//     try {
+//         // Récupérer les order_items avec leurs relations
+//         $orderItems = order_items::with(['order.employee', 'product'])->get();
+
+//         $response = [];
+
+//         // Itérer sur chaque élément de la commande
+//         foreach ($orderItems as $orderItem) {
+
+//             // Récupérer les données de la commande
+//             $orderData = [
+//                 'order_id' => $orderItem->order->id,
+//                 'order_total' => $orderItem->order->total,
+//                 'order_status' => $orderItem->order->status,
+//                 'order_created_at' => $orderItem->order->created_at,
+//                 // 'pro_id'=>$orderItem->product->id,
+//                 'product1' => $orderItem->product ? $orderItem->product->product_images1 : null,
+//                 'product2' => $orderItem->product ? $orderItem->product->product_images2 : null, 
+//                 'product3' => $orderItem->product ? $orderItem->product->product_images3 : null,
+//                 'customer_name' => $orderItem->order->employee ? $orderItem->order->employee->username : null ,
+//                 'pro'=>$orderItem->product
+//             ];
+
+//             // Combiner les données de la commande et de l'employé
+//             $alldata = [
+//                 'order_id' => $orderData['order_id'],
+//                 'order_total' => $orderData['order_total'],
+//                 'order_created_at' => $orderData['order_created_at'],
+//                 'order_status' => $orderData['order_status'],
+//                 // 'pro_id'=>$orderData['pro_id'],
+//                 'product1' => $orderData['product1'],
+//                 'product2' => $orderData['product2'],
+//                 'product3' => $orderData['product3'],
+//                 'customer_name' => $orderData['customer_name'],
+//                 'pro'=>$orderData['pro']
+//             ];
+
+//             // Ajouter cette commande à la réponse
+//             $response[] = $alldata;
+//         }
+
+//         // Retourner la réponse au format JSON
+//         return response()->json([
+//             'success' => true,
+//             'data' => $response
+//         ]);
+
+//     } catch (\Exception $e) {
+//         // Gestion des erreurs
+//         return response()->json([
+//             'success' => false,
+//             'message' => 'Une erreur est survenue',
+//             'error' => $e->getMessage(),
+//             'line' => $e->getLine()
+//         ], 500);
+//     }
+// }
+
+public function getallvendororder()
+{
+    try {
+        // Récupérer les orders avec leurs items et produits associés
+        $orders = Order::with(['orderItems.product', 'employee'])->get();
+
+        $response = [];
+
+        // Itérer sur chaque commande
+        foreach ($orders as $order) {
+
+            // Récupérer les données de chaque commande
+            $orderData = [
+                'order_id' => $order->id,
+                'order_total' => $order->total,
+                'order_status' => $order->status,
+                'order_created_at' => $order->created_at,
+                'customer_name' => $order->employee ? $order->employee->username : null,
+                'products' => [],
+            ];
+
+            // Itérer sur chaque order_item pour récupérer les produits
+            foreach ($order->orderItems as $orderItem) {
+                $orderData['products'][] = [
+                    'product1' => $orderItem->product ? $orderItem->product->product_images1 : null,
+                    'product2' => $orderItem->product ? $orderItem->product->product_images2 : null,
+                    'product3' => $orderItem->product ? $orderItem->product->product_images3 : null,
+                    'product_name' => $orderItem->product ? $orderItem->product->product_name : null,
+                    'product_price'=>$orderItem->product ? $orderItem->product->price : null,
+                    'produ_quanty'=>$orderItem->quantity
+                ];
+            }
+
+            // Ajouter la commande avec les produits à la réponse
+            $response[] = $orderData;
+        }
+
+        // Retourner la réponse au format JSON
+        return response()->json([
+            'success' => true,
+            'data' => $response
+        ]);
+
+    } catch (\Exception $e) {
+        // Gestion des erreurs
+        return response()->json([
+            'success' => false,
+            'message' => 'Une erreur est survenue',
+            'error' => $e->getMessage(),
+            'line' => $e->getLine()
+        ], 500);
+    }
+}
+
+
+
+
+
+
+    
 }

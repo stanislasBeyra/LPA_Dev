@@ -31,6 +31,12 @@ class order extends Model
     }
     
 
+    public function users()
+{
+    return $this->belongsTo(User::class); // Assurez-vous que cela correspond à la relation entre Order et User
+}
+    
+
     public function employee(){
         return $this->belongsTo(employee::class, 'user_id');
     }
