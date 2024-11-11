@@ -65,13 +65,13 @@ class EmployeeappController extends Controller
             if (!$user) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Adresse username incorrecte',
+                    'message' => 'Incorrect username',
                 ], 401);
             }
             if (!Hash::check($request->password, $user->password)) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Les informations d\'identification sont incorrectes',
+                    'message' => 'The credentials are incorrect',
                 ], 401);
             }
             $user->tokens()->delete();
@@ -80,7 +80,7 @@ class EmployeeappController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Connexion réussie',
+                'message' => 'Login successful',
                 'token' => $token
             ], 200);
         } catch (\Exception $e) {
