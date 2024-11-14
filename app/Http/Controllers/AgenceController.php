@@ -47,8 +47,9 @@ public function editAgence(Request $request)
         $validated = $request->validate([
             'agent_name' => 'required|string|max:255',
             'description' => 'required|string|max:255',
-            'agency_code' => 'required|string|max:255|unique:agences,agency_code,'
+            'agency_code' => 'required|string|max:255|unique:agences,agency_code,' . $request->agenceId 
         ]);
+        
 
         // Trouver l'agence par son ID
         $agence = Agence::find($request->agenceId);
