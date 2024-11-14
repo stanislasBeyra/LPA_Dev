@@ -57,7 +57,7 @@ Route::get('getCutomerPaiement',[SalaryController::class,'getCutomerPaiement']);
 
  Route::post('/createAgence',[AgenceController::class,'createAgence']);
  Route::post('/editAgence',[AgenceController::class,'editAgence']);
- Route::delete('deleteAgence',[AgenceController::class,'deleteAgence']);
+ Route::post('deleteAgence',[AgenceController::class,'deleteAgence']);
 
 Route::middleware('auth:sanctum')->group(function () {
     // agences  info

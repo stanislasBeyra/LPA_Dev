@@ -85,10 +85,12 @@ public function editAgence(Request $request)
 public function deleteAgence(Request $request)
 {
     try {
-        // Validate that the agency ID is provided in the request
+        
         $validated = $request->validate([
-            'agenceId' => 'required|exists:agences,id', // Checks if the agency ID exists
+            'agenceId' => 'required|exists:agences,id',
         ]);
+
+     //   dd($request->agenceId);
 
         // Find the agency by its ID
         $agence = Agence::find($request->agenceId);
