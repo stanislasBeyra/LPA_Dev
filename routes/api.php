@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AgenceController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\EmailController;
@@ -49,8 +50,11 @@ Route::post('Admin/update/Customer/info',[AuthController::class,'AdminupdateCust
 Route::post('Admin/update/vendor/info',[AuthController::class,'Adminupdatevendorinfo']);
 // recuperer les methodes de paiement
 Route::get('getCutomerPaiement',[SalaryController::class,'getCutomerPaiement']);
+Route::get('/get/All/Agences/Info',[AgenceController::class,'getAllAgencesInfo']);
 
 Route::middleware('auth:sanctum')->group(function () {
+    // agences  info
+   
     //get Employyee Info
     Route::get('/get/employee/all',[EmployeeController::class,'getallEmploye']);
     //securite des route privé
