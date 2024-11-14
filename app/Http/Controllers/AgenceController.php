@@ -82,6 +82,43 @@ public function editAgence(Request $request)
     }
 }
 
+public function deleteAgence(Request $request)
+{
+    try {
+        // Validate that the agency ID is provided in the request
+        $validated = $request->validate([
+            'agenceId' => 'required|exists:agences,id', // Checks if the agency ID exists
+        ]);
+
+        // Find the agency by its ID
+        $agence = Agence::find($request->agenceId);
+
+        if (!$agence) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Agency not found'
+            ], 404); // HTTP 404 for resource not found
+        }
+
+        // Delete the agency
+        $agence->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Agency successfully deleted'
+        ], 200); // HTTP 200 for successful deletion
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'An error occurred while deleting the agency',
+            'error' => $e->getMessage(),
+            'line' => $e->getLine()
+        ], 500); // HTTP 500 for server error
+    }
+}
+
+
 
 
     public function getAllAgencesInfo()
