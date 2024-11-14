@@ -84,7 +84,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/add/vendor/category',[ProductController::class,'addcategory']);
     Route::get('/get/category/foradmin/',[ProductController::class,'getCategoryforadmin']);
     Route::post('update/Category',[ProductController::class,'updateCategory']);
-    Route::delete('/destroy/Category/{id}',[ProductController::class,'destroyCategory']);
+    Route::post('/destroy/Category/',[ProductController::class,'destroyCategory']);
 
     // --- 3 cart session
     Route::post('/add/cart',[CartController::class,'addToCart']);

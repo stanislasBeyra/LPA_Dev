@@ -494,7 +494,7 @@ class ProductController extends Controller
     }
 
 
-    public function destroyCategory($id)
+    public function destroyCategory(Request $request)
     {
         try {
             $UserVendor = Auth::user();
@@ -504,7 +504,7 @@ class ProductController extends Controller
                     'message' => 'You are not authenticated.'
                 ], 404);
             }
-            $category = productcategories::find($id);
+            $category = productcategories::find($request->categoryId);
             if (!$category) {
                 return response()->json([
                     'success' => false,
