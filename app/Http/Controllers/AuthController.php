@@ -524,7 +524,7 @@ class AuthController extends Controller
                 'avatar' => 'nullable|image|max:2048', // Assurez-vous que l'avatar est une image si vous voulez le mettre à jour
                 'status' => 'nullable|boolean',
                 'net_salary' => 'nullable|numeric',
-                'agencescode' => 'nullable|string|max:255',
+                'agencescode' => 'nullable|integer',
                 'role' => 'nullable|integer|exists:roles,id', // Assurez-vous que le rôle existe dans la table roles
             ]);
 
