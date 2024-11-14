@@ -639,7 +639,7 @@ class ProductController extends Controller
             $category->categories_name = $validatedData['categories_name'];
         }
         if (isset($validatedData['description'])) { // Utilisation de 'description' au lieu de 'decription'
-            $category->description = $validatedData['description'];
+            $category->categories_description = $validatedData['description'];
         }
         $category->save();
 
