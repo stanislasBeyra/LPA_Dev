@@ -356,58 +356,101 @@ class OrderController extends Controller
     }
 
     public function newshowOrderProducts()
-{
-    try {
-        $user = Auth::user();
+    {
+        try {
+            $user = Auth::user();
 
-        // Récupérer toutes les commandes de l'utilisateur avec les produits associés
-        $orders = Order::with('orderItems.product')
-            ->where('user_id', $user->id)
-            ->get(); // Utilisation de get() pour récupérer toutes les commandes
+            // Récupérer la commande par son ID et s'assurer qu'elle appartient à l'utilisateur
+            $order = Order::with('orderItems.product')
+                ->where('user_id', $user->id)
+                ->get(); // Cela lancera une exception si la commande n'est pas trouvée
 
-        // Vérifier si l'utilisateur a des commandes
-        if ($orders->isEmpty()) {
+            // Retourner les détails de la commande avec les produits
+            return response()->json([
+                'success' => true,
+                // 'order_id' => $order->id,
+                // 'user_id' => $order->user_id,
+                'total' => $order->total,
+                'status' => $order->status,
+                'products' => $order->orderItems->map(function ($item) {
+                    return [
+                        'product_id' => $item->product_id,
+                        'quantity' => $item->quantity,
+                        'total' => $item->total,
+                        'product_name' => $item->product->product_name,
+                        "product_images1" => $item->product->product_images1,
+                        "product_images2" => $item->product->product_images1,
+                        "product_images3" => $item->product->product_images3,
+                    ];
+                }),
+            ]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'No orders found for this user.'
+                'message' => 'Order not found.'
             ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'An unexpected error occurred.',
+                'error' => $e->getMessage(),
+            ], 500);
         }
-
-        // Retourner les détails de toutes les commandes
-        return response()->json([
-            'success' => true,
-            'orders' => $orders->map(function ($order) {
-                return [
-                    'order_id' => $order->id,
-                    'total' => $order->total,
-                    'status' => $order->status,
-                    'products' => $order->orderItems->map(function ($item) {
-                        return [
-                            'product_id' => $item->product_id,
-                            'quantity' => $item->quantity,
-                            'total' => $item->total,
-                            'product_name' => $item->product->product_name??null,
-                            'product_images1' => $item->product->product_images1??null,
-                            'product_images2' => $item->product->product_images2??null, // Correction ici
-                            'product_images3' => $item->product->product_images3??null,
-                        ];
-                    }),
-                ];
-            }),
-        ]);
-    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Order not found.',
-        ], 404);
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'An unexpected error occurred.',
-            'error' => $e->getMessage(),
-        ], 500);
     }
-}
+
+//     public function newshowOrderProducts()
+// {
+//     try {
+//         $user = Auth::user();
+
+//         // Récupérer toutes les commandes de l'utilisateur avec les produits associés
+//         $orders = Order::with('orderItems.product')
+//             ->where('user_id', $user->id)
+//             ->get(); // Utilisation de get() pour récupérer toutes les commandes
+
+//         // Vérifier si l'utilisateur a des commandes
+//         if ($orders->isEmpty()) {
+//             return response()->json([
+//                 'success' => false,
+//                 'message' => 'No orders found for this user.'
+//             ], 404);
+//         }
+
+//         // Retourner les détails de toutes les commandes
+//         return response()->json([
+//             'success' => true,
+//             'orders' => $orders->map(function ($order) {
+//                 return [
+//                     'order_id' => $order->id,
+//                     'total' => $order->total,
+//                     'status' => $order->status,
+//                     'products' => $order->orderItems->map(function ($item) {
+//                         return [
+//                             'product_id' => $item->product_id,
+//                             'quantity' => $item->quantity,
+//                             'total' => $item->total,
+//                             'product_name' => $item->product->product_name??null,
+//                             'product_images1' => $item->product->product_images1??null,
+//                             'product_images2' => $item->product->product_images2??null, // Correction ici
+//                             'product_images3' => $item->product->product_images3??null,
+//                         ];
+//                     }),
+//                 ];
+//             }),
+//         ]);
+//     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+//         return response()->json([
+//             'success' => false,
+//             'message' => 'Order not found.',
+//         ], 404);
+//     } catch (\Exception $e) {
+//         return response()->json([
+//             'success' => false,
+//             'message' => 'An unexpected error occurred.',
+//             'error' => $e->getMessage(),
+//         ], 500);
+//     }
+// }
 
 //     public function getallvendororder()
 // {
