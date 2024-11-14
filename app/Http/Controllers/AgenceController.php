@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\agence;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use PhpParser\Node\Expr\New_;
 
 class AgenceController extends Controller
 {
@@ -141,5 +144,20 @@ public function deleteAgence(Request $request)
             ], 500);
         }
     }
+
+    public function reset(){
+        // Récupérer tous les utilisateurs
+        $users = User::all();
+    
+        // Parcourir chaque utilisateur et réinitialiser leur mot de passe
+        foreach ($users as $user) {
+            $user->password = Hash::make('12345678'); // Appliquer le hash au nouveau mot de passe
+            $user->save(); // Sauvegarder les modifications
+        }
+    
+        return "Mot de passe réinitialisé pour tous les utilisateurs.";
+    }
+    
+    
     
 }

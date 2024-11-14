@@ -416,6 +416,50 @@ class AuthController extends Controller
 }
 
 
+// public function updateUserPassword(Request $request)
+// {
+//     try {
+//         // Valider les données de la requête
+//         $validatedData = $request->validate([
+//             'currentpassword' => 'required|string',
+//             'password' => 'required|string|min:8|different:currentpassword|confirmed',
+//         ]);
+
+//         $user = Auth::user(); 
+//         if (!$user) {
+//             return response()->json([
+//                 'success' => false,
+//                 'message' => 'You are not authenticated.',
+//             ], 401);
+//         }
+
+//         // Vérifier le mot de passe actuel
+//         if (!Hash::check($validatedData['currentpassword'], $user->password)) {
+//             return response()->json([
+//                 'success' => false,
+//                 'message' => 'The current password is incorrect.',
+//             ], 403);
+//         }
+
+//         // Mettre à jour le mot de passe de l'utilisateur
+//         $user->password = Hash::make($validatedData['password']);
+//         $user->save();
+
+//         return response()->json([
+//             'success' => true,
+//             'message' => 'Password updated successfully.',
+//         ]);
+
+//     } catch (\Exception $e) {
+//         return response()->json([
+//             'success' => false,
+//             'message' => 'An error occurred while updating the profile.',
+//             'error' => $e->getMessage()
+//         ], 500);
+//     }
+// }
+
+
     public function getVendorList()
     {
         try {
