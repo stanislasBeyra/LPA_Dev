@@ -526,37 +526,105 @@ class ProductController extends Controller
         }
     }
 
-    public function updateCategory(Request $request, $id)
-    {
-        try {
-            // Vérification de l'authentification de l'utilisateur
-            $UserVendor = Auth::user();
-            if (!$UserVendor) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'You are not authenticated.'
-                ], 404);
-            }
+    // public function updateCategory(Request $request, $id)
+    // {
+    //     try {
+    //         // Vérification de l'authentification de l'utilisateur
+    //         $UserVendor = Auth::user();
+    //         if (!$UserVendor) {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => 'You are not authenticated.'
+    //             ], 404);
+    //         }
 
-            // Validation des données de la requête
-            $validatedData = $request->validate([
-                'categories_name' => 'required|string|max:255',
-            ]);
+    //         // Validation des données de la requête
+    //         $validatedData = $request->validate([
+    //             'categories_name' => 'required|string|max:255',
+    //         ]);
 
-            // Récupérer la catégorie par ID
-            $category = productcategories::find($id);
+    //         // Récupérer la catégorie par ID
+    //         $category = productcategories::find($id);
 
-            // Vérifier si la catégorie existe
-            if (!$category) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Category not found.'
-                ], 404);
-            }
+    //         // Vérifier si la catégorie existe
+    //         if (!$category) {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => 'Category not found.'
+    //             ], 404);
+    //         }
 
-            // Vérifier si une catégorie avec le même nom existe déjà (insensible à la casse)
-            $existingCategory = productcategories::where('categories_name', 'LIKE', $validatedData['categories_name'])
-                ->where('id', '!=', $id)
+    //         // Vérifier si une catégorie avec le même nom existe déjà (insensible à la casse)
+    //         $existingCategory = productcategories::where('categories_name', 'LIKE', $validatedData['categories_name'])
+    //             ->where('id', '!=', $id)
+    //             ->first();
+    //         if ($existingCategory) {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => 'A category with this name already exists.'
+    //             ], 409);
+    //         }
+
+    //         // Mise à jour des informations de la catégorie
+    //         $category->categories_name = $validatedData['categories_name'];
+    //         $category->save();
+
+    //         // Retourner une réponse JSON après la mise à jour réussie
+    //         return response()->json([
+    //             'success' => true,
+    //             'message' => 'Category updated successfully.',
+    //             'category' => $category
+    //         ], 200);
+    //     } catch (\Illuminate\Validation\ValidationException $e) {
+    //         // Gestion des erreurs de validation
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Validation failed.',
+    //             'errors' => $e->errors()
+    //         ], 422);
+    //     } catch (\Exception $e) {
+    //         // Gestion des autres exceptions
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'An unexpected error occurred.',
+    //             'error' => $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
+
+    public function updateCategory(Request $request)
+{
+    try {
+        // Vérification de l'authentification de l'utilisateur
+        $UserVendor = Auth::user();
+        if (!$UserVendor) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You are not authenticated.'
+            ], 401); // Utilisation du code 401 pour "Unauthorized"
+        }
+
+        // Validation des données de la requête
+        $validatedData = $request->validate([
+            'categories_name' => 'nullable|string|max:100',
+            'description' => 'nullable|string|max:255' // Correction de "decription" en "description"
+        ]);
+
+        // Récupérer la catégorie par ID
+        $category = ProductCategories::find($request->categoryid); // Assurez-vous que la classe est en PascalCase
+
+        // Vérifier si la catégorie existe
+        if (!$category) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Category not found.'
+            ], 404);
+        }
+
+        // Vérifier si une catégorie avec le même nom existe déjà (insensible à la casse)
+        if (isset($validatedData['categories_name'])) {
+            $existingCategory = ProductCategories::where('categories_name', 'LIKE', $validatedData['categories_name'])
+                ->where('id', '!=', $category->id)
                 ->first();
             if ($existingCategory) {
                 return response()->json([
@@ -564,33 +632,40 @@ class ProductController extends Controller
                     'message' => 'A category with this name already exists.'
                 ], 409);
             }
-
-            // Mise à jour des informations de la catégorie
-            $category->categories_name = $validatedData['categories_name'];
-            $category->save();
-
-            // Retourner une réponse JSON après la mise à jour réussie
-            return response()->json([
-                'success' => true,
-                'message' => 'Category updated successfully.',
-                'category' => $category
-            ], 200);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            // Gestion des erreurs de validation
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation failed.',
-                'errors' => $e->errors()
-            ], 422);
-        } catch (\Exception $e) {
-            // Gestion des autres exceptions
-            return response()->json([
-                'success' => false,
-                'message' => 'An unexpected error occurred.',
-                'error' => $e->getMessage()
-            ], 500);
         }
+
+        // Mise à jour des informations de la catégorie
+        if (isset($validatedData['categories_name'])) {
+            $category->categories_name = $validatedData['categories_name'];
+        }
+        if (isset($validatedData['description'])) { // Utilisation de 'description' au lieu de 'decription'
+            $category->description = $validatedData['description'];
+        }
+        $category->save();
+
+        // Retourner une réponse JSON après la mise à jour réussie
+        return response()->json([
+            'success' => true,
+            'message' => 'Category updated successfully.',
+            'category' => $category
+        ], 200);
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        // Gestion des erreurs de validation
+        return response()->json([
+            'success' => false,
+            'message' => 'Validation failed.',
+            'errors' => $e->errors()
+        ], 422);
+    } catch (\Exception $e) {
+        // Gestion des autres exceptions
+        return response()->json([
+            'success' => false,
+            'message' => 'An unexpected error occurred.',
+            'error' => $e->getMessage()
+        ], 500);
     }
+}
+
 
     public function deleteAllProducts()
     {
