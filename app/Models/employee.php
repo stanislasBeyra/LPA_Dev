@@ -16,11 +16,14 @@ class employee extends Authenticatable
         'firstname',
         'lastname',
         'username',
+        'middle_name',
         'email',
         'mobile',
+        'mobile2',
         'avatar',
         'status',
         'net_salary',
+        'ministry_agency',
         'agencescode',
         'email_verified_at',
         'password',
@@ -35,4 +38,9 @@ class employee extends Authenticatable
     {
         return $this->belongsTo(roles::class, 'role');
     }
+    
+    public function agences(){
+        return $this->belongsTo(agence::class, 'agencescode');
+    }
+
 }

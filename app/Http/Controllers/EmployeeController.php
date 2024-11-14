@@ -53,21 +53,43 @@ class EmployeeController extends Controller
         }
     }
 
-    public function getallEmploye(){
-        try{
-            $employees = employee::all();
-            return response()->json([
-                'success' => true,
-                'employees' => $employees
-                ], 200);
-        }catch(\Exception $e){
-            return response()->json([
-                'success' => false,
-                'message' => 'Erreur lors de la récupération des employés',
-                'error' => $e->getMessage()
-                ], 500);
-        }
+    // public function getallEmploye(){
+    //     try{
+    //         $employees = employee::all();
+    //         return response()->json([
+    //             'success' => true,
+    //             'employees' => $employees
+    //             ], 200);
+    //     }catch(\Exception $e){
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Erreur lors de la récupération des employés',
+    //             'error' => $e->getMessage()
+    //             ], 500);
+    //     }
 
+    // }
+
+    public function getAllEmploye()
+{
+    try {
+        // Retrieve all employees with their associated agencies
+        $employees = Employee::with('agences')->get();
+
+        return response()->json([
+            'success' => true,
+            'employees' => $employees
+        ], 200);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error while retrieving employees',
+            'error' => $e->getMessage()
+        ], 500);
     }
+}
+
+    
+
 }
 

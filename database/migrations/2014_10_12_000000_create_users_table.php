@@ -23,7 +23,7 @@ return new class extends Migration
             $table->double('net_salary')->nullable()->default(0);
             // 1 = Admin, 2 = Vendor, 3 = Client
             $table->integer('role')->default(2);
-            $table->string('agencescode')->nullable();
+            $table->integer('agencescode')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

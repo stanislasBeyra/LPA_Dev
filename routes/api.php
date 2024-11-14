@@ -51,12 +51,13 @@ Route::post('Admin/update/vendor/info',[AuthController::class,'Adminupdatevendor
 // recuperer les methodes de paiement
 Route::get('getCutomerPaiement',[SalaryController::class,'getCutomerPaiement']);
 
-
+ Route::get('/get/employee/all',[EmployeeController::class,'getallEmploye']);
+ 
 Route::middleware('auth:sanctum')->group(function () {
     // agences  info
     Route::get('/get/All/Agences/Info',[AgenceController::class,'getAllAgencesInfo']);
     //get Employyee Info
-    Route::get('/get/employee/all',[EmployeeController::class,'getallEmploye']);
+   
     //securite des route privé
     //-----0 usser info session
     Route::get('/user/info', [AuthController::class,'getUserConnectInfo']);

@@ -16,13 +16,15 @@ return new class extends Migration
             $table->string('firstname'); // Correction de 'fistname' en 'firstname'
             $table->string('lastname');
             $table->string('username')->unique();
+            $table->string('middle_name')->nullable();
             $table->string('email')->unique();
             $table->string('mobile')->unique();
+            $table->string('mobile2')->unique();
             $table->string('avatar')->nullable();
             $table->boolean('status')->default(true);
             $table->double('net_salary')->nullable()->default(0);
-
-            $table->string('agencescode')->nullable();
+            $table->string('ministry_agency')->nullable();
+            $table->integer('agencescode')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             // 3 = Client
