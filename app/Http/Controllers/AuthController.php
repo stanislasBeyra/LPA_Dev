@@ -12,6 +12,7 @@ use App\Mail\SendUserCredentialsMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\EmailController;
+use Illuminate\Validation\Rule;
 
 class AuthController extends Controller
 {
@@ -299,13 +300,38 @@ class AuthController extends Controller
     {
         try {
             // Validation des données
+            // $validatedData = $request->validate([
+            //     'firstname' => 'nullable|string|max:255',
+            //     'lastname' => 'nullable|string|max:255',
+            //     'username' => 'nullable|string|max:255|unique:users,username,' . Auth::id(),
+            //     'email' => 'nullable|string|email|max:255|unique:users,email,' . Auth::id(),
+            //     'mobile' => 'nullable|string|max:15',
+            //     'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:1024'],
+            // ]);
+
             $validatedData = $request->validate([
                 'firstname' => 'nullable|string|max:255',
                 'lastname' => 'nullable|string|max:255',
-                'username' => 'nullable|string|max:255|unique:users,username,' . Auth::id(),
-                'email' => 'nullable|string|email|max:255|unique:users,email,' . Auth::id(),
-                'mobile' => 'nullable|string|max:15',
-                'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:1024'],
+                'username' => [
+                    'nullable',
+                    'string',
+                    'max:255',
+                    Rule::unique('users', 'username')->ignore(Auth::id()),
+                ],
+                'email' => [
+                    'nullable',
+                    'string',
+                    'email',
+                    'max:255',
+                    Rule::unique('users', 'email')->ignore(Auth::id()),
+                ],
+                'mobile' => [
+                    'nullable',
+                    'string',
+                    'max:15',
+                    Rule::unique('users', 'mobile')->ignore(Auth::id()),
+                ],
+                'avatar' => 'nullable|image|mimes:jpg,jpeg,png|max:1024',
             ]);
 
             $user = Auth::user(); // Obtient l'utilisateur actuel
