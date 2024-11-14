@@ -126,7 +126,8 @@ public function deleteAgence(Request $request)
     public function getAllAgencesInfo()
     {
         try {
-            $agences = Agence::all();
+            $agences = Agence::orderBy('id', 'desc')->get();
+
             return response()->json([
                 'success' => true,
                 'data' => $agences
