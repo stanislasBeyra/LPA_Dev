@@ -432,6 +432,7 @@ class ProductController extends Controller
                     'id' => $category->id,
                     'name' => $category->categories_name,
                     'description' => $category->categories_description,
+                    'created_at' => $category->created_at,
                 ];
             });
 

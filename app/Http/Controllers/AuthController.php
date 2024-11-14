@@ -372,20 +372,20 @@ class AuthController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Profil mis à jour avec succès',
+                'message' => 'Profile updated successfully',
                 'user' => $user
             ], 200);
         } catch (\Exception $e) {
             // Gestion des erreurs
             return response()->json([
                 'success' => false,
-                'message' => 'Une erreur est survenue lors de la mise à jour du profil.',
+                'message' => 'An error occurred while updating the profile.',
                 'error' => $e->getMessage()
             ], 500);
         }catch(\Throwable $t){
             return response()->json([
                 'success' => false,
-                'message' => 'Une erreur est survenue lors de la mise à jour du profil.',
+                'message' => 'An error occurred while updating the profile.',
                 'error' => $t->getMessage()
             ], 500);
         }
