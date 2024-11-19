@@ -293,14 +293,19 @@ class AuthController extends Controller
 
 
 
-    private function base64ToFileavatart($base64String, $folder, $filename)
-    {
-        // Supprimer le préfixe de la chaîne Base64
+    private function base64ToFileAvatar($base64String, $folder, $filename)
+{
+    // Vérifier si la chaîne est en base64
+    if (preg_match('/^data:image\/(jpg|jpeg|png);base64,/', $base64String)) {
         $base64String = preg_replace('/^data:image\/(jpg|jpeg|png);base64,/', '', $base64String);
         $base64String = str_replace(' ', '+', $base64String);
         $fileData = base64_decode($base64String);
 
-        // Créer un chemin de fichier dans le répertoire de stockage
+        if ($fileData === false) {
+            throw new \Exception("Invalid Base64 string");
+        }
+
+        // Chemin du fichier
         $filePath = public_path('app/' . $folder . '/' . $filename);
 
         // Créer le dossier si nécessaire
@@ -315,110 +320,161 @@ class AuthController extends Controller
         return $filename;
     }
 
+    throw new \Exception("Invalid Base64 format");
+}
 
+public function updateProfile(Request $request)
+{
+    try {
+        // Validation des données
+        $validatedData = $request->validate([
+            'firstname' => 'nullable|string|max:255',
+            'lastname' => 'nullable|string|max:255',
+            'username' => [
+                'nullable', 'string', 'max:255',
+                Rule::unique('users', 'username')->ignore(Auth::id()),
+            ],
+            'email' => [
+                'nullable', 'string', 'email', 'max:255',
+                Rule::unique('users', 'email')->ignore(Auth::id()),
+            ],
+            'mobile' => [
+                'nullable', 'string', 'max:15',
+                Rule::unique('users', 'mobile')->ignore(Auth::id()),
+            ],
+            'avatar' => 'nullable|string', // Base64 string ou fichier
+        ]);
 
-    public function updateProfile(Request $request)
-    {
-        try {
-            // Validation des données
-            // $validatedData = $request->validate([
-            //     'firstname' => 'nullable|string|max:255',
-            //     'lastname' => 'nullable|string|max:255',
-            //     'username' => 'nullable|string|max:255|unique:users,username,' . Auth::id(),
-            //     'email' => 'nullable|string|email|max:255|unique:users,email,' . Auth::id(),
-            //     'mobile' => 'nullable|string|max:15',
-            //     'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:1024'],
-            // ]);
-
-            $validatedData = $request->validate([
-                'firstname' => 'nullable|string|max:255',
-                'lastname' => 'nullable|string|max:255',
-                'username' => [
-                    'nullable',
-                    'string',
-                    'max:255',
-                    Rule::unique('users', 'username')->ignore(Auth::id()),
-                ],
-                'email' => [
-                    'nullable',
-                    'string',
-                    'email',
-                    'max:255',
-                    Rule::unique('users', 'email')->ignore(Auth::id()),
-                ],
-                'mobile' => [
-                    'nullable',
-                    'string',
-                    'max:15',
-                    Rule::unique('users', 'mobile')->ignore(Auth::id()),
-                ],
-                'avatar' => 'nullable|image|mimes:jpg,jpeg,png|max:1024',
-            ]);
-
-            $user = Auth::user(); // Obtient l'utilisateur actuel
-            if(!$user){
-                return response()->json([
-                    'success' => false,
-                    'message' => 'You are not authenticated.',
-                ]);
-            }
-            // Gestion de l'avatar
-            // if ($request->hasFile('avatar')) {
-            //     $avatar = $request->file('avatar');
-            //     $avatarName = time() . '_' . $avatar->getClientOriginalName();
-            //     $destinationPath = public_path('app/avatars');
-            //     if (!file_exists($destinationPath)) {
-            //         mkdir($destinationPath, 0755, true);
-            //     }
-            //     $avatar->move($destinationPath, $avatarName);
-            //     $user->avatar = 'avatars/' . $avatarName;
-            // }
-
-            if ($request->hasFile('avatar')) {
-                $avatarName = $validatedData['avatar'] ?
-                $this->base64ToFileavatart($validatedData['avatar'], 'avatars', uniqid() . '.png') : null;
-                $user->avatar = 'avatars/' . $avatarName;
-            }
-
-            
-
-            if (!empty($validatedData['firstname'])) {
-                $user->firstname = $validatedData['firstname'];
-            }
-            if (!empty($validatedData['lastname'])) {
-                $user->lastname = $validatedData['lastname'];
-            }
-            if (!empty($validatedData['username'])) {
-                $user->username = $validatedData['username'];
-            }
-            if (!empty($validatedData['email'])) {
-                $user->email = $validatedData['email'];
-            }
-            if (!empty($validatedData['mobile'])) {
-                $user->mobile = $validatedData['mobile'];
-            }
-            $user->save();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Profile updated successfully',
-                'user' => $user
-            ], 200);
-        } catch (\Exception $e) {
-            // Gestion des erreurs
-            return response()->json([
-                'success' => false,
-                'message' => 'An error occurred while updating the profile.',
-                'error' => $e->getMessage()
-            ], 500);
-        }catch(\Throwable $t){
-            return response()->json([
-                'success' => false,
-                'message' => 'An error occurred while updating the profile.',
-                'error' => $t->getMessage()
-            ], 500);
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'You are not authenticated.'], 401);
         }
+
+        // Gestion de l'avatar
+        if ($request->has('avatar')) {
+            $avatarName = $this->base64ToFileAvatar(
+                $validatedData['avatar'],
+                'avatars',
+                uniqid() . '.png'
+            );
+            $user->avatar = 'avatars/' . $avatarName;
+        }
+
+        // Mise à jour des autres champs
+        $user->fill(array_filter($validatedData)); // Met à jour uniquement les champs non vides
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Profile updated successfully',
+            'user' => $user
+        ], 200);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'An error occurred while updating the profile.',
+            'error' => $e->getMessage()
+        ], 500);
     }
+}
+
+
+
+
+    // public function updateProfile(Request $request)
+    // {
+    //     try {
+    //         // Validation des données
+    //         // $validatedData = $request->validate([
+    //         //     'firstname' => 'nullable|string|max:255',
+    //         //     'lastname' => 'nullable|string|max:255',
+    //         //     'username' => 'nullable|string|max:255|unique:users,username,' . Auth::id(),
+    //         //     'email' => 'nullable|string|email|max:255|unique:users,email,' . Auth::id(),
+    //         //     'mobile' => 'nullable|string|max:15',
+    //         //     'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:1024'],
+    //         // ]);
+
+    //         $validatedData = $request->validate([
+    //             'firstname' => 'nullable|string|max:255',
+    //             'lastname' => 'nullable|string|max:255',
+    //             'username' => [
+    //                 'nullable',
+    //                 'string',
+    //                 'max:255',
+    //                 Rule::unique('users', 'username')->ignore(Auth::id()),
+    //             ],
+    //             'email' => [
+    //                 'nullable',
+    //                 'string',
+    //                 'email',
+    //                 'max:255',
+    //                 Rule::unique('users', 'email')->ignore(Auth::id()),
+    //             ],
+    //             'mobile' => [
+    //                 'nullable',
+    //                 'string',
+    //                 'max:15',
+    //                 Rule::unique('users', 'mobile')->ignore(Auth::id()),
+    //             ],
+    //             'avatar' => 'nullable|image|mimes:jpg,jpeg,png|max:1024',
+    //         ]);
+
+    //         $user = Auth::user(); // Obtient l'utilisateur actuel
+    //         if(!$user){
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => 'You are not authenticated.',
+    //             ]);
+    //         }
+    //         // Gestion de l'avatar
+    //         if ($request->hasFile('avatar')) {
+    //             $avatar = $request->file('avatar');
+    //             $avatarName = time() . '_' . $avatar->getClientOriginalName();
+    //             $destinationPath = public_path('app/avatars');
+    //             if (!file_exists($destinationPath)) {
+    //                 mkdir($destinationPath, 0755, true);
+    //             }
+    //             $avatar->move($destinationPath, $avatarName);
+    //             $user->avatar = 'avatars/' . $avatarName;
+    //         }
+
+    //         if (!empty($validatedData['firstname'])) {
+    //             $user->firstname = $validatedData['firstname'];
+    //         }
+    //         if (!empty($validatedData['lastname'])) {
+    //             $user->lastname = $validatedData['lastname'];
+    //         }
+    //         if (!empty($validatedData['username'])) {
+    //             $user->username = $validatedData['username'];
+    //         }
+    //         if (!empty($validatedData['email'])) {
+    //             $user->email = $validatedData['email'];
+    //         }
+    //         if (!empty($validatedData['mobile'])) {
+    //             $user->mobile = $validatedData['mobile'];
+    //         }
+    //         $user->save();
+
+    //         return response()->json([
+    //             'success' => true,
+    //             'message' => 'Profile updated successfully',
+    //             'user' => $user
+    //         ], 200);
+    //     } catch (\Exception $e) {
+    //         // Gestion des erreurs
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'An error occurred while updating the profile.',
+    //             'error' => $e->getMessage()
+    //         ], 500);
+    //     }catch(\Throwable $t){
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'An error occurred while updating the profile.',
+    //             'error' => $t->getMessage()
+    //         ], 500);
+    //     }
+    // }
 
     public function updateUserPassword(Request $request)
 {
