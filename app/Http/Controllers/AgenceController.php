@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\agence;
+use App\Models\employee;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -147,7 +148,8 @@ public function deleteAgence(Request $request)
 
     public function reset(){
         // Récupérer tous les utilisateurs
-        $users = User::all();
+        // $users = User::all();
+        $users = employee::all();
     
         // Parcourir chaque utilisateur et réinitialiser leur mot de passe
         foreach ($users as $user) {

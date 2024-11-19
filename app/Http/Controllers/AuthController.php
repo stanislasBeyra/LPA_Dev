@@ -293,6 +293,27 @@ class AuthController extends Controller
 
 
 
+    private function base64ToFileavatart($base64String, $folder, $filename)
+    {
+        // Supprimer le préfixe de la chaîne Base64
+        $base64String = preg_replace('/^data:image\/(jpg|jpeg|png);base64,/', '', $base64String);
+        $base64String = str_replace(' ', '+', $base64String);
+        $fileData = base64_decode($base64String);
+
+        // Créer un chemin de fichier dans le répertoire de stockage
+        $filePath = public_path('app/' . $folder . '/' . $filename);
+
+        // Créer le dossier si nécessaire
+        $directory = dirname($filePath);
+        if (!file_exists($directory)) {
+            mkdir($directory, 0755, true);
+        }
+
+        // Sauvegarder le fichier
+        file_put_contents($filePath, $fileData);
+
+        return $filename;
+    }
 
 
 
@@ -342,16 +363,24 @@ class AuthController extends Controller
                 ]);
             }
             // Gestion de l'avatar
+            // if ($request->hasFile('avatar')) {
+            //     $avatar = $request->file('avatar');
+            //     $avatarName = time() . '_' . $avatar->getClientOriginalName();
+            //     $destinationPath = public_path('app/avatars');
+            //     if (!file_exists($destinationPath)) {
+            //         mkdir($destinationPath, 0755, true);
+            //     }
+            //     $avatar->move($destinationPath, $avatarName);
+            //     $user->avatar = 'avatars/' . $avatarName;
+            // }
+
             if ($request->hasFile('avatar')) {
-                $avatar = $request->file('avatar');
-                $avatarName = time() . '_' . $avatar->getClientOriginalName();
-                $destinationPath = public_path('app/avatars');
-                if (!file_exists($destinationPath)) {
-                    mkdir($destinationPath, 0755, true);
-                }
-                $avatar->move($destinationPath, $avatarName);
+                $avatarName = $validatedData['avatar'] ?
+                $this->base64ToFileavatart($validatedData['avatar'], 'avatars', uniqid() . '.png') : null;
                 $user->avatar = 'avatars/' . $avatarName;
             }
+
+            
 
             if (!empty($validatedData['firstname'])) {
                 $user->firstname = $validatedData['firstname'];
