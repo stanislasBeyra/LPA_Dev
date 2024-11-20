@@ -10,6 +10,10 @@ use Illuminate\Support\Facades\Log;
 
 class HomeController extends Controller
 {
+
+    public function loginform(){
+        return view('auths.login');
+    }
     public function getUsers()
     {
         // Exemple de données d'utilisateurs avec solde

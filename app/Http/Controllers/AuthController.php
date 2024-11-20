@@ -286,7 +286,7 @@ class AuthController extends Controller
         } catch (\Illuminate\Validation\ValidationException $e) {
             return back()->withErrors($e->validator)->withInput();
         } catch (\Exception $e) {
-            return back()->with('error', 'An error occurred. Please try again.');
+            return back()->with('error', 'An error occurred. Please try again.'.$e->getMessage());
         }
     }
 

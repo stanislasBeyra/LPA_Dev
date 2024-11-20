@@ -17,21 +17,26 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('index');
-});
+
 
 // Route::get('/home', function () {
 //     return view('homecontent',);
 // });
 
 
-Route::get('viewcategorie',[ProductCategoryController::class,'viecatgeroie'])->name('view.categories');
+//Route::get('viewcategorie',[ProductCategoryController::class,'viecatgeroie'])->name('view.categories');
 
+Route::middleware('auth:web')->group(function () {
+    Route::get('/', function () {
+        return view('index');
+    });
+   Route::get('/{page}', [HomeController::class, 'getContent'])->name('content.page');
+    // Ajoutez ici d'autres routes qui nécessitent une authentification
+});
 
-Route::get('/{page}', [HomeController::class, 'getContent'])->name('content.page');
 
 
 Route::post('addCategories',[ProductCategoryController::class,'addCategories'])->name('categories.save');
 Route::post('/login', [AuthController::class, 'Newlogin'])->name('login');
+Route::get('login',[HomeController::class,'loginform'])->name('login');
 Route::post('logout',[AuthController::class,'logout'])->name('logout');
