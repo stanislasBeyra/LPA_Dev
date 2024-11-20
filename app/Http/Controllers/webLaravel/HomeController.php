@@ -115,6 +115,10 @@ class HomeController extends Controller
 
         // Sélectionner la vue en fonction de la page
         switch ($page) {
+            case 'login':
+                return view('auths.login');
+                case 'index':
+                    return view('index');
             case 'home':
                 return view('homecontent', [
                     'users' => $userData['users'],
@@ -149,7 +153,7 @@ class HomeController extends Controller
             case 'historiquemobile':
                 return view('transfert.historiquemobilemonney', ['transactions' => $transactions]);
             default:
-                return view('admin404');  // Page non trouvée
+            return abort(404);
         }
     }
 }

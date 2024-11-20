@@ -219,6 +219,86 @@ class AuthController extends Controller
     }
 
 
+    //     public function Newlogin(Request $request)
+    // {
+    //     try {
+    //         // Valider les champs d'entrée
+    //         $validatedData = $request->validate([
+    //             'username' => 'required|string', // Le champ 'username' est requis
+    //             'password' => 'required|string', // Le champ 'password' est requis
+    //         ]);
+    //         dd($validatedData);
+    //         // Rechercher l'utilisateur par le nom d'utilisateur
+    //         $user = User::where('username', $validatedData['username'])->first();
+
+    //         if (!$user) {
+    //             // Si aucun utilisateur trouvé, retourner une erreur
+    //             return back()->with('error', 'Username does not exist.');
+    //         }
+
+    //         // Vérifier si le mot de passe est correct
+    //         if (!Hash::check($validatedData['password'], $user->password)) {
+    //             // Si le mot de passe est incorrect, retourner une erreur
+    //             return back()->with('error', 'Invalid password.');
+    //         }
+
+    //         // Connecter l'utilisateur (utilisation de Laravel Auth)
+    //         Auth::login($user);
+
+    //         // Rediriger vers le tableau de bord ou une autre page après la connexion
+    //         return redirect()->route('content.page', ['page' => 'home'])->with('success', 'Login successful.');
+    //     } catch (\Illuminate\Validation\ValidationException $e) {
+    //         // Gestion des erreurs de validation
+    //         return back()->withErrors($e->validator)->withInput();
+    //     } catch (\Exception $e) {
+    //         // Gestion des autres exceptions
+    //         return back()->with('error', 'An error occurred. Please try again.');
+    //     }
+    // }
+
+    public function Newlogin(Request $request)
+    {
+        try {
+            // Afficher les données envoyées avant la validation
+            //    dd($request->all()); 
+
+            // Valider les champs d'entrée
+            $validatedData = $request->validate([
+                'username' => 'required|string',
+                'password' => 'required|string',
+            ]);
+
+            // dd($validatedData);  // Vérifiez si cette ligne est atteinte
+
+            // Recherche et authentification
+            $user = User::where('username', $validatedData['username'])->first();
+
+            if (!$user) {
+                return back()->with('error', 'Username does not exist.');
+            }
+
+            if (!Hash::check($validatedData['password'], $user->password)) {
+                return back()->with('error', 'Invalid password.');
+            }
+
+            Auth::login($user);
+            return redirect()->route('content.page', ['page' => 'index'])->with('success', 'Login successful.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()->withErrors($e->validator)->withInput();
+        } catch (\Exception $e) {
+            return back()->with('error', 'An error occurred. Please try again.');
+        }
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect()->route('login')->with('success', 'Successfully logged out');
+    }
+
+
 
 
     public function login(Request $request)
@@ -228,6 +308,7 @@ class AuthController extends Controller
             'email' => 'required|email',
             'password' => 'required',
         ]);
+
 
         // Rechercher l'utilisateur par email
         $user = User::where('email', $request->email)->first();
@@ -252,7 +333,7 @@ class AuthController extends Controller
         Auth::login($user);
 
         // Supprimer les jetons existants pour cet utilisateur
-       // $user->tokens()->delete();
+        // $user->tokens()->delete();
 
         // Création d'un nouveau token d'authentification
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -335,7 +416,7 @@ class AuthController extends Controller
             ]);
 
             $user = Auth::user(); // Obtient l'utilisateur actuel
-            if(!$user){
+            if (!$user) {
                 return response()->json([
                     'success' => false,
                     'message' => 'You are not authenticated.',
@@ -382,7 +463,7 @@ class AuthController extends Controller
                 'message' => 'An error occurred while updating the profile.',
                 'error' => $e->getMessage()
             ], 500);
-        }catch(\Throwable $t){
+        } catch (\Throwable $t) {
             return response()->json([
                 'success' => false,
                 'message' => 'An error occurred while updating the profile.',
@@ -392,98 +473,97 @@ class AuthController extends Controller
     }
 
     public function updateUserPassword(Request $request)
-{
-    try {
-        // Valider les données de la requête
-        $validatedData = $request->validate([
-            'current_password' => 'required|string', // Mot de passe actuel requis
-            'password' => 'required|string|min:8|different:current_password|confirmed', // Nouveau mot de passe requis, différent de l'ancien et confirmé
-        ]);
+    {
+        try {
+            // Valider les données de la requête
+            $validatedData = $request->validate([
+                'current_password' => 'required|string', // Mot de passe actuel requis
+                'password' => 'required|string|min:8|different:current_password|confirmed', // Nouveau mot de passe requis, différent de l'ancien et confirmé
+            ]);
 
-        $user = Auth::user(); // Obtient l'utilisateur actuel
-        if (!$user) {
+            $user = Auth::user(); // Obtient l'utilisateur actuel
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You are not authenticated.',
+                ], 401); // Retourner un code de statut 401 pour l'authentification
+            }
+
+            // Vérifier le mot de passe actuel
+            if (!Hash::check($validatedData['current_password'], $user->password)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'The current password is incorrect.',
+                ], 403); // Retourner un code de statut 403 pour une erreur de validation
+            }
+
+            // Mettre à jour le mot de passe de l'utilisateur
+            $user->password = Hash::make($validatedData['password']); // Utiliser Hash pour hacher le mot de passe
+            $user->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Password updated successfully.',
+            ]);
+        } catch (\Exception $e) {
+            // Gestion des erreurs
             return response()->json([
                 'success' => false,
-                'message' => 'You are not authenticated.',
-            ], 401); // Retourner un code de statut 401 pour l'authentification
-        }
-
-        // Vérifier le mot de passe actuel
-        if (!Hash::check($validatedData['current_password'], $user->password)) {
+                'message' => 'An error occurred while updating the profile.',
+                'error' => $e->getMessage()
+            ], 500);
+        } catch (\Throwable $t) {
             return response()->json([
                 'success' => false,
-                'message' => 'The current password is incorrect.',
-            ], 403); // Retourner un code de statut 403 pour une erreur de validation
+                'message' => 'An error occurred while updating the profile.',
+                'error' => $t->getMessage()
+            ], 500);
         }
-
-        // Mettre à jour le mot de passe de l'utilisateur
-        $user->password = Hash::make($validatedData['password']); // Utiliser Hash pour hacher le mot de passe
-        $user->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Password updated successfully.',
-        ]);
-
-    } catch (\Exception $e) {
-        // Gestion des erreurs
-        return response()->json([
-            'success' => false,
-            'message' => 'An error occurred while updating the profile.',
-            'error' => $e->getMessage()
-        ], 500);
-    } catch (\Throwable $t) {
-        return response()->json([
-            'success' => false,
-            'message' => 'An error occurred while updating the profile.',
-            'error' => $t->getMessage()
-        ], 500);
     }
-}
 
 
-// public function updateUserPassword(Request $request)
-// {
-//     try {
-//         // Valider les données de la requête
-//         $validatedData = $request->validate([
-//             'currentpassword' => 'required|string',
-//             'password' => 'required|string|min:8|different:currentpassword|confirmed',
-//         ]);
+    // public function updateUserPassword(Request $request)
+    // {
+    //     try {
+    //         // Valider les données de la requête
+    //         $validatedData = $request->validate([
+    //             'currentpassword' => 'required|string',
+    //             'password' => 'required|string|min:8|different:currentpassword|confirmed',
+    //         ]);
 
-//         $user = Auth::user(); 
-//         if (!$user) {
-//             return response()->json([
-//                 'success' => false,
-//                 'message' => 'You are not authenticated.',
-//             ], 401);
-//         }
+    //         $user = Auth::user(); 
+    //         if (!$user) {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => 'You are not authenticated.',
+    //             ], 401);
+    //         }
 
-//         // Vérifier le mot de passe actuel
-//         if (!Hash::check($validatedData['currentpassword'], $user->password)) {
-//             return response()->json([
-//                 'success' => false,
-//                 'message' => 'The current password is incorrect.',
-//             ], 403);
-//         }
+    //         // Vérifier le mot de passe actuel
+    //         if (!Hash::check($validatedData['currentpassword'], $user->password)) {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => 'The current password is incorrect.',
+    //             ], 403);
+    //         }
 
-//         // Mettre à jour le mot de passe de l'utilisateur
-//         $user->password = Hash::make($validatedData['password']);
-//         $user->save();
+    //         // Mettre à jour le mot de passe de l'utilisateur
+    //         $user->password = Hash::make($validatedData['password']);
+    //         $user->save();
 
-//         return response()->json([
-//             'success' => true,
-//             'message' => 'Password updated successfully.',
-//         ]);
+    //         return response()->json([
+    //             'success' => true,
+    //             'message' => 'Password updated successfully.',
+    //         ]);
 
-//     } catch (\Exception $e) {
-//         return response()->json([
-//             'success' => false,
-//             'message' => 'An error occurred while updating the profile.',
-//             'error' => $e->getMessage()
-//         ], 500);
-//     }
-// }
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'An error occurred while updating the profile.',
+    //             'error' => $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
 
 
     public function getVendorList()
@@ -524,7 +604,8 @@ class AuthController extends Controller
         ], 200);
     }
 
-    public function getCountUser() {
+    public function getCountUser()
+    {
         try {
             // Authentification de l'utilisateur (peut être utilisé si nécessaire)
             $user = Auth::user();
@@ -550,7 +631,6 @@ class AuthController extends Controller
                 'message' => 'User count successful', // Correction de la faute de frappe
                 'data' => $response
             ], 200);
-
         } catch (\Exception $e) {
             // Gestion des exceptions
             return response()->json([
@@ -607,7 +687,6 @@ class AuthController extends Controller
                 'message' => 'Employee information updated successfully',
                 'data' => $customer
             ]);
-
         } catch (\Exception $e) {
             // Gestion des erreurs
             return response()->json([
@@ -665,7 +744,6 @@ class AuthController extends Controller
                 'message' => 'Employee information updated successfully',
                 'data' => $customer
             ]);
-
         } catch (\Exception $e) {
             // Gestion des erreurs
             return response()->json([
@@ -676,5 +754,4 @@ class AuthController extends Controller
             ], 500);
         }
     }
-
 }

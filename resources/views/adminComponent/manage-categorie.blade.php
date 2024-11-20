@@ -1,7 +1,7 @@
 @extends('components.appconfig') <!-- Extending the appconfig layout -->
 
 @section('content')
-<div class="container pt-4">
+<div class="container-fluid pt-4">
 
     <!-- Section contenant le bouton aligné à droite -->
     <div class="d-flex justify-content-between mb-3">

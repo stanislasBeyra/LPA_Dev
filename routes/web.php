@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\webLaravel\HomeController;
@@ -20,9 +21,9 @@ Route::get('/', function () {
     return view('index');
 });
 
-Route::get('/home', function () {
-    return view('homecontent',);
-});
+// Route::get('/home', function () {
+//     return view('homecontent',);
+// });
 
 
 Route::get('viewcategorie',[ProductCategoryController::class,'viecatgeroie'])->name('view.categories');
@@ -32,3 +33,5 @@ Route::get('/{page}', [HomeController::class, 'getContent'])->name('content.page
 
 
 Route::post('addCategories',[ProductCategoryController::class,'addCategories'])->name('categories.save');
+Route::post('/login', [AuthController::class, 'Newlogin'])->name('login');
+Route::post('logout',[AuthController::class,'logout'])->name('logout');

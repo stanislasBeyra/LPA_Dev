@@ -2,26 +2,12 @@
     <div class="position-sticky">
         <div class="list-group list-group-flush mx-3 mt-4">
             <!-- Dashboard Section -->
-            <a href="/" class="list-group-item list-group-item-action py-2 active" data-mdb-ripple-init aria-current="true">
+            <a href="/" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init aria-current="true">
                 <i class="fas fa-tachometer-alt fa-fw me-3"></i><span>Dashboard</span>
             </a>
 
-           
-
-            <!-- Add Products Section -->
-            <a href="/add-products" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
-                <i class="fas fa-plus fa-fw me-3"></i><span>Add Products</span>
-            </a>
-            <a href="/my-products" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
-                <i class="fas fa-box fa-fw me-3"></i><span>My Products</span>
-            </a>
-            <a href="/my-orders" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
-                <i class="fas fa-box-open fa-fw me-3"></i><span>My Orders</span>
-            </a>
-
-           
-
-           
+            @if(auth()->user()->role == 1)
+            <!-- principal admin -->
             <a href="/manage-vendors" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
                 <i class="fas fa-users-cog fa-fw me-3"></i><span>Manage Vendors</span>
             </a>
@@ -34,7 +20,6 @@
             <a href="/manage-categories" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
                 <i class="fas fa-th-large fa-fw me-3"></i><span>Manage Categories</span>
             </a>
-
             <!-- Vendor Orders and Products -->
             <a href="/vendor-product" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
                 <i class="fas fa-cogs fa-fw me-3"></i><span>Vendor Product</span>
@@ -42,39 +27,27 @@
             <a href="/vendor-order" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
                 <i class="fas fa-truck fa-fw me-3"></i><span>Vendor Order</span>
             </a>
-
-
             <!-- Payments Section -->
             <a href="/employee-paiement" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
                 <i class="fas fa-credit-card fa-fw me-3"></i><span>Payments</span>
             </a>
 
-            <!-- Other Elements -->
-            <a href="/historiques" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
-                <i class="fas fa-chart-pie fa-fw me-3"></i><span>SEO</span>
-            </a>
+            @endif
 
-            <a href="#" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
-                <i class="fas fa-chart-bar fa-fw me-3"></i><span>Orders</span>
+            @if(auth()->user()->role == 3)
+            <!-- vendors-->
+            <a href="/add-products" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
+                <i class="fas fa-plus fa-fw me-3"></i><span>Add Products</span>
             </a>
-            <a href="#" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
-                <i class="fas fa-globe fa-fw me-3"></i><span>International</span>
+            <a href="/my-products" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
+                <i class="fas fa-box fa-fw me-3"></i><span>My Products</span>
             </a>
-            <a href="#" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
-                <i class="fas fa-building fa-fw me-3"></i><span>Partners</span>
+            <a href="/my-orders" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
+                <i class="fas fa-box-open fa-fw me-3"></i><span>My Orders</span>
             </a>
-            <a href="/historique" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
-                <i class="fas fa-calendar fa-fw me-3"></i><span>Historique</span>
-            </a>
-            <a href="/historiquemobile" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
-                <i class="fas fa-calendar fa-fw me-3"></i><span>Mobile Money</span>
-            </a>
-            <a href="/home" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
-                <i class="fas fa-users fa-fw me-3"></i><span>Users</span>
-            </a>
-            <a href="#" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
-                <i class="fas fa-money-bill fa-fw me-3"></i><span>Sales</span>
-            </a>
+            @endif
+
+
         </div>
     </div>
 </nav>
