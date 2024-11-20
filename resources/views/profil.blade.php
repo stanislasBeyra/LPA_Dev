@@ -11,7 +11,7 @@
                 <div class="modal-dialog modal-dialog-centered text-center d-flex justify-content-center">
                     <div class="modal-content w-75">
                         <div class="modal-body p-4">
-                            <img src="{{ Auth::user()->avatar ? asset('app/avatars/' . Auth::user()->avatar) : 'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp' }}" alt="avatar" class="rounded-circle position-absolute top-0 start-50 translate-middle h-50" />
+                            <img src="{{ Auth::user()->avatar ? asset('app/' . Auth::user()->avatar) : 'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp' }}" alt="avatar" class="rounded-circle position-absolute top-0 start-50 translate-middle h-50" />
                             <form>
                                 <div>
                                     <h5 class="pt-5 my-3">Maria Doe</h5>
