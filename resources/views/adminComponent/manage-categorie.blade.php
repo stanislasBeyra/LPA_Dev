@@ -72,7 +72,12 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary" id="submitBtn">Submit</button>
+                        <button type="submit" class="btn btn-primary" id="submitButton">
+                            <span id="buttonText">Submit</span>
+                            <div id="spinner" class="spinner-border text-light" style="display: none; width: 1.5rem; height: 1.5rem;" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </button>
                     </div>
                 </form>
             </div>
@@ -80,11 +85,7 @@
     </div>
 
 
-    <div id="spinner-container" class="d-none text-center">
-        <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-    </div>
+
 
     <!-- Section avec tableau -->
     <section class="mb-4">
@@ -112,10 +113,10 @@
                                 <td>{{ $category->categories_name }}</td> <!-- Nom de la catégorie -->
                                 <td>{{ $category->categories_description }}</td> <!-- Description de la catégorie -->
                                 <td class="text-center">
-                                    <button type="button" class="btn btn-outline-primary btn-sm">
+                                    <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-primary btn-sm" data-mdb-modal-init data-mdb-target="#staticBackdrop1">
                                         <i class="fas fa-edit"></i> Edit
                                     </button>
-                                    <button type="button" class="btn btn-danger btn-sm" data-mdb-modal-init data-mdb-target="#exampleModal1">
+                                    <button type="button" class="btn btn-danger btn-sm" data-mdb-modal-init data-mdb-target="#exampleModal1" onclick="setCategoryId('{{ $category->id }}')">
                                         <i class="fas fa-trash-alt"></i> Delete
                                     </button>
                                 </td>
@@ -138,39 +139,85 @@
                 <h5 class="modal-title text-white text-center" id="deleteConfirmationModalLabel">Delete Confirmation</h5>
             </div>
 
-            <div class="modal-body d-flex flex-column align-items-center text-center">
-                <!-- Icône de suppression au-dessus du texte -->
-                <i class="fas fa-trash-alt mb-3 text-danger" style="font-size: 3rem;"></i> <!-- Icône de suppression -->
-                <p>Are you sure you want to delete this product? This action cannot be undone.</p><!-- Texte de confirmation -->
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-danger">Delete</button>
-            </div>
+            <form id="deleteForm" action="{{ route('delete.categorie') }}" method="POST">
+                @csrf
+                <input type="hidden" id="categoryId" name="categoryId">
+                <div class="modal-body text-center">
+                    <i class="fas fa-trash-alt mb-3 text-danger" style="font-size: 3rem;"></i>
+                    <p>Are you sure you want to delete this category? This action cannot be undone.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-danger" id="deleteButton">
+                        <span id="deleteButtonText">Delete</span>
+                        <div id="deleteSpinner" class="spinner-border text-light" style="display: none; width: 1.5rem; height: 1.5rem;" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </button>
+                </div>
+
+            </form>
         </div>
     </div>
 </div>
 
 
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop1" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true">
+    <div class="modal-dialog ">
+        <div class="modal-content ">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel1">Edit category</h5>
+            </div>
+            <div class="modal-body p-4">
+                <form>
+                    <div class="form-outline mb-4">
+                        <input type="text" id="categoryName" name="categoryName" class="form-control" required />
+                        <label class="form-label" for="categoryName">Category Name</label>
+                    </div>
+
+                    <div class="form-outline mb-4">
+                        <textarea id="categoryDescription" name="categoryDescription" class="form-control" rows="4" required></textarea>
+                        <label class="form-label" for="categoryDescription">Category Description</label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+
 <script>
-    // Lorsque le formulaire est soumis
-    document.getElementById('categoryForm').addEventListener('submit', function(event) {
-        // Empêche le formulaire de se soumettre immédiatement
-        event.preventDefault();
+    function setCategoryId(categoryId) {
+        document.getElementById('categoryId').value = categoryId;
+    }
 
-        // Affiche le spinner
-        document.getElementById('spinner-container').classList.remove('d-none');
+    const submitButton = document.getElementById('submitButton');
+    const spinner = document.getElementById('spinner');
+    const buttonText = document.getElementById('buttonText');
 
-        // Simuler une action qui prend du temps (par exemple, une requête AJAX)
-        setTimeout(function() {
-            // Après la "soumission", cacher le spinner
-            document.getElementById('spinner-container').classList.add('d-none');
+    submitButton.addEventListener('click', function(event) {
+        buttonText.style.display = 'none';
+        spinner.style.display = 'inline-block';
 
-            // Soumettre le formulaire après un délai simulé (par exemple, 2 secondes)
-            document.getElementById('categoryForm').submit();
-        }, 2000); // Remplacez ce délai par l'action réelle (par exemple, AJAX)
+
+    });
+
+    const deleteButton = document.getElementById('deleteButton'); // Bouton de suppression
+    const spinnerdelete = document.getElementById('deleteSpinner'); // Spinner pour le bouton
+    const buttonTextdelete = document.getElementById('deleteButtonText'); // Texte du bouton
+
+    // Ajout de l'événement sur le bouton
+    deleteButton.addEventListener('click', function(event) {
+        // Affiche le spinner et masque le texte
+        buttonTextdelete.style.display = 'none'; // Masque le texte du bouton
+        spinnerdelete.style.display = 'inline-block'; // Affiche le spinner
     });
 </script>
+
 
 <script>
     // Fonction pour masquer les messages après 5 secondes

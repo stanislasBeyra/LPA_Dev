@@ -23,6 +23,9 @@ Route::middleware('auth:web')->group(function () {
         return view('index');
     });
 
+    // delete categorie
+    Route::post('deletecategorie',[ProductCategoryController::class,'deleteCategories'])->name('delete.categorie');
+
     // Route::get('/{page}', [HomeController::class, 'getContent'])->name('content.page');
     Route::get('/{page}', [HomeController::class, 'getContent'])->name('content.page')
          ->where('page', '^(?!login$|register$).*');
