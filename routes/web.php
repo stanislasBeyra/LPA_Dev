@@ -17,26 +17,25 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
-
-// Route::get('/home', function () {
-//     return view('homecontent',);
-// });
-
-
-//Route::get('viewcategorie',[ProductCategoryController::class,'viecatgeroie'])->name('view.categories');
-
+// Route pour la page d'accueil, protégée par le middleware 'auth:web'
 Route::middleware('auth:web')->group(function () {
     Route::get('/', function () {
         return view('index');
     });
-   Route::get('/{page}', [HomeController::class, 'getContent'])->name('content.page');
-    // Ajoutez ici d'autres routes qui nécessitent une authentification
+
+    // Route::get('/{page}', [HomeController::class, 'getContent'])->name('content.page');
+    Route::get('/{page}', [HomeController::class, 'getContent'])->name('content.page')
+         ->where('page', '^(?!login$|register$).*');
 });
 
+// Route de connexion, accessible uniquement pour les utilisateurs non authentifiés
+Route::middleware('guest')->group(function () {
+    Route::get('login', [HomeController::class, 'loginform'])->name('login');
+    Route::post('/login', [AuthController::class, 'Newlogin'])->name('login.post');
+});
 
+// Déconnexion
+Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::post('addCategories',[ProductCategoryController::class,'addCategories'])->name('categories.save');
-Route::post('/login', [AuthController::class, 'Newlogin'])->name('login');
-Route::get('login',[HomeController::class,'loginform'])->name('login');
-Route::post('logout',[AuthController::class,'logout'])->name('logout');
+// Routes publiques
+Route::post('addCategories', [ProductCategoryController::class, 'addCategories'])->name('categories.save');
