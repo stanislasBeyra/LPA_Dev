@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\webLaravel\HomeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,5 +15,14 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('index');
 });
+
+Route::get('/home', function () {
+    return view('homecontent',);
+});
+
+
+
+
+Route::get('/{page}', [HomeController::class, 'getContent']);
