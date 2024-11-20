@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Paytou Dashboard</title>
+    <title>LPA Login</title>
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
     <!-- Google Fonts -->
@@ -95,8 +95,9 @@
         <div class="auth-container card shadow-lg">
             <div class="row auth-header bg-primary p-4 align-items-center">
                 <div class="col-md-6">
-                    <h5 class="mb-3">Bienvenue de retour !</h5>
-                    <p>Connectez-vous pour continuer vers Paytou.</p>
+                    <h5 class="mb-3">Welcome back!</h5>
+                    <p>Log in to continue to Legal Power of Attorney (LPA).</p>
+
                 </div>
                 <div class="col-md-6 text-center">
                     <img src="{{ asset('assets/img/profile-img.png') }}" alt="Profile" class="img-fluid">
