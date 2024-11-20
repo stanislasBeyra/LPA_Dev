@@ -119,8 +119,6 @@ class HomeController extends Controller
 
         // Sélectionner la vue en fonction de la page
         switch ($page) {
-            case 'login':
-                return view('auths.login');
                 case 'index':
                     return view('index');
             case 'home':
