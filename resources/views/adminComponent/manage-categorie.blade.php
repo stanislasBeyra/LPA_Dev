@@ -3,6 +3,8 @@
 @section('content')
 <div class="container-fluid pt-4">
 
+
+
     <!-- Section contenant le bouton aligné à droite -->
     <div class="d-flex justify-content-between mb-3">
         <!-- Affichage des messages d'erreur à gauche -->
@@ -79,54 +81,76 @@
 
 
     <div id="spinner-container" class="d-none text-center">
-    <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
     </div>
-</div>
 
     <!-- Section avec tableau -->
     <section class="mb-4">
-    <div class="card">
-        <div class="card-header text-center py-3">
-            <h5 class="mb-0 text-center">
-                <strong>Categories</strong>
-            </h5>
+        <div class="card">
+            <div class="card-header text-center py-3">
+                <h5 class="mb-0 text-center">
+                    <strong>Categories</strong>
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover text-nowrap">
+                        <thead>
+                            <tr>
+                                <th scope="col">Creation Date</th>
+                                <th scope="col">Category Name</th>
+                                <th scope="col">Category Description</th>
+                                <th scope="col" class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($categories as $category)
+                            <tr>
+                                <td>{{ $category->created_at->format('m/d/Y, h:i:s A') }}</td> <!-- Date de création formatée -->
+                                <td>{{ $category->categories_name }}</td> <!-- Nom de la catégorie -->
+                                <td>{{ $category->categories_description }}</td> <!-- Description de la catégorie -->
+                                <td class="text-center">
+                                    <button type="button" class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-sm" data-mdb-modal-init data-mdb-target="#exampleModal1">
+                                        <i class="fas fa-trash-alt"></i> Delete
+                                    </button>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover text-nowrap">
-                    <thead>
-                        <tr>
-                            <th scope="col">Creation Date</th>
-                            <th scope="col">Category Name</th>
-                            <th scope="col">Category Description</th>
-                            <th scope="col" class="text-center">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($categories as $category)
-                        <tr>
-                            <td>{{ $category->created_at->format('m/d/Y, h:i:s A') }}</td>  <!-- Date de création formatée -->
-                            <td>{{ $category->categories_name }}</td>  <!-- Nom de la catégorie -->
-                            <td>{{ $category->categories_description }}</td>  <!-- Description de la catégorie -->
-                            <td class="text-center">
-                                <button type="button" class="btn btn-outline-primary btn-sm">
-                                    <i class="fas fa-edit"></i> Edit
-                                </button>
-                                <button type="button" class="btn btn-danger btn-sm">
-                                    <i class="fas fa-trash-alt"></i> Delete
-                                </button>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+    </section>
+
+</div>
+
+
+<div class="modal top fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true" data-mdb-backdrop="true" data-mdb-keyboard="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header bg-danger d-flex justify-content-center w-100">
+                <h5 class="modal-title text-white text-center" id="deleteConfirmationModalLabel">Delete Confirmation</h5>
+            </div>
+
+            <div class="modal-body d-flex flex-column align-items-center text-center">
+                <!-- Icône de suppression au-dessus du texte -->
+                <i class="fas fa-trash-alt mb-3 text-danger" style="font-size: 3rem;"></i> <!-- Icône de suppression -->
+                <p>Are you sure you want to delete this product? This action cannot be undone.</p><!-- Texte de confirmation -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger">Delete</button>
             </div>
         </div>
     </div>
-</section>
-
 </div>
+
 
 <script>
     // Lorsque le formulaire est soumis

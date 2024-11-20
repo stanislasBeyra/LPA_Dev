@@ -31,7 +31,7 @@
                                 <td>18,492</td>
                                 <td>228</td>
                                 <td>350</td>
-                                <td>$4,787.64</td>
+                                <td>$4,787.64</td> 
                                 <td>$13.68</td>
                                 <td>
                                     <button type="button" class="btn btn-info btn-sm" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#exampleModal">

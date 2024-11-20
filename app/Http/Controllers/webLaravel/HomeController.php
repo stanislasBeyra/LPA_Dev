@@ -151,6 +151,8 @@ class HomeController extends Controller
 
                         case 'employee-paiement':
                             return view('adminComponent.employee-paiement');
+                            case 'user-profile':
+                                return view('profil');
 
             case 'historiquemobile':
                 return view('transfert.historiquemobilemonney', ['transactions' => $transactions]);
