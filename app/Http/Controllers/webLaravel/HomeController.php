@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\webLaravel;
 
 use App\Http\Controllers\Controller;
+use App\Models\productcategories;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+
 
 class HomeController extends Controller
 {
@@ -85,11 +88,30 @@ class HomeController extends Controller
         return $transactions;
     }
 
+    public function getNewCategories()
+{
+    try {
+        // Récupérer toutes les catégories de produits
+        $categories = productcategories::orderBY('id','desc')->get(); // Utilisation de 'all()' pour récupérer toutes les catégories
+
+        // Retourner la vue avec les catégories
+        return $categories;
+
+    } catch (\Exception $e) {
+        // Enregistrer l'erreur dans les logs pour le débogage
+        Log::error('Error fetching categories: ' . $e->getMessage());
+
+        // Rediriger avec un message d'erreur générique
+        return redirect()->route('view.categories')->with('error', 'An error occurred while fetching categories. Please try again later.');
+    }
+}
+
     public function getContent($page)
     {
         // Récupérer les utilisateurs et les transactions
         $userData = $this->getUsers();
         $transactions = $this->getTransactions();
+        $categories=$this->getNewCategories();
 
         // Sélectionner la vue en fonction de la page
         switch ($page) {
@@ -115,7 +137,7 @@ class HomeController extends Controller
             case 'manage-agencies':
                 return view('adminComponent.manage-agencies');
             case 'manage-categories':
-                return view('adminComponent.manage-categorie');
+                return view('adminComponent.manage-categorie',['categories' => $categories]);
                 case 'vendor-product':
                     return view('adminComponent.vendor-product');
                     case 'vendor-order':

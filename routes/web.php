@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\ProductCategoryController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\webLaravel\HomeController;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +25,10 @@ Route::get('/home', function () {
 });
 
 
+Route::get('viewcategorie',[ProductCategoryController::class,'viecatgeroie'])->name('view.categories');
 
 
-Route::get('/{page}', [HomeController::class, 'getContent']);
+Route::get('/{page}', [HomeController::class, 'getContent'])->name('content.page');
+
+
+Route::post('addCategories',[ProductCategoryController::class,'addCategories'])->name('categories.save');
