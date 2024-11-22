@@ -11,12 +11,14 @@ use App\Http\Controllers\Paytou\apitesteController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SalaryController;
+use App\Http\Controllers\webLaravel\HomeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 
 //create role
 
+Route::get('getUsersWithVendors',[HomeController::class,'getUsersWithVendors']);
 Route::post('reacterole',[RoleController::class,'reacterole']);
 
 Route::delete('/deleterole/{id}',[RoleController::class,'deleterole']);

@@ -31,6 +31,7 @@ Route::middleware('auth:web')->group(function () {
          ->where('page', '^(?!login$|register$).*');
 });
 
+Route::post('/register/vendor', [AuthController::class, 'vendorgister'])->name('vendor.register'); 
 // Route de connexion, accessible uniquement pour les utilisateurs non authentifiés
 Route::middleware('guest')->group(function () {
     Route::get('login', [HomeController::class, 'loginform'])->name('login');

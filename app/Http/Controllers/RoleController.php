@@ -89,4 +89,10 @@ public function getallrole(){
     return response()->json($roles);
 }
 
+public function getvendorregisterrole(){
+    $roles = roles::whereNull('deleted_at')->get();
+
+    return response()->json($roles);
+}
+
 }

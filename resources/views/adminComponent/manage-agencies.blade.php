@@ -77,10 +77,10 @@
                                 <td>Civil Service Agency</td>
                                 <td>001</td>
                                 <td><button class="btn btn-sm btn-outline-primary"> <i class="fas fa-edit"></i> Edit</button>
-                                <button type="button" class="btn btn-danger btn-sm">
+                                    <button type="button" class="btn btn-danger btn-sm">
                                         <i class="fas fa-trash-alt"></i> Delete
                                     </button>
-                            </td>
+                                </td>
                             </tr>
                             <tr>
                                 <td>11/14/2024, 05:07:19 PM</td>
@@ -88,10 +88,10 @@
                                 <td>Ministry of Gender</td>
                                 <td>002</td>
                                 <td><button class="btn btn-sm btn-outline-primary"> <i class="fas fa-edit"></i> Edit</button>
-                                <button type="button" class="btn btn-danger btn-sm">
+                                    <button type="button" class="btn btn-danger btn-sm">
                                         <i class="fas fa-trash-alt"></i> Delete
                                     </button>
-                            </td>
+                                </td>
                             </tr>
                             <tr>
                                 <td>11/14/2024, 05:06:44 PM</td>
@@ -99,10 +99,10 @@
                                 <td>Ministry of Agriculture</td>
                                 <td>003</td>
                                 <td><button class="btn btn-sm btn-outline-primary"> <i class="fas fa-edit"></i> Edit</button>
-                                <button type="button" class="btn btn-danger btn-sm">
+                                    <button type="button" class="btn btn-danger btn-sm">
                                         <i class="fas fa-trash-alt"></i> Delete
                                     </button>
-                            </td>
+                                </td>
                             </tr>
                             <tr>
                                 <td>11/14/2024, 02:23:00 PM</td>
@@ -110,22 +110,23 @@
                                 <td>Ministry Of Health</td>
                                 <td>004</td>
                                 <td><button class="btn btn-sm btn-outline-primary"> <i class="fas fa-edit"></i> Edit</button>
-                                <button type="button" class="btn btn-danger btn-sm">
+                                    <button type="button" class="btn btn-danger btn-sm">
                                         <i class="fas fa-trash-alt"></i> Delete
                                     </button>
-                            </td>
+                                </td>
                             </tr>
                             <tr>
                                 <td>11/14/2024, 01:32:15 PM</td>
                                 <td>Ministry of Education</td>
                                 <td>Ministry of Education</td>
                                 <td>005</td>
-                                <td><button class="btn btn-sm btn-outline-primary"> <i class="fas fa-edit"></i> Edit</button>
-                                <button type="button" class="btn btn-danger btn-sm">
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary"> <i class="fas fa-edit"></i> Edit</button>
+                                    <button type="button" class="btn btn-danger btn-sm">
                                         <i class="fas fa-trash-alt"></i> Delete
                                     </button>
-                            </td>
-                                
+                                </td>
+
                             </tr>
                         </tbody>
                     </table>

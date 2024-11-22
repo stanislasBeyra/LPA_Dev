@@ -4,6 +4,8 @@ namespace App\Http\Controllers\webLaravel;
 
 use App\Http\Controllers\Controller;
 use App\Models\productcategories;
+use App\Models\roles;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -11,7 +13,8 @@ use Illuminate\Support\Facades\Log;
 class HomeController extends Controller
 {
 
-    public function loginform(){
+    public function loginform()
+    {
         return view('auths.login');
     }
     public function getUsers()
@@ -93,34 +96,53 @@ class HomeController extends Controller
     }
 
     public function getNewCategories()
-{
-    try {
-        // Récupérer toutes les catégories de produits
-        $categories = productcategories::orderBY('id','desc')->get(); // Utilisation de 'all()' pour récupérer toutes les catégories
+    {
+        try {
+            // Récupérer toutes les catégories de produits
+            $categories = productcategories::orderBY('id', 'desc')->get(); // Utilisation de 'all()' pour récupérer toutes les catégories
 
-        // Retourner la vue avec les catégories
-        return $categories;
+            // Retourner la vue avec les catégories
+            return $categories;
+        } catch (\Exception $e) {
+            // Enregistrer l'erreur dans les logs pour le débogage
+            Log::error('Error fetching categories: ' . $e->getMessage());
 
-    } catch (\Exception $e) {
-        // Enregistrer l'erreur dans les logs pour le débogage
-        Log::error('Error fetching categories: ' . $e->getMessage());
-
-        // Rediriger avec un message d'erreur générique
-        return redirect()->route('view.categories')->with('error', 'An error occurred while fetching categories. Please try again later.');
+            // Rediriger avec un message d'erreur générique
+            return redirect()->route('view.categories')->with('error', 'An error occurred while fetching categories. Please try again later.');
+        }
     }
+
+    public function getvendorregisterrole()
+{
+    $roles = roles::whereNull('deleted_at')->get();  // Corrigez si nécessaire
+
+    return $roles;
 }
+
+public function getUsersWithVendors()
+{
+    // Récupérer tous les utilisateurs avec leurs fournisseurs associés
+    $users = User::with('vendor')->orderBy('id','desc')->get();  // La méthode 'with' permet de charger les relations en une seule requête
+    
+    return $users;
+}
+
+   
 
     public function getContent($page)
     {
         // Récupérer les utilisateurs et les transactions
         $userData = $this->getUsers();
         $transactions = $this->getTransactions();
-        $categories=$this->getNewCategories();
+        $categories = $this->getNewCategories();
+        $roles = $this->getvendorregisterrole();
+        $vendors=$this->getUsersWithVendors();
 
+      //  dd($roles);
         // Sélectionner la vue en fonction de la page
         switch ($page) {
-                case 'index':
-                    return view('index');
+            case 'index':
+                return view('index');
             case 'home':
                 return view('homecontent', [
                     'users' => $userData['users'],
@@ -137,27 +159,27 @@ class HomeController extends Controller
             case 'historique':
                 return view('transfert.historique', ['transactions' => $transactions]);
             case 'manage-vendors':
-                return view('adminComponent.manage-vendor');
+                return view('adminComponent.manage-vendor', compact('roles','vendors'));
             case 'manage-employees':
                 return view('adminComponent.manage-employee');
             case 'manage-agencies':
                 return view('adminComponent.manage-agencies');
             case 'manage-categories':
-                return view('adminComponent.manage-categorie',['categories' => $categories]);
-                case 'vendor-product':
-                    return view('adminComponent.vendor-product');
-                    case 'vendor-order':
-                        return view('adminComponent.vendor-order');
+                return view('adminComponent.manage-categorie', ['categories' => $categories]);
+            case 'vendor-product':
+                return view('adminComponent.vendor-product');
+            case 'vendor-order':
+                return view('adminComponent.vendor-order');
 
-                        case 'employee-paiement':
-                            return view('adminComponent.employee-paiement');
-                            case 'user-profile':
-                                return view('profil');
+            case 'employee-paiement':
+                return view('adminComponent.employee-paiement');
+            case 'user-profile':
+                return view('profil');
 
             case 'historiquemobile':
                 return view('transfert.historiquemobilemonney', ['transactions' => $transactions]);
             default:
-            return abort(404);
+                return abort(404);
         }
     }
 }

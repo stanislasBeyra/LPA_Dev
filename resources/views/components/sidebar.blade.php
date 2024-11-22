@@ -8,7 +8,7 @@
 
             @if(auth()->user()->role == 1)
             <!-- principal admin -->
-            <a href="/manage-vendors" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
+            <a href="{{ route('content.page', ['page' => 'manage-vendors']) }}" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
                 <i class="fas fa-users-cog fa-fw me-3"></i><span>Manage Vendors</span>
             </a>
             <a href="/manage-employees" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>

@@ -39,6 +39,12 @@ class User extends Authenticatable
         return $this->role === self::ROLE_ADMIN;
     }
 
+    public function vendor()
+    {
+        return $this->hasOne(Vendor::class, 'user_id');  // Assurez-vous que 'user_id' est la clé étrangère dans la table 'vendors'
+    }
+
+
     public function isVendor(): bool
     {
         return $this->role === self::ROLE_VENDOR;

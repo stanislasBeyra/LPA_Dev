@@ -33,7 +33,7 @@
         </div>
 
         <!-- Bouton à droite -->
-        <button type="button" class="btn btn-primary fs-5" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#addCategoryModal">
+        <button type="button" class="btn btn-primary fs-7" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#addCategoryModal">
             ADD CATEGORIES
         </button>
     </div>
@@ -113,7 +113,7 @@
                                 <td>{{ $category->categories_name }}</td> <!-- Nom de la catégorie -->
                                 <td>{{ $category->categories_description }}</td> <!-- Description de la catégorie -->
                                 <td class="text-center">
-                                    <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-primary btn-sm" data-mdb-modal-init data-mdb-target="#staticBackdrop1">
+                                    <button type="button"  data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-primary btn-sm" data-mdb-modal-init data-mdb-target="#staticBackdrop1">
                                         <i class="fas fa-edit"></i> Edit
                                     </button>
                                     <button type="button" class="btn btn-danger btn-sm" data-mdb-modal-init data-mdb-target="#exampleModal1" onclick="setCategoryId('{{ $category->id }}')">
@@ -122,7 +122,7 @@
                                 </td>
                             </tr>
                             @endforeach
-                        </tbody>
+                        </tbody> 
                     </table>
                 </div>
             </div>
@@ -181,7 +181,7 @@
                         <label class="form-label" for="categoryDescription">Category Description</label>
                     </div>
 
-                    <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                    <button type="submit" class="btn btn-outline-primary btn-block">Submit And edit</button>
                 </form>
 
             </div>
@@ -193,7 +193,9 @@
 <script>
     function setCategoryId(categoryId) {
         document.getElementById('categoryId').value = categoryId;
-    }
+    };
+
+    
 
     const submitButton = document.getElementById('submitButton');
     const spinner = document.getElementById('spinner');

@@ -12,6 +12,7 @@ use App\Mail\SendUserCredentialsMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\EmailController;
+use App\Models\vendor;
 use Illuminate\Validation\Rule;
 
 class AuthController extends Controller
@@ -218,43 +219,223 @@ class AuthController extends Controller
         }
     }
 
+    public function vendorgister(Request $request)
+    {
+        try {
 
-    //     public function Newlogin(Request $request)
-    // {
-    //     try {
-    //         // Valider les champs d'entrée
-    //         $validatedData = $request->validate([
-    //             'username' => 'required|string', // Le champ 'username' est requis
-    //             'password' => 'required|string', // Le champ 'password' est requis
-    //         ]);
-    //         dd($validatedData);
-    //         // Rechercher l'utilisateur par le nom d'utilisateur
-    //         $user = User::where('username', $validatedData['username'])->first();
+            $validated = $request->validate([
+                // Section de la table user
+                'firstname' => 'required|string|max:255',
+                'lastname' => 'required|string|max:255',
+                'role' => 'required|integer',
+                'email' => 'required|email|unique:users',
+                'mobile' => 'required|string|max:15|unique:users',
 
-    //         if (!$user) {
-    //             // Si aucun utilisateur trouvé, retourner une erreur
-    //             return back()->with('error', 'Username does not exist.');
-    //         }
+                // Section de la table vendor
+                'vendorname' => 'required|string|max:255|unique:vendors',
+                'contactpersonname' => 'required|string|max:255',
+                'businessregno' => 'required|string|max:255',
+                'taxidnumber' => 'required|string|max:255',
+                'businesscategory' => 'required|string|max:255',
+                'businessaddress' => 'required|string',
+                'bank_name_1' => 'nullable|string|max:255',
+                'bankaccount1' => 'nullable|string|max:255',
+                'bankname2' => 'nullable|string|max:255',
+                'bankaccount2' => 'nullable|string|max:255',
+                'accountholdername' => 'nullable|string|max:255',
+                'businesscertificate.*' => 'nullable|file|mimes:pdf,jpg,png|max:2048', // Pour plusieurs fichiers
+                'taxcertificate.*' => 'nullable|file|mimes:pdf,jpg,png|max:2048', // Pour plusieurs fichiers
+                'passportorID.*' => 'nullable|file|mimes:pdf,jpg,png|max:2048', // Pour plusieurs fichiers
+            ], [
+                // Messages personnalisés pour la section user
+                'firstname.required' => 'The first name is required.',
+                'lastname.required' => 'The last name is required.',
+                'role.required' => 'The role is required.',
+                'role.in' => 'The role must be one of the following values: 1, 2, or 3.',
+                'email.required' => 'The email address is required.',
+                'email.email' => 'The email must be a valid email address.',
+                'email.unique' => 'The email has already been taken.',
+                'mobile.required' => 'The phone number is required.',
+                'mobile.max' => 'The phone number must not exceed 15 characters.',
 
-    //         // Vérifier si le mot de passe est correct
-    //         if (!Hash::check($validatedData['password'], $user->password)) {
-    //             // Si le mot de passe est incorrect, retourner une erreur
-    //             return back()->with('error', 'Invalid password.');
-    //         }
+                // Messages personnalisés pour la section vendor
+                'vendorname.required' => 'The vendor name is required.',
+                'contactpersonname.required' => 'The contact person\'s name is required.',
+                'businessregno.required' => 'The business registration number is required.',
+                'taxidnumber.required' => 'The tax identification number is required.',
+                'businesscategory.required' => 'The business category is required.',
+                'businessaddress.required' => 'The business address is required.',
+                'bank_name_1.max' => 'The bank name must not exceed 255 characters.',
+                'bankaccount1.max' => 'The bank account number must not exceed 255 characters.',
+                'businesscertificate.mimes' => 'The business certificate must be a file of type: pdf, jpg, png.',
+                'businesscertificate.max' => 'The business certificate must not exceed 2 MB.',
+                'taxcertificate.mimes' => 'The tax certificate must be a file of type: pdf, jpg, png.',
+                'taxcertificate.max' => 'The tax certificate must not exceed 2 MB.',
+                'passportorID.mimes' => 'The passport or ID must be a file of type: pdf, jpg, png.',
+                'passportorID.max' => 'The passport or ID must not exceed 2 MB.',
+            ]);
 
-    //         // Connecter l'utilisateur (utilisation de Laravel Auth)
-    //         Auth::login($user);
 
-    //         // Rediriger vers le tableau de bord ou une autre page après la connexion
-    //         return redirect()->route('content.page', ['page' => 'home'])->with('success', 'Login successful.');
-    //     } catch (\Illuminate\Validation\ValidationException $e) {
-    //         // Gestion des erreurs de validation
-    //         return back()->withErrors($e->validator)->withInput();
-    //     } catch (\Exception $e) {
-    //         // Gestion des autres exceptions
-    //         return back()->with('error', 'An error occurred. Please try again.');
-    //     }
-    // }
+
+            $user = User::create([
+                'firstname' => $validated['firstname'],
+                'lastname' => $validated['lastname'],
+                'username' => $validated['vendorname'],
+                'email' => $validated['email'],
+                'mobile' => $validated['mobile'],
+                'password' => Hash::make('12345678'),
+                'role' => $validated['role'],
+            ]);
+
+
+
+            // $businessCertificatePaths = [];
+
+            // if ($request->hasFile('businesscertificate')) {
+            //     $files = $request->file('businesscertificate');
+
+            //     $directory = public_path('app/businesscertificate');
+            //     if (!file_exists($directory)) {
+            //         mkdir($directory, 0755, true);
+            //     }
+
+            //     foreach ($files as $file) {
+            //         $businessCertificatePath = 'businesscertificate/' . time() . '_' . $file->getClientOriginalName();
+
+            //         $file->move($directory, $businessCertificatePath);
+
+            //         $businessCertificatePaths[] = $businessCertificatePath;
+            //     }
+            // }
+
+
+            $businessCertificatePaths = []; // Tableau pour stocker les chemins des fichiers
+
+            if ($request->hasFile('businesscertificate')) {
+                // Récupérer tous les fichiers
+                $files = $request->file('businesscertificate');
+
+                // Spécifier le répertoire de destination
+                $directory = public_path('app/businesscertificate');
+
+                // Créer le répertoire si nécessaire
+                if (!file_exists($directory)) {
+                    mkdir($directory, 0755, true);
+                }
+
+                // Parcourir tous les fichiers
+                foreach ($files as $file) {
+                    // Récupérer l'extension du fichier
+                    $extension = $file->getClientOriginalExtension();
+                    // Générer un nouveau nom pour chaque fichier
+                    $businessCertificatePath = 'businesscertificate/' . time() . '_' . uniqid() . '.' . $extension;
+
+                    // Déplacer le fichier vers le répertoire de destination
+                    $file->move($directory, $businessCertificatePath);
+
+                    // Ajouter le chemin du fichier au tableau
+                    $businessCertificatePaths[] = $businessCertificatePath;
+                }
+            }
+
+            $businessCertificatePathsJson = json_encode($businessCertificatePaths);
+
+            $businessCertificatePathsJson = str_replace('\/', '/', $businessCertificatePathsJson);
+
+
+            $taxCertificatePaths = []; // Tableau pour stocker les chemins des fichiers
+
+            if ($request->hasFile('taxcertificate')) {
+                // Récupérer tous les fichiers
+                $files = $request->file('taxcertificate');
+
+                // Spécifier le répertoire de destination
+                $directory = public_path('app/taxcertificate');
+
+                // Créer le répertoire si nécessaire
+                if (!file_exists($directory)) {
+                    mkdir($directory, 0755, true);
+                }
+
+                // Parcourir tous les fichiers
+                foreach ($files as $file) {
+                    // Générer un nouveau nom pour chaque fichier
+                    $extension = $file->getClientOriginalExtension(); // Récupérer l'extension du fichier
+                    $taxCertificatePath = 'taxcertificate/' . time() . '_' . uniqid() . '.' . $extension;
+
+                    // Déplacer le fichier vers le répertoire de destination
+                    $file->move($directory, $taxCertificatePath);
+
+                    // Ajouter le chemin du fichier au tableau
+                    $taxCertificatePaths[] = $taxCertificatePath;
+                }
+            }
+            $taxCertificatePathsJson = json_encode($taxCertificatePaths);
+            $taxCertificatePathsJson = str_replace('\/', '/', $taxCertificatePathsJson);
+
+
+
+
+
+
+            $passportOrIDPaths = []; // Tableau pour stocker les chemins des fichiers
+
+            if ($request->hasFile('passportorID')) {
+                // Récupérer tous les fichiers
+                $files = $request->file('passportorID');
+
+                // Spécifier le répertoire de destination
+                $directory = public_path('app/passportorID');
+
+                // Créer le répertoire si nécessaire
+                if (!file_exists($directory)) {
+                    mkdir($directory, 0755, true);
+                }
+
+                // Parcourir tous les fichiers
+                foreach ($files as $file) {
+                    // Générer un nouveau nom pour chaque fichier
+                    $extension = $file->getClientOriginalExtension(); // Récupérer l'extension du fichier
+                    $passportOrIDPath = 'passportorID/' . time() . '_' . uniqid() . '.' . $extension;
+
+                    // Déplacer le fichier vers le répertoire de destination
+                    $file->move($directory, $passportOrIDPath);
+
+                    // Ajouter le chemin du fichier au tableau
+                    $passportOrIDPaths[] = $passportOrIDPath;
+                }
+            }
+
+
+            $passportOrIDPathsJson = json_encode($passportOrIDPaths);
+            $passportOrIDPathsJson = str_replace('\/', '/', $passportOrIDPathsJson);
+
+            // Création du fournisseur
+            $vendor = Vendor::create([
+                'user_id' => $user->id, // Associe l'utilisateur au fournisseur
+                'vendorname' => $validated['vendorname'],
+                'contactpersonname' => $validated['contactpersonname'],
+                'businessregno' => $validated['businessregno'],
+                'taxidnumber' => $validated['taxidnumber'],
+                'businesscategory' => $validated['businesscategory'],
+                'businessaddress' => $validated['businessaddress'],
+                'bankname1' => $validated['bank_name_1'] ?? null,
+                'bankaccount1' => $validated['bankaccount1'] ?? null,
+                'bankname2' => $validated['bankname2'] ?? null,
+                'bankaccount2' => $validated['bankaccount2'] ?? null,
+                'accountholdername' => $validated['accountholdername'] ?? null,
+                'businesscertificate' => $businessCertificatePathsJson,
+                'taxcertificate' => $taxCertificatePathsJson,
+                'passportorID' => $passportOrIDPathsJson,
+            ]);
+
+            return back()->with('success', 'Vendor information saved successfully.');
+        } catch (\Throwable $t) {
+            return back()->with('error', 'An error occurred: ' . $t->getMessage());
+        }
+    }
+
+
 
     public function Newlogin(Request $request)
     {
@@ -286,7 +467,7 @@ class AuthController extends Controller
         } catch (\Illuminate\Validation\ValidationException $e) {
             return back()->withErrors($e->validator)->withInput();
         } catch (\Exception $e) {
-            return back()->with('error', 'An error occurred. Please try again.'.$e->getMessage());
+            return back()->with('error', 'An error occurred. Please try again.' . $e->getMessage());
         }
     }
 
