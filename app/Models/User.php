@@ -41,7 +41,7 @@ class User extends Authenticatable
 
     public function vendor()
     {
-        return $this->hasOne(Vendor::class, 'user_id');  // Assurez-vous que 'user_id' est la clé étrangère dans la table 'vendors'
+        return $this->hasOne(vendor::class, 'user_id');  // Assurez-vous que 'user_id' est la clé étrangère dans la table 'vendors'
     }
 
     public function role()

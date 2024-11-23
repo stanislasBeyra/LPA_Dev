@@ -68,7 +68,7 @@ class EmployeeappController extends Controller
                     'message' => 'Incorrect username',
                 ], 401);
             }
-            if($user->status==1){
+            if($user->status==0){
                 return response()->json([
                     'success'=>false,
                     'message'=>'Your account is inactive'
