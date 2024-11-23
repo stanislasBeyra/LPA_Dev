@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\vendor;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
 class VendorController extends Controller
@@ -19,14 +20,13 @@ class VendorController extends Controller
             ->with(['vendor', 'role'])  // Eager load vendor and role relationships
             ->orderBy('id', 'desc')  // Order by user id in descending order
             ->get();
-    
-         //   dd($users);
+
+        //   dd($users);
+        // return $users;
         // Return the view with the users data
         return view('adminComponent.vendors-detail', compact('users'));
-
-        
     }
-    
+
 
 
     public function VendorinfoUpdate(Request $request)
@@ -157,124 +157,31 @@ class VendorController extends Controller
         }
     }
 
-    //     public function VendorinfoUpdate(Request $request)
-    // {
-    //     try {
-    //         // Récupération du fournisseur et de l'utilisateur
+    public function resetVendorPassword(Request $request)
+{
+    try {
+        // Checks if the user ID is provided and the user exists
+        $user = User::find($request->userid);
+        
+        if (!$user) {
+            return back()->with('error', 'User not found');
+        }
+        
+        // Resets the user's password
+        $user->password = Hash::make('1234567890');
+        
+        // Saves the user after password reset
+        $user->save();
+        
+        // Returns a success message
+        return back()->with('success', 'Password reset successfully');
+        
+    } catch (\Exception $e) {
+        // Returns an error message in case of an exception
+        return back()->with('error', 'An error occurred: ' . $e->getMessage());
+    }
+}
 
-    //         $user = User::findOrFail($request->user_id);
-    //         if(!$user){
-    //             return back()->with('error','Vendor not found');
-    //         }
-    //         $vendor = Vendor::where('user_id',$user->id)->first();
-    //         if(!$vendor){
-    //             return back()->with('error','Vendor not found');
-    //         }
-
-    //         // Validation des données
-    //         $validated = $request->validate([
-    //             // Section de la table user
-    //             'firstname' => 'required|string|max:255',
-    //             'lastname' => 'required|string|max:255',
-    //             'role' => 'required|integer',
-    //             'email' => [
-    //                 'required',
-    //                 'email',
-    //                 Rule::unique('users', 'email')->ignore($user->id),
-    //             ],
-    //             'mobile' => [
-    //                 'required',
-    //                 'string',
-    //                 'max:15',
-    //                 Rule::unique('users', 'mobile')->ignore($user->id),
-    //             ],
-
-    //             // Section de la table vendor
-    //             'vendorname' => [
-    //                 'required',
-    //                 'string',
-    //                 'max:255',
-    //                 Rule::unique('vendors', 'vendorname')->ignore($vendor->id),
-    //             ],
-    //             'contactpersonname' => 'required|string|max:255',
-    //             'businessregno' => [
-    //                 'required',
-    //                 'string',
-    //                 'max:255',
-    //                 Rule::unique('vendors', 'businessregno')->ignore($vendor->id),
-    //             ],
-    //             'taxidnumber' => [
-    //                 'required',
-    //                 'string',
-    //                 'max:255',
-    //                 Rule::unique('vendors', 'taxidnumber')->ignore($vendor->id),
-    //             ],
-    //             'businesscategory' => 'required|string|max:255',
-    //             'businessaddress' => 'required|string',
-    //             'businessemail' => [
-    //                 'nullable',
-    //                 'email',
-    //                 Rule::unique('vendors', 'businessemail')->ignore($vendor->id),
-    //             ],
-    //             'bank_name_1' => 'nullable|string|max:255',
-    //             'bankaccount1' => 'nullable|string|max:255',
-    //             'bankname2' => 'nullable|string|max:255',
-    //             'bankaccount2' => 'nullable|string|max:255',
-    //             'accountholdername' => 'nullable|string|max:255',
-    //         ], [
-    //             // Messages personnalisés pour la section user
-    //             'firstname.required' => 'Le prénom est requis.',
-    //             'lastname.required' => 'Le nom est requis.',
-    //             'role.required' => 'Le rôle est requis.',
-    //             'email.required' => 'L\'adresse email est requise.',
-    //             'email.email' => 'L\'adresse email doit être valide.',
-    //             'email.unique' => 'Cette adresse email est déjà utilisée.',
-    //             'mobile.required' => 'Le numéro de téléphone est requis.',
-    //             'mobile.max' => 'Le numéro de téléphone ne doit pas dépasser 15 caractères.',
-    //             'mobile.unique' => 'Ce numéro de téléphone est déjà utilisé.',
-
-    //             // Messages personnalisés pour la section vendor
-    //             'vendorname.required' => 'Le nom du fournisseur est requis.',
-    //             'contactpersonname.required' => 'Le nom de la personne de contact est requis.',
-    //             'businessregno.required' => 'Le numéro d\'enregistrement de l\'entreprise est requis.',
-    //             'taxidnumber.required' => 'Le numéro d\'identification fiscale est requis.',
-    //             'businesscategory.required' => 'La catégorie de l\'entreprise est requise.',
-    //             'businessaddress.required' => 'L\'adresse de l\'entreprise est requise.',
-    //             'businessemail.email' => 'L\'adresse email de l\'entreprise doit être valide.',
-    //             'businessemail.unique' => 'Cette adresse email d\'entreprise est déjà utilisée.',
-    //         ]);
-
-    //         // Mise à jour de l'utilisateur
-    //         $user->update([
-    //             'firstname' => $validated['firstname'],
-    //             'lastname' => $validated['lastname'],
-    //             'username' => $validated['vendorname'],
-    //             'email' => $validated['email'],
-    //             'mobile' => $validated['mobile'],
-    //             'role' => $validated['role'],
-    //         ]);
-
-    //         // Mise à jour du fournisseur
-    //         $vendor->update([
-    //             'vendorname' => $validated['vendorname'],
-    //             'contactpersonname' => $validated['contactpersonname'],
-    //             'businessregno' => $validated['businessregno'],
-    //             'taxidnumber' => $validated['taxidnumber'],
-    //             'businesscategory' => $validated['businesscategory'],
-    //             'businessaddress' => $validated['businessaddress'],
-    //             'businessemail' => $validated['businessemail'] ?? null,
-    //             'bankname1' => $validated['bank_name_1'] ?? null,
-    //             'bankaccount1' => $validated['bankaccount1'] ?? null,
-    //             'bankname2' => $validated['bankname2'] ?? null,
-    //             'bankaccount2' => $validated['bankaccount2'] ?? null,
-    //             'accountholdername' => $validated['accountholdername'] ?? null,
-    //         ]);
-
-    //         return back()->with('success', 'Les informations du fournisseur ont été mises à jour avec succès.');
-    //     } catch (\Throwable $t) {
-    //         return back()->with('error', 'Une erreur s\'est produite : ' . $t->getMessage());
-    //     }
-    // }
 
     public function deleteVendors(Request $request)
     {

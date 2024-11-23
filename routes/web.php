@@ -39,6 +39,7 @@ Route::middleware('auth:web')->group(function () {
 
 // In routes/web.php
 Route::get('/vendors-detail/{id}', [VendorController::class, 'getUsersWithVendors'])->name('users.vendors');
+Route::post('/vendor/reset-password', [VendorController::class, 'resetVendorPassword'])->name('vendor.resetPassword');
 
 
     // Route::get('/{page}', [HomeController::class, 'getContent'])->name('content.page');

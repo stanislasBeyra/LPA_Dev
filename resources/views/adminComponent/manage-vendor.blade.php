@@ -266,7 +266,7 @@
 
                         <td>
                            <a href="/vendors-detail/{{$user->id}}" class="btn btn-info btn-sm"><i class="fas fa-eye"></i>Details</a>
-                          
+
                            <button data-mdb-button-init data-mdb-ripple-init
                               class="btn btn-outline-primary btn-sm"
                               data-mdb-modal-init data-mdb-target="#staticBackdrop1"
@@ -301,7 +301,7 @@
             <h5 class="modal-title" id="exampleModalLabel1">Edit Vendor</h5>
          </div>
          <div class="modal-body p-4">
-         <form id="editVendorForm" method="POST" action="{{ route('Vendor.Update') }}">
+            <form id="editVendorForm" method="POST" action="{{ route('Vendor.Update') }}">
 
                @csrf
                <input type="hidden" id="editUserId" name="user_id" />
