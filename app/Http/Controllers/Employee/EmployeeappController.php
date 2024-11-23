@@ -72,7 +72,7 @@ class EmployeeappController extends Controller
                 return response()->json([
                     'success'=>false,
                     'message'=>'Your account is inactive'
-                ]);
+                ],403);
             }
             if (!Hash::check($request->password, $user->password)) {
                 return response()->json([

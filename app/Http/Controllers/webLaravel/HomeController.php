@@ -177,8 +177,7 @@ class HomeController extends Controller
                 return view('transfert.historique', ['transactions' => $transactions]);
             case 'manage-vendors':
                 return view('adminComponent.manage-vendor', compact('roles', 'vendors'));
-                case 'vendors-detail':
-                    return view('adminComponent.vendors-detail', compact('roles', 'vendors'));
+                
             case 'manage-employees':
                 return view('adminComponent.manage-employee');
             case 'manage-agencies':

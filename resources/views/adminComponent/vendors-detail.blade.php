@@ -3,6 +3,7 @@
 @section('content')
 <div class="container-fluid pt-4">
 
+    @foreach($users as $user)
     <section>
         <div class="container-fluid py-5">
 
@@ -59,7 +60,7 @@
                         <div class="card-body text-center">
                             <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar"
                                 class="rounded-circle img-fluid" style="width: 150px;">
-                            <h5 class="my-3">Jane Doe</h5>
+                            <h5 class="my-3">{{$user->username}}</h5>
                             <p class="text-muted mb-1">Vendor</p>
                             <p class="text-muted mb-4">Full Name: Jane Doe</p>
                             <div class="d-flex justify-content-center mb-2">
@@ -67,33 +68,7 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Contact Info Card -->
-                    <!-- <div class="card mb-4 mb-lg-0">
-                        <div class="card-body p-0">
-                            <ul class="list-group list-group-flush rounded-3">
-                                <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                                    <i class="fas fa-globe fa-lg text-warning"></i>
-                                    <p class="mb-0">https://example.com</p>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                                    <i class="fab fa-github fa-lg text-body"></i>
-                                    <p class="mb-0">githubuser</p>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                                    <i class="fab fa-twitter fa-lg" style="color: #55acee;"></i>
-                                    <p class="mb-0">@janedoe</p>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                                    <i class="fab fa-instagram fa-lg" style="color: #ac2bac;"></i>
-                                    <p class="mb-0">janedoe_instagram</p>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                                    <i class="fab fa-facebook-f fa-lg" style="color: #3b5998;"></i>
-                                    <p class="mb-0">janedoe_fb</p>
-                                </li>
-                            </ul>
-                        </div>
-                    </div> -->
+                   
 
                     <div class="card mb-6 mb-lg-0">
                         <div class="card-body">
@@ -103,18 +78,18 @@
                                     <p class="mb-0">Street Address</p>
                                 </div>
                                 <div class="col-sm-9">
-                                    <p class="text-muted mb-0">123 Street Name, City</p>
+                                    <p class="text-muted mb-0">{{$user->vendor->businessaddress??null}}</p>
                                 </div>
                             </div>
                             <hr>
-                            <div class="row">
+                            <!-- <div class="row">
                                 <div class="col-sm-3">
                                     <p class="mb-0">Country</p>
                                 </div>
                                 <div class="col-sm-9">
                                     <p class="text-muted mb-0">Country Name</p>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
 
@@ -131,7 +106,7 @@
                                     <p class="mb-0">Full Name</p>
                                 </div>
                                 <div class="col-sm-9">
-                                    <p class="text-muted mb-0">Jane Doe</p>
+                                    <p class="text-muted mb-0">{{$user->firstname}} {{$user->lastname}}</p>
                                 </div>
                             </div>
                             <hr>
@@ -140,7 +115,7 @@
                                     <p class="mb-0">Email</p>
                                 </div>
                                 <div class="col-sm-9">
-                                    <p class="text-muted mb-0">janedoe@example.com</p>
+                                    <p class="text-muted mb-0">{{$user->email}}</p>
                                 </div>
                             </div>
                             <hr>
@@ -149,7 +124,7 @@
                                     <p class="mb-0">Vendor Name</p>
                                 </div>
                                 <div class="col-sm-9">
-                                    <p class="text-muted mb-0">Jane Doe Enterprises</p>
+                                    <p class="text-muted mb-0">{{$user->username}}</p>
                                 </div>
                             </div>
                             <hr>
@@ -158,7 +133,7 @@
                                     <p class="mb-0">Username</p>
                                 </div>
                                 <div class="col-sm-9">
-                                    <p class="text-muted mb-0">janedoe123</p>
+                                    <p class="text-muted mb-0">{{$user->username}}</p>
                                 </div>
                             </div>
                             <hr>
@@ -167,7 +142,7 @@
                                     <p class="mb-0">Contact Person Name</p>
                                 </div>
                                 <div class="col-sm-9">
-                                    <p class="text-muted mb-0">John Doe</p>
+                                    <p class="text-muted mb-0">{{$user->vendor->contactpersonname??'NA'}}</p>
                                 </div>
                             </div>
                             <hr>
@@ -176,7 +151,7 @@
                                     <p class="mb-0">Business Email</p>
                                 </div>
                                 <div class="col-sm-9">
-                                    <p class="text-muted mb-0">contact@janedoeenterprises.com</p>
+                                    <p class="text-muted mb-0">{{$user->vendor->businessemail??null}}</p>
                                 </div>
                             </div>
                             <hr>
@@ -185,7 +160,7 @@
                                     <p class="mb-0">Phone Number</p>
                                 </div>
                                 <div class="col-sm-9">
-                                    <p class="text-muted mb-0">+1234567890</p>
+                                    <p class="text-muted mb-0">{{$user->mobile}}</p>
                                 </div>
                             </div>
                         </div>
@@ -202,7 +177,7 @@
                                     <p class="mb-0">Business Registration Number</p>
                                 </div>
                                 <div class="col-sm-9">
-                                    <p class="text-muted mb-0">BR123456789</p>
+                                    <p class="text-muted mb-0">{{$user->vendor->businessregno??null}}</p>
                                 </div>
                             </div>
                             <hr>
@@ -211,7 +186,7 @@
                                     <p class="mb-0">Tax ID Number</p>
                                 </div>
                                 <div class="col-sm-9">
-                                    <p class="text-muted mb-0">TIN987654321</p>
+                                    <p class="text-muted mb-0">{{$user->vendor->taxidnumber??null}}</p>
                                 </div>
                             </div>
                             <hr>
@@ -220,7 +195,7 @@
                                     <p class="mb-0">Business Category</p>
                                 </div>
                                 <div class="col-sm-9">
-                                    <p class="text-muted mb-0">E-commerce</p>
+                                    <p class="text-muted mb-0">{{$user->vendor->businesscategory??null}}</p>
                                 </div>
                             </div>
                         </div>
@@ -240,7 +215,7 @@
                                     <p class="mb-0">Bank Name 1</p>
                                 </div>
                                 <div class="col-sm-9">
-                                    <p class="text-muted mb-0">Bank ABC</p>
+                                    <p class="text-muted mb-0">{{$user->vendor->bankname1??null}}</p>
                                 </div>
                             </div>
                             <hr>
@@ -249,7 +224,7 @@
                                     <p class="mb-0">Bank Account Number 1</p>
                                 </div>
                                 <div class="col-sm-9">
-                                    <p class="text-muted mb-0">123456789012</p>
+                                    <p class="text-muted mb-0">{{$user->vendor->bankaccount1??null}}</p>
                                 </div>
                             </div>
                             <hr>
@@ -258,7 +233,7 @@
                                     <p class="mb-0">Bank Name 2</p>
                                 </div>
                                 <div class="col-sm-9">
-                                    <p class="text-muted mb-0">Bank XYZ</p>
+                                    <p class="text-muted mb-0">{{$user->vendor->bankname2??null}}</p>
                                 </div>
                             </div>
                             <hr>
@@ -267,7 +242,7 @@
                                     <p class="mb-0">Bank Account Number 2</p>
                                 </div>
                                 <div class="col-sm-9">
-                                    <p class="text-muted mb-0">987654321098</p>
+                                    <p class="text-muted mb-0">{{$user->vendor->bankaccount2??null}}</p>
                                 </div>
                             </div>
                             <hr>
@@ -276,7 +251,7 @@
                                     <p class="mb-0">Account Holder Name</p>
                                 </div>
                                 <div class="col-sm-9">
-                                    <p class="text-muted mb-0">John Doe</p>
+                                    <p class="text-muted mb-0">{{$user->vendor->accountholdername??null}}</p>
                                 </div>
                             </div>
                         </div>
@@ -357,5 +332,6 @@
 
         </div>
     </section>
+    @endforeach
 </div>
 @endsection

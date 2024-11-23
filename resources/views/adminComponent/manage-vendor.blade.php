@@ -265,7 +265,7 @@
                         <td>{{ $user->email }}</td>
 
                         <td>
-                           <a href="/vendors-detail" class="btn btn-info btn-sm"><i class="fas fa-eye"></i>Details</a>
+                           <a href="/vendors-detail/{{$user->id}}" class="btn btn-info btn-sm"><i class="fas fa-eye"></i>Details</a>
                           
                            <button data-mdb-button-init data-mdb-ripple-init
                               class="btn btn-outline-primary btn-sm"

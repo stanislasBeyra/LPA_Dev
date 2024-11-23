@@ -37,6 +37,8 @@ Route::middleware('auth:web')->group(function () {
     // vendor
     Route::post('deleteVendors', [VendorController::class, 'deleteVendors'])->name('delete.Vendor');
 
+// In routes/web.php
+Route::get('/vendors-detail/{id}', [VendorController::class, 'getUsersWithVendors'])->name('users.vendors');
 
 
     // Route::get('/{page}', [HomeController::class, 'getContent'])->name('content.page');

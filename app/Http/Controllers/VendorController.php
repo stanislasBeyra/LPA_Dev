@@ -11,6 +11,24 @@ class VendorController extends Controller
 {
     //
 
+    public function getUsersWithVendors($id)
+    {
+        // Retrieve the user with the given $id and their associated vendor and role, filtering by role 3
+        $users = User::where('id', $id)
+            ->where('role', 3)  // Ensure we're fetching users with the role of 3
+            ->with(['vendor', 'role'])  // Eager load vendor and role relationships
+            ->orderBy('id', 'desc')  // Order by user id in descending order
+            ->get();
+    
+         //   dd($users);
+        // Return the view with the users data
+        return view('adminComponent.vendors-detail', compact('users'));
+
+        
+    }
+    
+
+
     public function VendorinfoUpdate(Request $request)
     {
         // Retrieve the User by ID
