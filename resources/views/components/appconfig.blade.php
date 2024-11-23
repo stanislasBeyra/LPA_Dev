@@ -203,6 +203,43 @@
         });
     </script>
 
+ <!-- login des buton -->
+
+ <script>
+   
+    const submitButton = document.getElementById('submitButton');
+    const spinner = document.getElementById('spinner');
+    const buttonText = document.getElementById('buttonText');
+
+    submitButton.addEventListener('click', function(event) {
+        buttonText.style.display = 'none';
+        spinner.style.display = 'inline-block';
+
+
+    });
+
+    const deleteButton = document.getElementById('deleteButton'); // Bouton de suppression
+    const spinnerdelete = document.getElementById('deleteSpinner'); // Spinner pour le bouton
+    const buttonTextdelete = document.getElementById('deleteButtonText'); // Texte du bouton
+
+    // Ajout de l'événement sur le bouton
+    deleteButton.addEventListener('click', function(event) {
+        // Affiche le spinner et masque le texte
+        buttonTextdelete.style.display = 'none'; // Masque le texte du bouton
+        spinnerdelete.style.display = 'inline-block'; // Affiche le spinner
+    });
+
+    const eiditButton = document.getElementById('editButton'); // Bouton de suppression
+    const spinneredit = document.getElementById('editSpinner'); // Spinner pour le bouton
+    const buttonTextedit = document.getElementById('editButtonText'); // Texte du bouton
+
+    // Ajout de l'événement sur le bouton
+    eiditButton.addEventListener('click', function(event) {
+        // Affiche le spinner et masque le texte
+        buttonTextedit.style.display = 'none'; // Masque le texte du bouton
+        spinneredit.style.display = 'inline-block'; // Affiche le spinner
+    });
+</script>
 
 
 </body>

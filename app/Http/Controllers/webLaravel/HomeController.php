@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\webLaravel;
 
 use App\Http\Controllers\Controller;
+use App\Models\agence;
 use App\Models\productcategories;
 use App\Models\roles;
 use App\Models\User;
@@ -113,21 +114,36 @@ class HomeController extends Controller
     }
 
     public function getvendorregisterrole()
-{
-    $roles = roles::whereNull('deleted_at')->get();  // Corrigez si nécessaire
+    {
+        $roles = roles::whereNull('deleted_at')->get();  // Corrigez si nécessaire
 
-    return $roles;
-}
+        return $roles;
+    }
 
-public function getUsersWithVendors()
+
+    public function getUsersWithVendors()
 {
-    // Récupérer tous les utilisateurs avec leurs fournisseurs associés
-    $users = User::with('vendor')->orderBy('id','desc')->get();  // La méthode 'with' permet de charger les relations en une seule requête
-    
+    // Récupérer tous les utilisateurs avec leurs fournisseurs associés et leurs rôles
+    $users = User::with(['vendor', 'role'])
+        ->where('role',3)
+        ->orderBy('id', 'desc')
+        ->get();
+
+        // dd($users->map(function ($user) {
+        //     return $user->role;  // Accède à la relation 'role' de chaque utilisateur
+        // }));
+    // Retourner les utilisateurs avec les relations chargées
     return $users;
 }
 
-   
+
+    public function getagences()
+    {
+        $agences = agence::orderBy('id', 'desc')->get();
+        return $agences;
+    }
+
+
 
     public function getContent($page)
     {
@@ -136,9 +152,10 @@ public function getUsersWithVendors()
         $transactions = $this->getTransactions();
         $categories = $this->getNewCategories();
         $roles = $this->getvendorregisterrole();
-        $vendors=$this->getUsersWithVendors();
+        $vendors = $this->getUsersWithVendors();
+        $agences=$this->getagences();
 
-      //  dd($roles);
+        //  dd($roles);
         // Sélectionner la vue en fonction de la page
         switch ($page) {
             case 'index':
@@ -159,11 +176,13 @@ public function getUsersWithVendors()
             case 'historique':
                 return view('transfert.historique', ['transactions' => $transactions]);
             case 'manage-vendors':
-                return view('adminComponent.manage-vendor', compact('roles','vendors'));
+                return view('adminComponent.manage-vendor', compact('roles', 'vendors'));
+                case 'vendors-detail':
+                    return view('adminComponent.vendors-detail', compact('roles', 'vendors'));
             case 'manage-employees':
                 return view('adminComponent.manage-employee');
             case 'manage-agencies':
-                return view('adminComponent.manage-agencies');
+                return view('adminComponent.manage-agencies',compact('agences'));
             case 'manage-categories':
                 return view('adminComponent.manage-categorie', ['categories' => $categories]);
             case 'vendor-product':

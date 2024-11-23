@@ -44,6 +44,11 @@ class User extends Authenticatable
         return $this->hasOne(Vendor::class, 'user_id');  // Assurez-vous que 'user_id' est la clé étrangère dans la table 'vendors'
     }
 
+    public function role()
+    {
+        return $this->belongsTo(roles::class, 'role'); // Si chaque utilisateur a un seul rôle
+    }
+
 
     public function isVendor(): bool
     {

@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('taxidnumber'); // Tax Identification Number
             $table->string('businesscategory');
             $table->text('businessaddress');
+            $table->string('businessemail')->nullable();
             $table->string('bankname1')->nullable();
             $table->string('bankaccount1')->nullable();
             $table->string('bankname2')->nullable();

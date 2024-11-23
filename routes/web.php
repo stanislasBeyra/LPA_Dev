@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\AgenceController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\VendorController;
 use App\Http\Controllers\webLaravel\HomeController;
 use Illuminate\Support\Facades\Route;
 
@@ -23,15 +25,27 @@ Route::middleware('auth:web')->group(function () {
         return view('index');
     });
 
+    // agencies 
+    Route::post('/createAgencies',[AgenceController::class,'createAgencies'])->name('create.agencies');
+    Route::post('/deleteagence', [AgenceController::class, 'deleteAgencies'])->name('agences.delete');
+    // Route pour modifier une agence
+    Route::post('/edit', [AgenceController::class, 'editAgencies'])->name('agences.edit');
     // delete categorie
-    Route::post('deletecategorie',[ProductCategoryController::class,'deleteCategories'])->name('delete.categorie');
+    Route::post('deletecategorie', [ProductCategoryController::class, 'deleteCategories'])->name('delete.categorie');
+    Route::post('updateCategories',[ProductCategoryController::class,'updateCategories'])->name('update.Categorie');
+
+    // vendor
+    Route::post('deleteVendors', [VendorController::class, 'deleteVendors'])->name('delete.Vendor');
+
+
 
     // Route::get('/{page}', [HomeController::class, 'getContent'])->name('content.page');
     Route::get('/{page}', [HomeController::class, 'getContent'])->name('content.page')
-         ->where('page', '^(?!login$|register$).*');
+        ->where('page', '^(?!login$|register$).*');
 });
 
-Route::post('/register/vendor', [AuthController::class, 'vendorgister'])->name('vendor.register'); 
+Route::post('/register/vendor', [AuthController::class, 'vendorgister'])->name('vendor.register');
+Route::post('/VendorinfoUpdate',[VendorController::class,'VendorinfoUpdate'])->name('Vendor.Update');
 // Route de connexion, accessible uniquement pour les utilisateurs non authentifiés
 Route::middleware('guest')->group(function () {
     Route::get('login', [HomeController::class, 'loginform'])->name('login');

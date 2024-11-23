@@ -44,6 +44,84 @@ class AgenceController extends Controller
     }
 }
 
+
+public function createAgencies(Request $request)
+{
+    try {
+        // Valider les données envoyées
+        $validated = $request->validate([
+            'agent_name' => 'required|string|max:255',
+            'description' => 'required|string|max:255',
+            'agency_code' => 'required|string|max:255|unique:agences',
+        ]);
+
+        // Créer une nouvelle agence avec les données validées
+        $agence = Agence::create([
+            'agent_name' => $validated['agent_name'],
+            'description' => $validated['description'],
+            'agency_code' => $validated['agency_code'],
+        ]);
+        return back()->with('success', 'Agency created successfully.');
+    } catch (\Exception $e) {
+        return back()->with('error', 'An error occurred while creating the agency.');
+    }
+    
+}
+public function editAgencies(Request $request)
+{
+    try {
+        // Valider les données envoyées
+        $validated = $request->validate([
+            'agent_name' => 'required|string|max:255',
+            'description' => 'required|string|max:255',
+            'agency_code' => 'required|string|max:255|unique:agences,agency_code,' . $request->agenceId
+        ]);
+
+        // Trouver l'agence par son ID
+        $agence = Agence::find($request->agenceId);
+
+        if (!$agence) {
+            return back()->with('error', 'Agency not found');
+        }
+
+        // Mettre à jour les données de l'agence
+        $agence->update([
+            'agent_name' => $validated['agent_name'],
+            'description' => $validated['description'],
+            'agency_code' => $validated['agency_code'],
+        ]);
+
+        return back()->with('success', 'Agency updated successfully');
+    } catch (\Exception $e) {
+        // Retourner une réponse JSON pour un débogage supplémentaire, si nécessaire
+        return back()->with('error', 'An error occurred while editing the agency')->withInput();
+    }
+}
+
+public function deleteAgencies(Request $request)
+{
+    try {
+        // Valider les données envoyées
+        $validated = $request->validate([
+            'agenceId' => 'required|exists:agences,id',
+        ]);
+
+        // Trouver l'agence par son ID
+        $agence = Agence::find($validated['agenceId']);
+
+        if (!$agence) {
+            return back()->with('error', 'Agency not found');
+        }
+
+        // Supprimer l'agence
+        $agence->delete();
+
+        return back()->with('success', 'Agency successfully deleted');
+    } catch (\Exception $e) {
+        return back()->with('error', 'An error occurred while deleting the agency: ' . $e->getMessage());
+    }
+}
+
 public function editAgence(Request $request)
 {
     try {

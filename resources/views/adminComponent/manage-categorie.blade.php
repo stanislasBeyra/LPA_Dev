@@ -113,16 +113,24 @@
                                 <td>{{ $category->categories_name }}</td> <!-- Nom de la catégorie -->
                                 <td>{{ $category->categories_description }}</td> <!-- Description de la catégorie -->
                                 <td class="text-center">
-                                    <button type="button"  data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-primary btn-sm" data-mdb-modal-init data-mdb-target="#staticBackdrop1">
+                                    <button type="button" data-mdb-button-init data-mdb-ripple-init
+                                        class="btn btn-outline-primary btn-sm"
+                                        data-mdb-modal-init data-mdb-target="#staticBackdrop1"
+                                        data-id="{{ $category->id }}"
+                                        data-name="{{ $category->categories_name }}"
+                                        data-description="{{ $category->categories_description }}"
+                                        onclick="populateEditModal(this)">
                                         <i class="fas fa-edit"></i> Edit
                                     </button>
-                                    <button type="button" class="btn btn-danger btn-sm" data-mdb-modal-init data-mdb-target="#exampleModal1" onclick="setCategoryId('{{ $category->id }}')">
+                                    <button type="button" class="btn btn-danger btn-sm"
+                                     data-mdb-modal-init data-mdb-target="#exampleModal1"
+                                      onclick="setCategoryId('{{ $category->id }}')">
                                         <i class="fas fa-trash-alt"></i> Delete
                                     </button>
                                 </td>
                             </tr>
                             @endforeach
-                        </tbody> 
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -170,19 +178,30 @@
                 <h5 class="modal-title" id="exampleModalLabel1">Edit category</h5>
             </div>
             <div class="modal-body p-4">
-                <form>
+                <form method="POST" action="{{ route('update.Categorie') }}">
+                    @csrf
+                    <input type="hidden" id="editCategoryId" name="categoryid" />
+
+                    <!-- Nom de la catégorie -->
                     <div class="form-outline mb-4">
-                        <input type="text" id="categoryName" name="categoryName" class="form-control" required />
-                        <label class="form-label" for="categoryName">Category Name</label>
+                        <input type="text" id="editCategoryName" name="categories_name" class="form-control" required />
+                        <label class="form-label" for="editCategoryName">Category Name</label>
                     </div>
 
+                    <!-- Description de la catégorie -->
                     <div class="form-outline mb-4">
-                        <textarea id="categoryDescription" name="categoryDescription" class="form-control" rows="4" required></textarea>
-                        <label class="form-label" for="categoryDescription">Category Description</label>
+                        <textarea id="editCategoryDescription" name="description" class="form-control" rows="4" required></textarea>
+                        <label class="form-label" for="editCategoryDescription">Category Description</label>
                     </div>
 
-                    <button type="submit" class="btn btn-outline-primary btn-block">Submit And edit</button>
+                    <button type="submit" class="btn btn-outline-primary btn-block" id="editButton">
+                        <span id="editButtonText">Submit And Edit</span>
+                        <div id="editSpinner" class="spinner-border text-primary" style="display: none; width: 1.5rem; height: 1.5rem;" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </button>
                 </form>
+
 
             </div>
         </div>
@@ -195,7 +214,6 @@
         document.getElementById('categoryId').value = categoryId;
     };
 
-    
 
     const submitButton = document.getElementById('submitButton');
     const spinner = document.getElementById('spinner');
@@ -218,7 +236,37 @@
         buttonTextdelete.style.display = 'none'; // Masque le texte du bouton
         spinnerdelete.style.display = 'inline-block'; // Affiche le spinner
     });
+
+    const eiditButton = document.getElementById('editButton'); // Bouton de suppression
+    const spinneredit = document.getElementById('editSpinner'); // Spinner pour le bouton
+    const buttonTextedit = document.getElementById('editButtonText'); // Texte du bouton
+
+    // Ajout de l'événement sur le bouton
+    eiditButton.addEventListener('click', function(event) {
+        // Affiche le spinner et masque le texte
+        buttonTextedit.style.display = 'none'; // Masque le texte du bouton
+        spinneredit.style.display = 'inline-block'; // Affiche le spinner
+    });
 </script>
+<!-- recupertaion des info a editer -->
+
+<script>
+    document.querySelectorAll('[data-mdb-target="#staticBackdrop1"]').forEach(button => {
+        button.addEventListener('click', function() {
+            // Récupérer les données du bouton
+            const id = this.getAttribute('data-id');
+            const name = this.getAttribute('data-name');
+            const description = this.getAttribute('data-description');
+
+            // Remplir les champs du formulaire
+            document.getElementById('editCategoryId').value = id;
+            document.getElementById('editCategoryName').value = name;
+            document.getElementById('editCategoryDescription').value = description;
+        });
+    });
+
+</script>
+
 
 
 <script>

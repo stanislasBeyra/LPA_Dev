@@ -18,6 +18,7 @@ class vendor extends Model
         'taxidnumber',
         'businesscategory',
         'businessaddress',
+        'businessemail',
         'bankname1',
         'bankaccount1',
         'bankname2',
