@@ -143,6 +143,13 @@ class HomeController extends Controller
         return $agences;
     }
 
+    public function getproductCategorie(){
+        $categories = productcategories::where('status', 1)
+        ->orderBy('categories_name', 'asc')
+        ->get();
+
+        return $categories;
+    }
 
 
     public function getContent($page)
@@ -154,6 +161,7 @@ class HomeController extends Controller
         $roles = $this->getvendorregisterrole();
         $vendors = $this->getUsersWithVendors();
         $agences=$this->getagences();
+        $categories=$this->getproductCategorie();
 
         //  dd($roles);
         // Sélectionner la vue en fonction de la page
@@ -193,6 +201,9 @@ class HomeController extends Controller
                 return view('adminComponent.employee-paiement');
             case 'user-profile':
                 return view('profil');
+
+            case'manage-vendor-product':
+                return view('vendorComponent.manage-vendor-product',compact('categories'));
 
             case 'historiquemobile':
                 return view('transfert.historiquemobilemonney', ['transactions' => $transactions]);

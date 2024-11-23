@@ -26,20 +26,23 @@ Route::middleware('auth:web')->group(function () {
     });
 
     // agencies 
-    Route::post('/createAgencies',[AgenceController::class,'createAgencies'])->name('create.agencies');
+    Route::post('/createAgencies', [AgenceController::class, 'createAgencies'])->name('create.agencies');
     Route::post('/deleteagence', [AgenceController::class, 'deleteAgencies'])->name('agences.delete');
     // Route pour modifier une agence
     Route::post('/edit', [AgenceController::class, 'editAgencies'])->name('agences.edit');
     // delete categorie
     Route::post('deletecategorie', [ProductCategoryController::class, 'deleteCategories'])->name('delete.categorie');
-    Route::post('updateCategories',[ProductCategoryController::class,'updateCategories'])->name('update.Categorie');
+    Route::post('updateCategories', [ProductCategoryController::class, 'updateCategories'])->name('update.Categorie');
 
     // vendor
     Route::post('deleteVendors', [VendorController::class, 'deleteVendors'])->name('delete.Vendor');
 
-// In routes/web.php
-Route::get('/vendors-detail/{id}', [VendorController::class, 'getUsersWithVendors'])->name('users.vendors');
-Route::post('/vendor/reset-password', [VendorController::class, 'resetVendorPassword'])->name('vendor.resetPassword');
+    // In routes/web.php
+    Route::get('/vendors-detail/{id}', [VendorController::class, 'getUsersWithVendors'])->name('users.vendors');
+    Route::post('/vendor/reset-password', [VendorController::class, 'resetVendorPassword'])->name('vendor.resetPassword');
+
+    //product
+    Route::post('/vendor/product/store', [ProductController::class, 'storevendorproduct'])->name('vendor.product.store');
 
 
     // Route::get('/{page}', [HomeController::class, 'getContent'])->name('content.page');
@@ -48,7 +51,7 @@ Route::post('/vendor/reset-password', [VendorController::class, 'resetVendorPass
 });
 
 Route::post('/register/vendor', [AuthController::class, 'vendorgister'])->name('vendor.register');
-Route::post('/VendorinfoUpdate',[VendorController::class,'VendorinfoUpdate'])->name('Vendor.Update');
+Route::post('/VendorinfoUpdate', [VendorController::class, 'VendorinfoUpdate'])->name('Vendor.Update');
 // Route de connexion, accessible uniquement pour les utilisateurs non authentifiés
 Route::middleware('guest')->group(function () {
     Route::get('login', [HomeController::class, 'loginform'])->name('login');

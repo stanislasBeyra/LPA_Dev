@@ -67,7 +67,7 @@
 
                   <div class="row mb-4">
                      <div class="col-md-6">
-                        <select name="role" class="form-control">
+                        <select name="role" class="form-select">
                            <option value="">Select role</option>
                            @foreach($roles as $role)
                            <option value="{{ $role->id }}">{{ $role->role_name }}</option>
