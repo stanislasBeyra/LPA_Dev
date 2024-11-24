@@ -168,15 +168,17 @@
                                 <td>{{ number_format($product->stock, 0, '.', ',') }} qty</td>
 
                                 <td>
-                            
+
                                     <button type="button" class="btn btn-info btn-sm" data-mdb-ripple-init
                                         data-mdb-modal-init data-mdb-target="#exampleModal"
                                         data-user='@json($product)'
                                         onclick="handleButtonClick(this)">
                                         <i class="fas fa-eye"></i>
                                     </button>
-                                    <button type="button" class="btn btn-outline-primary btn-sm" data-mdb-ripple-init
-                                        data-mdb-modal-init data-mdb-target="#exampleModal"
+                                    <button type="button" class="btn btn-outline-primary btn-sm"
+                                        data-mdb-button-init
+                                        data-mdb-ripple-init
+                                        data-mdb-modal-init data-mdb-target="#staticBackdrop3"
                                         data-edit-product='@json($product)'
                                         onclick="handleEditButtonClick(this)">
                                         <i class="fas fa-edit"></i>
@@ -198,6 +200,88 @@
         </div>
     </section>
 </div>
+
+
+
+<!--Edit Modal -->
+<div class="modal fade" id="staticBackdrop3" tabindex="-1" aria-labelledby="exampleModalLabel3" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel3">Produc Edit</h5>
+                <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form method="POST" action="{{ route('update.product') }}">
+                    @csrf
+                    <input type="hidden" id="productId" name="productId">
+                    <!-- Name input -->
+                    <h5 class="mb-4">Product Information</h5>
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="form-outline">
+                                <input type="text" name="EditProductName" id="EditProductName" class="form-control" />
+                                <label class="form-label" for="EditProductName">Product Name</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-outline">
+                                <input type="number" name="EditProductPrice" id="EditProductPrice" class="form-control" />
+                                <label class="form-label" for="EditProductPrice">Product Price</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <select name="EditCategorie" id="EditCategorie" class="form-select">
+                                <option value="">Categories</option>
+                                @foreach($categories as $categorie)
+                                <option value="{{ $categorie->id }}">{{ $categorie->categories_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-outline">
+                                <input type="number" name="Editstock" id="Editstock" class="form-control" />
+                                <label class="form-label" for="Editstock">Stock</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Product Details -->
+                    <h5 class="mb-4">Product Details</h5>
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <div class="form-outline">
+                                <textarea name="EditProduDetail" id="EditProduDetail" class="form-control" rows="3"></textarea>
+                                <label class="form-label" for="EditProduDetail">Product Detail</label>
+                            </div>
+                        </div>
+                    </div>
+
+
+                 
+
+                    <!-- Submit button -->
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
+
+                        <button type="submit" class="btn btn-outline-primary" id="editButton">
+                            <span id="editButtonText">Submit And Edit</span>
+                            <div id="editSpinner" class="spinner-border text-primary" style="display: none; width: 1.5rem; height: 1.5rem;" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </button>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
 
 <!-- Modal Detail -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -335,7 +419,7 @@
     </div>
 </div>
 
-
+<!-- Modal delete -->
 <div class="modal top fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true" data-mdb-backdrop="true" data-mdb-keyboard="true">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
@@ -383,6 +467,14 @@
     function handleEditButtonClick(button) {
         const productData = JSON.parse(button.getAttribute('data-edit-product'));
         console.log('edit::', productData)
+
+        // ajout des element au formulaire 
+        document.querySelector("#productId").value=productData.id;
+        document.querySelector("#EditProductName").value = productData.product_name;
+        document.querySelector("#EditProductPrice").value = productData.price;
+        document.querySelector("#EditCategorie").value = productData.categorie_id;
+        document.querySelector("#Editstock").value = productData.stock;
+        document.querySelector("#EditProduDetail").value = productData.product_description;
     }
 
     function handleButtonClick(button) {

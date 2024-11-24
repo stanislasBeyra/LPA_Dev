@@ -160,6 +160,78 @@ class ProductController extends Controller
 
     }
 
+    
+
+    public function NewupdateVendorProduct(Request $request)
+{
+    try {
+        $uservendor = Auth::user();
+
+        // Vérification du rôle
+        if ($uservendor->role != 3) {
+            return back()->with('error', 'Unauthorized access');
+        }
+
+        // Recherche du produit
+        $product = Product::where('vendor_id', $uservendor->id)->find($request->productId);
+
+        // Vérification si le produit existe
+        if (!$product) {
+            return back()->with('error', 'Product not found');
+        }
+
+        // Validation des données
+        $validated = $request->validate([
+            'EditProductName' => 'sometimes|string|max:255',
+            'EditProduDetail' => 'sometimes|string',
+            'Editstock' => 'sometimes|integer|min:1',
+            'EditProductPrice' => 'sometimes|numeric|min:0',
+            'EditCategorie' => 'sometimes|integer',
+        ]);
+
+        // Log de la mise à jour du produit
+        Log::info('Updating product', [
+            'validated_data' => $validated,
+            'user_id' => $uservendor->id,
+            'product_id' => $request->productId,
+            'EditProductName' => $validated['EditProductName'] ?? $product->product_name,
+            'EditCategorie' => $validated['EditCategorie'] ?? $product->categorie_id,
+        ]);
+
+        // Mise à jour des champs du produit sans gérer les images
+        $product->update([
+            'product_name' => $validated['EditProductName'] ?? $product->product_name,
+            'product_description' => $validated['EditProduDetail'] ?? $product->product_description,
+            'stock' => $validated['Editstock'] ?? $product->stock,
+            'price' => $validated['EditProductPrice'] ?? $product->price,
+            'categorie_id' => $validated['EditCategorie'] ?? $product->categorie_id,
+        ]);
+
+        return redirect()->back()->with('success', 'Product updated successfully.');
+        
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        // Log de l'exception de validation
+        Log::error('Validation error during product update: ' . $e->getMessage(), [
+            'product_id' => $request->productId,
+            'user_id' => $uservendor->id
+        ]);
+
+        return back()->with('error', 'Validation failed: ' . $e->getMessage());
+        
+    } catch (\Exception $e) {
+        // Log de l'exception générale
+        Log::error('Exception occurred during product update', [
+            'exception' => $e->getMessage(),
+            'product_id' => $request->productId,
+            'user_id' => $uservendor->id
+        ]);
+
+        return back()->with('error', 'An unexpected error occurred. Please try again later.');
+    }
+}
+
+
+
 
 
 

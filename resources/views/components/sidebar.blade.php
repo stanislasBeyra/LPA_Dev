@@ -36,9 +36,9 @@
 
             @if(auth()->user()->role == 3)
             <!-- vendors-->
-            <a href="/add-products" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
+            <!-- <a href="/add-products" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
                 <i class="fas fa-plus fa-fw me-3"></i><span>Add Products</span>
-            </a>
+            </a> -->
             <a href="/manage-vendor-product" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
                 <i class="fas fa-box fa-fw me-3"></i><span>manage Products</span>
             </a>
