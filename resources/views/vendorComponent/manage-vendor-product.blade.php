@@ -144,7 +144,7 @@
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-hover text-nowrap">
-                        <thead>
+                        <thead class="table-dark">
                             <tr>
                                 <th scope="col">#ID</th>
                                 <th scope="col">Creation date</th>
@@ -163,16 +163,30 @@
                                 <td>{{ $product->created_at->format('m/d/Y, h:i:s A') }}</td>
                                 <td> <img src="{{ asset('app/public/' . $product->product_images1) }}" height="60" width="60" class="shadow  rounded-3" alt="" /></td>
                                 <td>{{$product->product_name}}</td>
-                                <td>{{$product->categorie_id}}</td>
+                                <td>{{$product->category->categories_name}}</td>
                                 <td>{{ number_format($product->price, 2, '.', ',') }} $</td>
                                 <td>{{ number_format($product->stock, 0, '.', ',') }} qty</td>
 
                                 <td>
-                                    <button type="button" class="btn btn-info btn-sm" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#exampleModal">
-                                        <i class="fas fa-eye"></i> View Details
+                            
+                                    <button type="button" class="btn btn-info btn-sm" data-mdb-ripple-init
+                                        data-mdb-modal-init data-mdb-target="#exampleModal"
+                                        data-user='@json($product)'
+                                        onclick="handleButtonClick(this)">
+                                        <i class="fas fa-eye"></i>
                                     </button>
-                                    <button type="button" class="btn btn-danger btn-sm" data-mdb-modal-init data-mdb-target="#exampleModal1">
-                                        <i class="fas fa-trash-alt"></i> Delete
+                                    <button type="button" class="btn btn-outline-primary btn-sm" data-mdb-ripple-init
+                                        data-mdb-modal-init data-mdb-target="#exampleModal"
+                                        data-edit-product='@json($product)'
+                                        onclick="handleEditButtonClick(this)">
+                                        <i class="fas fa-edit"></i>
+
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-sm"
+                                        data-mdb-modal-init data-mdb-target="#exampleModal1"
+                                        data-product='@json($product)'
+                                        onclick="handledeleteButtonClick(this)">
+                                        <i class="fas fa-trash-alt"></i>
                                     </button>
                                 </td>
                             </tr>
@@ -193,9 +207,8 @@
                 <h5 class="modal-title text-white text-center" id="productDetailModalLabel">Product Details</h5>
                 <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
             </div>
-            <div class="modal-body  ">
-                <!-- Image carousel (optional, if multiple images are available) -->
-                <!-- Carousel wrapper -->
+            <div class="modal-body">
+
                 <div id="carouselDarkVariant" class="carousel slide carousel-fade carousel-dark" data-mdb-ride="carousel" data-mdb-carousel-init>
                     <!-- Indicators -->
                     <div class="carousel-indicators">
@@ -225,28 +238,26 @@
                     <div class="carousel-inner">
                         <!-- Single item -->
                         <div class="carousel-item active">
-                            <img src="https://mdbcdn.b-cdn.net/img/Photos/Slides/img%20(19).webp" class="d-block w-100" alt="Motorbike Smoke" />
+                            <img src="" class="d-block " style="width: 100%; height: 250px; object-fit: cover;" alt="Motorbike Smoke" />
                             <div class="carousel-caption d-none d-md-block">
-                                <h5>First slide label</h5>
-                                <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
+                                <h5 id="productDetailName"></h5>
                             </div>
                         </div>
 
                         <!-- Single item -->
                         <div class="carousel-item">
-                            <img src="https://mdbcdn.b-cdn.net/img/Photos/Slides/img%20(35).webp" class="d-block w-100" alt="Mountaintop" />
+                            <img src="" class="d-block" style="width: 100%; height: 250px; object-fit: cover;" alt="Mountaintop" />
                             <div class="carousel-caption d-none d-md-block">
-                                <h5>Second slide label</h5>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                                <h5 id="productDetailName"></h5>
                             </div>
                         </div>
 
                         <!-- Single item -->
                         <div class="carousel-item">
-                            <img src="https://mdbcdn.b-cdn.net/img/Photos/Slides/img%20(40).webp" class="d-block w-100" alt="Woman Reading a Book" />
+                            <img src="" class="d-block" style="width: 100%; height: 250px; object-fit: cover;" alt="Woman Reading a Book" />
                             <div class="carousel-caption d-none d-md-block">
-                                <h5>Third slide label</h5>
-                                <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur.</p>
+                                <h5 id="productDetailName"></h5>
+
                             </div>
                         </div>
                     </div>
@@ -262,40 +273,61 @@
                         <span class="visually-hidden">Next</span>
                     </button>
                 </div>
-                <!-- Carousel wrapper -->
+
+                <div class="accordion" id="accordionExample">
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button
+                                data-mdb-collapse-init
+                                class="accordion-button collapsed"
+                                type="button"
+                                data-mdb-target="#collapseTwo"
+                                aria-expanded="false"
+                                aria-controls="collapseTwo">
+                                Product description
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-mdb-parent="#accordionExample">
+                            <div class="accordion-body" id="productDetailDescription">
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
 
                 <div class="row d-flex mt-4">
-                    <!-- Card gauche -->
+                    <!-- Product Info Card -->
                     <div class="col-md-6 mb-3">
                         <div class="card h-100">
                             <div class="card-header bg-primary text-white">
                                 <h5 class="mb-0">Product Information</h5>
                             </div>
                             <div class="card-body">
-                                <p><strong>Product Name:</strong> Sample Product Name</p>
-                                <p><strong>Quantity:</strong> 350</p>
-                                <p><strong>Price:</strong> $13.68</p>
-                                <p><strong>Product Revenue:</strong> $4,787.64</p>
+                                <p><strong>Product Name:</strong> <span id="productDetailNames"></span></p>
+                                <p><strong>Quantity:</strong> <span id="productDetailQuantity"></span></p>
+                                <p><strong>Price:</strong> <span id="productDetailPrice"></span></p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Card droite -->
+                    <!-- Additional Details Card -->
                     <div class="col-md-6 mb-3">
                         <div class="card h-100">
                             <div class="card-header bg-primary text-white">
                                 <h5 class="mb-0">Additional Details</h5>
                             </div>
                             <div class="card-body">
-                                <p><strong>Unique Purchases:</strong> 228</p>
-                                <p><strong>Product Views:</strong> 18,492</p>
+                                <p><strong>Product category:</strong> <span id="productDetailcategorie"></span></p>
+                                <p><strong>product Status:</strong> <span id="productDetailStatus"></span> </p>
+
                             </div>
                         </div>
                     </div>
                 </div>
-
-
             </div>
+
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
             </div>
@@ -318,7 +350,19 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-danger">Delete</button>
+                <form method="POST" action="{{ route('delete.product') }}">
+                    @csrf
+
+                    <input type="hidden" id="productId" name="productId">
+
+                    <button type="submit" class="btn btn-danger" id="deleteButton">
+                        <span id="deleteButtonText">Delete</span>
+                        <div id="deleteSpinner" class="spinner-border text-light" style="display: none; width: 1.5rem; height: 1.5rem;" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </button>
+                </form>
+
             </div>
         </div>
     </div>
@@ -326,7 +370,70 @@
 
 
 
+
+
 <script>
+    function handledeleteButtonClick(button) {
+        const productData = JSON.parse(button.getAttribute('data-product'));
+        console.log('delete::', productData)
+
+        document.querySelector("#productId").value = productData.id
+    }
+
+    function handleEditButtonClick(button) {
+        const productData = JSON.parse(button.getAttribute('data-edit-product'));
+        console.log('edit::', productData)
+    }
+
+    function handleButtonClick(button) {
+        // Récupère les données JSON de l'attribut 'data-user'
+        const productData = JSON.parse(button.getAttribute('data-user'));
+
+        // Met à jour le titre du modal avec le nom du produit
+        document.querySelector("#productDetailModalLabel").textContent = "Product Details: " + productData.product_name;
+
+        // Affiche l'image du produit dans le carousel
+        const carouselItems = document.querySelectorAll('.carousel-item img');
+        carouselItems.forEach((img, index) => {
+            if (index === 0) {
+                img.src = "{{ asset('app/public/') }}" + "/" + productData.product_images1; // Première image du carousel
+            } else if (index === 1) {
+                img.src = "{{ asset('app/public/') }}" + "/" + productData.product_images2; // Deuxième image
+            } else if (index === 2) {
+                img.src = "{{ asset('app/public/') }}" + "/" + productData.product_images3; // Troisième image
+            }
+        });
+
+        // Met à jour les informations du produit dans les cartes
+        document.querySelector("#productDetailName").textContent = productData.product_name;
+        document.querySelector("#productDetailQuantity").textContent = productData.stock;
+        document.querySelector("#productDetailPrice").textContent = "$" + (productData.price).toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+        document.querySelector("#productDetailDescription").textContent = productData.product_description;
+        document.querySelector("#productDetailNames").textContent = productData.product_name
+        const status = productData.status === 1 ? 'active' : 'inactive';
+
+        document.querySelector("#productDetailStatus").textContent = status
+
+        document.querySelector("#productDetailcategorie").textContent = productData.category.categories_name; // Exemple de revenu
+
+        const statusElement = document.querySelector("#productDetailStatus");
+        if (status === 'active') {
+            statusElement.style.color = 'green';
+        } else {
+            statusElement.style.color = 'red';
+        }
+    }
+
+
+
+
+
+
+
+
     document.getElementById('ProductImage').addEventListener('change', function(event) {
         const previewContainer = document.getElementById('previewContainer');
         previewContainer.innerHTML = ''; // Efface les anciens aperçus
