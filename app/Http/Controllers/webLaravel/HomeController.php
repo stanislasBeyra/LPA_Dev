@@ -10,9 +10,17 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
+use App\Http\Controllers\ProductController;
+
 
 class HomeController extends Controller
 {
+    protected $productController;
+
+    public function __construct(ProductController $productController)
+    {
+        $this->productController = $productController;
+    }
 
     public function loginform()
     {
@@ -163,6 +171,8 @@ class HomeController extends Controller
         $agences=$this->getagences();
         $categories=$this->getproductCategorie();
 
+        $products=$this->productController->getallvendorcoonectproduct();
+
         //  dd($roles);
         // Sélectionner la vue en fonction de la page
         switch ($page) {
@@ -203,7 +213,7 @@ class HomeController extends Controller
                 return view('profil');
 
             case'manage-vendor-product':
-                return view('vendorComponent.manage-vendor-product',compact('categories'));
+                return view('vendorComponent.manage-vendor-product',compact('categories','products'));
 
             case 'historiquemobile':
                 return view('transfert.historiquemobilemonney', ['transactions' => $transactions]);

@@ -42,6 +42,7 @@ class ProductController extends Controller
 
     public function storevendorproduct(Request $request)
     {
+       try{
         $uservendor = Auth::user(); // Récupère l'utilisateur connecté (le vendeur)
 
         // Validation des champs
@@ -101,68 +102,32 @@ class ProductController extends Controller
             'product_images3' => $imagePaths['product_images3'], // Chemin de la troisième image
         ]);
 
-        return redirect()->back()->with('success', 'Product added successfully.'); // Retour à la page précédente avec un message de succès
+        return redirect()->back()->with('success', 'Product added successfully.'); 
+        
+       }catch(\Exception $e){
+        Log::error('Exception occurred', ['exception' => $e]);
+        return back()->with('error','An unexpected error occurred. Please try again later.');
+       }
     }
 
 
+    public function getallvendorcoonectproduct(){
+        try{
+            $vendor=Auth::user();
+            if(!$vendor){
+                return back()->with('error', 'You must be logged in to access this section.');
+            }
+            $product=Product::where('vendor_id',$vendor->id)->orderBy('id','desc')->get();
 
-    // public function storevendorproduct(Request $request)
-    // {
-    //     $uservendor = Auth::user();
+            return $product;
+        }catch(\Exception $e){
+            Log::error('Exception occurred', ['exception' => $e]);
+            return back()->with('error','An unexpected error occurred. Please try again later.'); 
+        }
 
-    //     // Validation des champs
-    //     $validatedData = $request->validate([
-    //         'productname' => 'required|string|max:255',
-    //         'productprice' => 'required|numeric|min:0',
-    //         'stock' => 'required|integer|min:1',
-    //         'categorie' => 'required|integer',
-    //         'produdetail' => 'required|string',
-    //         'ProductImage' => 'nullable|array|max:3', // Maximum 3 images
-    //         'ProductImage.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Validation pour chaque image
-    //     ]);
+    }
 
-    //     // Vérifier si le dossier des images existe, sinon le créer
-    //     $directory = public_path('app/public/product_images');
-    //     if (!file_exists($directory)) {
-    //         mkdir($directory, 0755, true);
-    //     }
 
-    //     // Initialisation des variables d'images
-    //     $imagePaths = ['product_images1' => null, 'product_images2' => null, 'product_images3' => null];
-
-    //     // Vérification et déplacement des images
-    //     if ($request->hasFile('ProductImage')) {
-    //         $images = $request->file('ProductImage');
-    //         $index = 1; // Pour suivre l'index des images et les enregistrer dans les colonnes appropriées
-
-    //         foreach ($images as $image) {
-    //             $imageName = time() . '_' . $image->getClientOriginalName();
-    //             $imagePath = 'product_images/' . $imageName;
-    //             $image->move(public_path('app/public/product_images'), $imageName);
-
-    //             // Enregistrer le chemin de l'image dans la colonne appropriée
-    //             if ($index <= 3) {
-    //                 $imagePaths['product_images' . $index] = $imagePath;
-    //                 $index++;
-    //             }
-    //         }
-    //     }
-
-    //     // Création du produit avec les chemins des images dans les champs distincts
-    //     $product = Product::create([
-    //         'product_name' => $validatedData['productname'],
-    //         'product_description' => $validatedData['produdetail'],
-    //         'stock' => $validatedData['stock'],
-    //         'price' => $validatedData['productprice'],
-    //         'vendor_id' => $uservendor->id,
-    //         'categorie_id' => $validatedData['categorie'],
-    //         'product_images1' => $imagePaths['product_images1'],
-    //         'product_images2' => $imagePaths['product_images2'],
-    //         'product_images3' => $imagePaths['product_images3'],
-    //     ]);
-
-    //     return redirect()->back()->with('success', 'Product added successfully.');
-    // }
 
 
 

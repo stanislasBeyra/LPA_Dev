@@ -146,23 +146,27 @@
                     <table class="table table-hover text-nowrap">
                         <thead>
                             <tr>
-                                <th scope="col"></th>
-                                <th scope="col">Product Detail Views</th>
-                                <th scope="col">Unique Purchases</th>
-                                <th scope="col">Quantity</th>
-                                <th scope="col">Product Revenue</th>
-                                <th scope="col">Avg. Price</th>
+                                <th scope="col">#ID</th>
+                                <th scope="col">Creation date</th>
+                                <th scope="col">Product Image</th>
+                                <th scope="col">Product Name</th>
+                                <th scope="col">Product categorie</th>
+                                <th scope="col">Product price</th>
+                                <th scope="col">product stock</th>
                                 <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
+                            @foreach($products as $key=>$product)
                             <tr>
-                                <th scope="row">Value</th>
-                                <td>18,492</td>
-                                <td>228</td>
-                                <td>350</td>
-                                <td>$4,787.64</td>
-                                <td>$13.68</td>
+                                <th scope="row">{{$key +1}}</th>
+                                <td>{{ $product->created_at->format('m/d/Y, h:i:s A') }}</td>
+                                <td> <img src="{{ asset('app/public/' . $product->product_images1) }}" height="60" width="60" class="shadow  rounded-3" alt="" /></td>
+                                <td>{{$product->product_name}}</td>
+                                <td>{{$product->categorie_id}}</td>
+                                <td>{{ number_format($product->price, 2, '.', ',') }} $</td>
+                                <td>{{ number_format($product->stock, 0, '.', ',') }} qty</td>
+
                                 <td>
                                     <button type="button" class="btn btn-info btn-sm" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#exampleModal">
                                         <i class="fas fa-eye"></i> View Details
@@ -172,7 +176,7 @@
                                     </button>
                                 </td>
                             </tr>
-                            <!-- Repeat for other rows -->
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -320,43 +324,7 @@
     </div>
 </div>
 
-<!-- <script>
-    document.getElementById('ProductImage').addEventListener('change', function(event) {
-        const files = event.target.files;
-        const previewContainer = document.getElementById('previewContainer');
-        const imageMessage = document.getElementById('image-message');
 
-        // Clear previous previews and error message
-        previewContainer.innerHTML = '';
-        imageMessage.style.display = 'none';
-        imageMessage.textContent = '';
-
-        // Check the number of selected files
-        if (files.length > 3) {
-            imageMessage.textContent = 'You can only upload a maximum of 3 images.';
-            imageMessage.style.display = 'block';
-            // Reset the file input
-            event.target.value = '';
-            return;
-        }
-
-        for (const file of files) {
-            if (file.type.startsWith('image/')) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.style.width = '100px';
-                    img.style.height = '100px';
-                    img.style.objectFit = 'cover';
-                    img.style.border = '1px solid #ddd';
-                    previewContainer.appendChild(img);
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-    });
-</script> -->
 
 <script>
     document.getElementById('ProductImage').addEventListener('change', function(event) {

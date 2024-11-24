@@ -44,6 +44,8 @@ Route::middleware('auth:web')->group(function () {
     //product
     Route::post('/vendor/product/store', [ProductController::class, 'storevendorproduct'])->name('vendor.product.store');
 
+   // Route::get('getallvendorcoonectproduct',[ProductController::class,'getallvendorcoonectproduct']);
+
 
     // Route::get('/{page}', [HomeController::class, 'getContent'])->name('content.page');
     Route::get('/{page}', [HomeController::class, 'getContent'])->name('content.page')
