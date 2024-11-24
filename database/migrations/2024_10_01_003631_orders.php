@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->integer('user_id');
-            // $table->integer('product_id');
             $table->double('total')->default(1);
             //1 pendind, 2 pour validate 3 pour encore de livraison
             $table->string('status')->default(1);
