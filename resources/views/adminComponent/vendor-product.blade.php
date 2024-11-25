@@ -110,6 +110,29 @@
                 </div>
 
                 <div class="accordion" id="accordionExample">
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button
+                                data-mdb-collapse-init
+                                class="accordion-button collapsed"
+                                type="button"
+                                data-mdb-target="#collapseTwo"
+                                aria-expanded="false"
+                                aria-controls="collapseTwo">
+                                Product description
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-mdb-parent="#accordionExample">
+                            <div class="accordion-body" id="productDetailDescription">
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                
+                <div class="accordion" id="accordionExample">
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="headingTwo">
                             <button class="accordion-button collapsed" type="button" data-mdb-target="#collapseTwo" aria-expanded="false">
