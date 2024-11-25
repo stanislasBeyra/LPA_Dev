@@ -31,23 +31,6 @@ class employee extends Authenticatable
         'role',
     ];
 
-    // protected $fillable = [
-    //     'firstname',
-    //     'lastname',
-    //     'username',
-    //     'middle_name',
-    //     'email',
-    //     'mobile',
-    //     'mobile2',
-    //     'avatar',
-    //     'status',
-    //     'net_salary',
-    //     'ministry_agency',
-    //     'agencescode',
-    //     'email_verified_at',
-    //     'password',
-    //     'role',
-    // ];
 
     // Attributs à traiter comme des dates
     protected $dates = ['email_verified_at', 'deleted_at'];

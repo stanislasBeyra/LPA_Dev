@@ -52,7 +52,7 @@
 
                                 <button type="submit" class="btn btn-warning btn-block" id="editButton">
                                     <span id="editButtonText">Reset</span>
-                                    <div id="editSpinner" class="spinner-border text-primary" style="display: none; width: 1.5rem; height: 1.5rem;" role="status">
+                                    <div id="editSpinner" class="spinner-border text-white" style="display: none; width: 1.5rem; height: 1.5rem;" role="status">
                                         <span class="visually-hidden">Loading...</span>
                                     </div>
                                 </button>
@@ -515,6 +515,20 @@
         </div>
 </div>
 </section>
+
 @endforeach
 </div>
+<Script>
+
+const eiditButton = document.getElementById('editButton'); // Bouton de suppression
+    const spinneredit = document.getElementById('editSpinner'); // Spinner pour le bouton
+    const buttonTextedit = document.getElementById('editButtonText'); // Texte du bouton
+
+    // Ajout de l'événement sur le bouton
+    eiditButton.addEventListener('click', function(event) {
+        // Affiche le spinner et masque le texte
+        buttonTextedit.style.display = 'none'; // Masque le texte du bouton
+        spinneredit.style.display = 'inline-block'; // Affiche le spinner
+    });
+</Script>
 @endsection
