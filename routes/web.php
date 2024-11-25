@@ -30,6 +30,7 @@ Route::middleware('auth:web')->group(function () {
     // update User Auth avatar
     Route::post('/profile/update-avatar', [VendorController::class, 'updatevendorlogo'])->name('profile.updateAvatar');
     Route::post('/profile/update-password', [VendorController::class, 'UpdateVendorPassword'])->name('profile.updatePassword');
+    Route::post('/admin/vendor/update-avatar', [VendorController::class, 'AdminChangeVendorAvatar'])->name('admin.vendor.update-avatar');
 
     // agencies 
     Route::post('/createAgencies', [AgenceController::class, 'createAgencies'])->name('create.agencies');

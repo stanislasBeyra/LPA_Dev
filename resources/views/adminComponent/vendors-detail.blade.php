@@ -83,8 +83,30 @@
                     <!-- Profile Card -->
                     <div class="card mb-4 animate__animated animate__zoomIn">
                         <div class="card-body text-center">
-                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar"
-                                class="rounded-circle img-fluid" style="width: 150px;">
+                            <div class="position-relative d-inline-block">
+                                <img src="{{ $user->avatar ? asset('app/' . $user->avatar) : 'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp' }}"
+                                    alt="avatar"
+                                    class="rounded-circle img-fluid clickable-avatar"
+                                    style="width: 130px; height:130px; cursor: pointer;"
+                                    onclick="document.getElementById('avatar-input').click()">
+
+                                <form action="{{ route('admin.vendor.update-avatar') }}" method="POST" enctype="multipart/form-data" id="avatar-form">
+                                    @csrf
+                                    <input type="hidden" name="vendor_id" value="{{$user->id}}">
+                                    <input type="file"
+                                        name="avatar"
+                                        id="avatar-input"
+                                        style="display: none;"
+                                        accept="image/*"
+                                        onchange="previewAvatar(event)">
+
+                                    <div id="save-avatar-section" style="display: none;" class="mt-2">
+                                        <button type="submit" class="btn btn-primary btn-sm">Save Avatar</button>
+                                        <button type="button" class="btn btn-secondary btn-sm ml-2" onclick="cancelAvatarChange()">Cancel</button>
+                                    </div>
+                                </form>
+                            </div>
+
                             <h5 class="my-3">{{$user->username}}</h5>
                             <p class="text-muted mb-1">Vendor</p>
                             <p class="text-muted mb-4">Full Name: Jane Doe</p>
@@ -518,9 +540,42 @@
 
 @endforeach
 </div>
-<Script>
+<script>
+    function previewAvatar(event) {
+        const input = event.target;
+        const image = document.querySelector('.clickable-avatar');
+        const saveSection = document.getElementById('save-avatar-section');
 
-const eiditButton = document.getElementById('editButton'); // Bouton de suppression
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                image.src = e.target.result;
+                saveSection.style.display = 'block';
+            }
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function cancelAvatarChange() {
+        const input = document.getElementById('avatar-input');
+        const image = document.querySelector('.clickable-avatar');
+        const saveSection = document.getElementById('save-avatar-section');
+
+        // Reset the file input
+        input.value = '';
+
+        // Restore original image
+        image.src = "{{ $user->avatar ? asset('app/' . $user->avatar) : 'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp' }}";
+
+        // Hide save section
+        saveSection.style.display = 'none';
+    }
+</script>
+
+<Script>
+    const eiditButton = document.getElementById('editButton'); // Bouton de suppression
     const spinneredit = document.getElementById('editSpinner'); // Spinner pour le bouton
     const buttonTextedit = document.getElementById('editButtonText'); // Texte du bouton
 

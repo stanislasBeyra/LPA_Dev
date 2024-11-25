@@ -103,7 +103,7 @@
                             <form action="{{ route('profile.updateAvatar') }}" method="POST" enctype="multipart/form-data" id="avatar-form">
                                 @csrf
                                 <input
-                                
+
                                     type="file"
                                     name="avatar"
                                     id="avatar-input"

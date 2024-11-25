@@ -162,42 +162,41 @@ class VendorController extends Controller
 
 
     public function UpdateVendorPassword(Request $request)
-{
-    try {
-        // Validate user inputs
-        $request->validate([
-            'current_password' => 'required',
-            'new_password' => 'required|min:8|confirmed',
-        ], [
-            'current_password.required' => 'The current password field is required.',
-            'new_password.required' => 'The new password field is required.',
-            'new_password.min' => 'The new password must be at least 8 characters long.',
-            'new_password.confirmed' => 'The new password confirmation does not match.',
-        ]);
-        
+    {
+        try {
+            // Validate user inputs
+            $request->validate([
+                'current_password' => 'required',
+                'new_password' => 'required|min:8|confirmed',
+            ], [
+                'current_password.required' => 'The current password field is required.',
+                'new_password.required' => 'The new password field is required.',
+                'new_password.min' => 'The new password must be at least 8 characters long.',
+                'new_password.confirmed' => 'The new password confirmation does not match.',
+            ]);
 
-        $user = Auth::user();
 
-        
+            $user = Auth::user();
 
-        // Check if the current password is correct
-        if (!Hash::check($request->current_password, $user->password)) {
-            return back()->with('error', 'The current password is incorrect.');
+
+
+            // Check if the current password is correct
+            if (!Hash::check($request->current_password, $user->password)) {
+                return back()->with('error', 'The current password is incorrect.');
+            }
+
+            // Update the password
+            $user->password = Hash::make($request->new_password);
+            $user->save();
+
+            return back()->with('success', 'Your password has been updated successfully.');
+        } catch (ValidationException $e) {
+            return back()->with('error', $e->getMessage());
+        } catch (\Exception $e) {
+            Log::error('Error updating password: ' . $e->getMessage());
+            return back()->with('error', 'An error occurred while updating your password.' . $e->getMessage());
         }
-
-        // Update the password
-        $user->password = Hash::make($request->new_password);
-        $user->save();
-
-        return back()->with('success', 'Your password has been updated successfully.');
-    } catch (ValidationException $e) {
-        return back()->with('error',$e->getMessage());
     }
-     catch (\Exception $e) {
-        Log::error('Error updating password: ' . $e->getMessage());
-        return back()->with('error', 'An error occurred while updating your password.'.$e->getMessage());
-    }
-}
 
     public function updatevendorlogo(Request $request)
     {
@@ -219,7 +218,7 @@ class VendorController extends Controller
 
             // Supprimer l'ancien avatar s'il existe
             if ($user->avatar && file_exists($avatarDirectory . '/' . $user->avatar)) {
-             $de=   unlink($avatarDirectory . '/' . $user->avatar);
+                $de =   unlink($avatarDirectory . '/' . $user->avatar);
             }
 
 
@@ -239,6 +238,52 @@ class VendorController extends Controller
         } catch (\Exception $e) {
             Log::error('Erreur lors de la mise à jour de l\'avatar : ' . $e->getMessage());
             return back()->with('error', 'Une erreur est survenue lors de la mise à jour de votre avatar.');
+        }
+    }
+
+    public function AdminChangeVendorAvatar(Request $request)
+    {
+        // Valider la requête
+        $request->validate([
+            'avatar' => 'required|image|max:2048'
+        ]);
+
+        // Récupérer l'ID du vendeur depuis la requête
+        $vendorId = $request->input('vendor_id');
+
+        // Récupérer le vendeur
+        $vendor = User::findOrFail($vendorId);
+        if(!$vendor){
+            return back()->with('error','vendor Not found');
+        }
+
+        // Créer le dossier avatars s'il n'existe pas
+        $avatarDirectory = public_path('app/avatars');
+        if (!file_exists($avatarDirectory)) {
+            mkdir($avatarDirectory, 0777, true);
+        }
+
+        // Générer un nom unique pour l'avatar
+        $avatarName = time() . '.' . $request->file('avatar')->extension();
+
+        // Supprimer l'ancien avatar s'il existe
+        if ($vendor->avatar) {
+            $oldAvatarPath = public_path('app/' . $vendor->avatar);
+            if (file_exists($oldAvatarPath)) {
+                unlink($oldAvatarPath);
+            }
+        }
+
+        try {
+            // Déplacer le nouveau fichier dans le dossier
+            $request->file('avatar')->move($avatarDirectory, $avatarName);
+
+            // Mettre à jour l'avatar dans la base de données
+            $vendor->update(['avatar' => 'avatars/' . $avatarName]);
+
+            return back()->with('success', 'Avatar updated successfully');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to update avatar: ' . $e->getMessage());
         }
     }
 
