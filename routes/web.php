@@ -45,11 +45,13 @@ Route::middleware('auth:web')->group(function () {
     //product
     Route::post('/vendor/product/store', [ProductController::class, 'storevendorproduct'])->name('vendor.product.store');
     Route::post('NewvendorvalidateOrder',[OrderController::class,'NewvendorvalidateOrder'])->name('validated.order');
+    Route::post('NewAdminVendorValidateOrder',[OrderController::class,'NewAdminVendorValidateOrder'])->name('AdminVendor.ValidateOrder');
 
     Route::get('getallvendorcoonectproduct',[ProductController::class,'getallvendorcoonectproduct']);
     Route::get('getorders',[OrderController::class,'getorders']);
     Route::get('NewvendorvalidateOrder',[OrderController::class,'NewvendorvalidateOrder']);
     Route::get('getNewallvendorProducts',[ProductController::class,'getNewallvendorProducts']);
+    Route::get('admingetvendororder',[OrderController::class,'admingetvendororder']);
     
 
     Route::post('/delete/vendor/Product',[ProductController::class,'newdeletevendorProduct'])->name('delete.product');

@@ -593,7 +593,7 @@ class OrderController extends Controller
 
             // Récupérer les éléments de la commande associés au vendor
             $orderItems = order_items::where('vendor_id', $vendor->id)
-                ->where('order_id', $order->id) 
+                ->where('order_id', $order->id)
                 ->get();
 
             // Vérifier si des éléments de commande ont été trouvés
@@ -603,9 +603,9 @@ class OrderController extends Controller
 
 
             foreach ($orderItems as $orderItem) {
-                if($orderItem->status == 2) {
+                if ($orderItem->status == 2) {
                     return back()->with('error', 'Order item is already processing.');
-                }                
+                }
 
                 $orderItem->status = 2;  // Mettre à jour le statut
                 $orderItem->save();
@@ -632,6 +632,46 @@ class OrderController extends Controller
             return back()->with('error', 'An error occurred: ' . $e->getMessage());
         }
     }
+
+    public function NewAdminVendorValidateOrder(Request $request)
+{
+    try {
+       
+
+        // Récupérer le vendeur authentifié
+        $vendor = Auth::user();
+
+        if (!$vendor) {
+            return back()->with('error', 'Unauthorized access');
+        }
+
+        $order = Order::find($request->orderid);
+
+        if (!$order) {
+            return back()->with('error', 'Order not found.');
+        }
+
+        $allOrderItems = order_items::where('order_id', $order->id)->get();
+
+        $allOrderItemsHaveStatus2 = $allOrderItems->every(function ($orderItem) {
+            return $orderItem->status == 2;
+        });
+
+        if (!$allOrderItemsHaveStatus2) {
+            return back()->with('error', 'Validation failed because not all vendors have validated their products.');
+        }
+
+        $order->status = 3; 
+        $order->save();
+
+        return back()->with('success', 'Order successfully processing.');
+
+    } catch (\Exception $e) {
+        Log::error('An error occurred: ' . $e->getMessage());
+        return back()->with('error', 'An error occurred: ' . $e->getMessage());
+    }
+}
+
 
 
 
@@ -702,6 +742,55 @@ class OrderController extends Controller
             });
 
             return $mappedOrderItems;
+        } catch (\Exception $e) {
+            Log::info('An occured error' . $e->getMessage());
+            return back()->with('error', 'An occured error');
+        }
+    }
+
+    public function admingetvendororder()
+    {
+        try {
+            $vendor = Auth::user();
+
+            // Vérifier si l'utilisateur est un vendor
+            if (!$vendor) {
+                return back()->with('error', 'Unauthorized access');
+            }
+
+            $orders = Order::with(['orderItems.product', 'employee'])
+                ->orderBy('id', 'desc')
+                ->get();
+
+                $formattedOrders = $orders->map(function ($order) {
+                    return [
+                        "orderId" => $order->id,
+                        'orderTotal' => $order->total,
+                        'orderStatus' => $order->status,
+                        'ordercreated' => $order->created_at,
+                        'employeefirstname' => $order->employee->firstname ?? null,
+                        'employeelastname' => $order->employee->lastname ?? null,
+                        'employeeusername' => $order->employee->username ?? null,
+                        'employeemiddlename' => $order->employee->middle_name ?? null,
+                        'employeeemail' => $order->employee->email ?? null,
+                        'employeemobile' => $order->employee->mobile ?? null,
+                        'employeemobile2' => $order->employee->mobile2 ?? null,
+                        'orderItems' => $order->orderItems->map(function ($item) {
+                            return [
+                                'orderItemsId' => $item->id,
+                                'orderItemsStatus' => $item->status,
+                                'quantity' => $item->quantity,
+                                'productname' => $item->product->product_name ?? null,
+                                'productprice' => $item->product->price ?? null,
+                                'product_images1' => $item->product->product_images1 ?? null,
+                                'product_images2' => $item->product->product_images2 ?? null,
+                                'product_images3' => $item->product->product_images3 ?? null,
+                            ];
+                        }),
+                    ];
+                });
+
+                return $formattedOrders;
         } catch (\Exception $e) {
             Log::info('An occured error' . $e->getMessage());
             return back()->with('error', 'An occured error');

@@ -181,6 +181,7 @@ class HomeController extends Controller
 
         // get vendor product for admin
         $vendorproducts=$this->productController->getNewallvendorProducts();
+        $vendororders=$this->orderController->admingetvendororder();
 
         //  dd($roles);
         // Sélectionner la vue en fonction de la page
@@ -214,7 +215,7 @@ class HomeController extends Controller
             case 'vendor-product':
                 return view('adminComponent.vendor-product',compact('vendorproducts'));
             case 'vendor-order':
-                return view('adminComponent.vendor-order');
+                return view('adminComponent.vendor-order',compact('vendororders'));
 
             case 'employee-paiement':
                 return view('adminComponent.employee-paiement');

@@ -3,6 +3,33 @@
 @section('content')
 <div class="container-fluid pt-4">
 
+    <div class="d-flex justify-content-center align-items-center mb-3">
+        <!-- Affichage des messages d'erreur à gauche -->
+        <div class="d-flex flex-column align-items-center">
+            @if(session('error'))
+            <div class="alert alert-danger mb-0 me-3" id="error-message">
+                {{ session('error') }}
+            </div>
+            @endif
+
+            @if(session('success'))
+            <div class="alert alert-success mb-0 me-3" id="success-message">
+                {{ session('success') }}
+            </div>
+            @endif
+
+            @if($errors->any())
+            <div class="alert alert-danger mb-0 me-3" id="error-list">
+                <ul class="mb-0">
+                    @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
+        </div>
+    </div>
+
     <!-- Section avec tableau -->
     <section class="mb-4">
         <div class="card">
@@ -16,54 +43,52 @@
                     <table class="table table-hover text-nowrap">
                         <thead>
                             <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Product Detail Views</th>
-                                <th scope="col">Unique Purchases</th>
-                                <th scope="col">Quantity</th>
-                                <th scope="col">Product Revenue</th>
-                                <th scope="col">Avg. Price</th>
+                                <th scope="col">#ID</th>
+                                <th scope="col">Creation date</th>
+                                <th scope="col">Username</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Total</th>
+                                <th scope="col">Status</th>
                                 <th scope="col">Actions</th> <!-- Nouvelle colonne pour les actions -->
                             </tr>
                         </thead>
                         <tbody>
-
+                            @foreach ($vendororders as $key=> $order)
                             <tr>
-                                <th scope="row">Absolute change</th>
+                                <td>{{ $key+1}}</td>
+                                <td>{{$order['ordercreated']->format('m/d/Y, h:i:s A')}}</td>
+                                <td>{{$order['employeeusername']}}</td>
+                                <td>{{$order['employeeusername']}}</td>
+                                <td>{{ number_format($order['orderTotal'], 2, '.', ',') }} FCFA</td>
                                 <td>
-                                    <span class="text-danger">
-                                        <i class="fas fa-caret-down me-1"></i><span>-17,654</span>
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="text-success">
-                                        <i class="fas fa-caret-up me-1"></i><span>28</span>
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="text-success">
-                                        <i class="fas fa-caret-up me-1"></i><span>111</span>
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="text-success">
-                                        <i class="fas fa-caret-up me-1"></i><span>$1,092.72</span>
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="text-danger">
-                                        <i class="fas fa-caret-down me-1"></i><span>$-1.78</span>
-                                    </span>
+                                    @if ($order['orderStatus'] == 1)
+                                    <span class="badge bg-warning">pending</span>
+                                    @elseif ($order['orderStatus'] == 2)
+                                    <span class="badge bg-primary">Processing</span>
+                                    @elseif ($order['orderStatus'] == 3)
+                                    <span class="badge bg-success">Validated</span>
+                                    @else
+                                    <span class="badge bg-danger">Cancelled</span>
+                                    @endif
                                 </td>
                                 <td>
                                     <!-- Boutons Action -->
-                                    <button type="button" class="btn btn-info btn-sm" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#exampleModal">
-                                        <i class="fas fa-eye"></i> View Details
+                                    <button type="button"
+                                        class="btn btn-info btn-sm"
+                                        data-mdb-ripple-init
+                                        data-mdb-modal-init
+                                        data-mdb-target="#exampleModal"
+                                        data-items-products='@json($order)'
+                                        data-image-url="{{ asset('app/public/') }}"
+                                        onclick="handleOrderDetailbutton(this)">
+                                        <i class="fas fa-eye"></i>
                                     </button>
-                                    <button type="button" class="btn btn-danger btn-sm" data-mdb-modal-init data-mdb-target="#exampleModal1">
-                                        <i class="fas fa-trash-alt"></i> Delete
-                                    </button>
+                                    <!-- <button type="button" class="btn btn-danger btn-sm" data-mdb-modal-init data-mdb-target="#exampleModal1">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button> -->
                                 </td>
                             </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -74,65 +99,55 @@
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog custom-modal"> <!-- Adjusted width to 70% -->
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">order Details</h5>
                 <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <!-- Product Table -->
                 <div class="table-responsive">
-                    <table class="table table-striped">
+                    <table class="table table-hover text-nowrap">
                         <thead>
                             <tr>
                                 <th scope="col">Image</th> <!-- Image column -->
-                                <th scope="col">Product</th>
                                 <th scope="col">Product Name</th>
                                 <th scope="col">Quantity</th>
                                 <th scope="col">Unit Price</th>
                                 <th scope="col">Total Price</th>
+                                <th scope="col">Status</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td><img src="https://i.pinimg.com/474x/b7/0b/0c/b70b0cf24259c3bb0853021163cdc31b.jpg" alt="Product 1" class="img-fluid" style="max-width:50px;"></td> <!-- Product 1 Image -->
-                                <td>Product</td>
-                                <td>Example Product 1</td>
-                                <td>12</td>
-                                <td>$12.00</td>
-                                <td>$144.00</td>
-                            </tr>
-                            <tr>
-                                <td><img src="https://i.pinimg.com/474x/60/66/8a/60668ab1f291ce0b9878af50ef3cbeae.jpg" alt="Product 2" class="img-fluid" style="max-width: 50px;"></td> <!-- Product 2 Image -->
-                                <td>Product</td>
-                                <td>Example Product 2</td>
-                                <td>4</td>
-                                <td>$10.00</td>
-                                <td>$40.00</td>
-                            </tr>
-                            <tr>
-                                <td><img src="https://i.pinimg.com/474x/a3/fb/d0/a3fbd06ccabc7b2dc25ccf9ea2b45997.jpg" alt="Product 3" class="img-fluid" style="max-width: 50px;"></td> <!-- Product 3 Image -->
-                                <td>Product</td>
-                                <td>Example Product 3</td>
-                                <td>2</td>
-                                <td>$8.00</td>
-                                <td>$16.00</td>
-                            </tr>
+                            <!-- Rows will be dynamically inserted here by JavaScript -->
                         </tbody>
                         <tfoot>
                             <tr>
                                 <th colspan="5" class="text-end">Sub Total:</th>
-                                <th>$200.00</th>
+                                <th>0.00 FCFA</th>
                             </tr>
                         </tfoot>
                     </table>
                 </div>
 
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
-            </div>
+            <form method="POST" action="{{ route('AdminVendor.ValidateOrder') }}">
+                @csrf
+                <input type="hidden" id="orderid" name="orderid">
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                        data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
+
+                    <button type="submit" class="btn btn-outline-primary" id="editButton">
+                        <span id="editButtonText">approuved order</span>
+                        <div id="editSpinner" class="spinner-border text-primary" style="display: none; width: 1.5rem; height: 1.5rem;" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </button>
+
+                </div>
+            </form>
+
         </div>
     </div>
 </div>
@@ -151,9 +166,8 @@
             </div>
 
             <div class="modal-body d-flex flex-column align-items-center text-center">
-                <!-- Icône de suppression au-dessus du texte -->
-                <i class="fas fa-trash-alt mb-3 text-danger" style="font-size: 3rem;"></i> <!-- Icône de suppression -->
-                <p class="d-inline">Are you sure you want to delete this order?</p> <!-- Texte de confirmation -->
+                <i class="fas fa-trash-alt mb-3 text-danger" style="font-size: 3rem;"></i>
+                <p class="d-inline">Are you sure you want to delete this order?</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
@@ -163,6 +177,159 @@
     </div>
 </div>
 
+
+
+
+<script>
+    function handleOrderDetailbutton(button) {
+        const orderData = JSON.parse(button.getAttribute('data-items-products'));
+        const imageBaseUrl = button.getAttribute('data-image-url');
+        const modalBody = document.querySelector('#exampleModal .modal-body table tbody');
+        modalBody.innerHTML = '';
+
+        console.log(orderData);
+
+        document.querySelector("#orderid").value = orderData.orderId;
+
+        function getStatusText(status) {
+            switch (status) {
+                case 1:
+                    return 'Pending';
+                case 2:
+                    return 'Processing';
+                case 3:
+                    return 'Validated';
+                default:
+                    return 'Unknown';
+            }
+        }
+
+        function getStatusBadgeClass(status) {
+            switch (status) {
+                case 1:
+                    return 'bg-warning';
+                case 2:
+                    return 'bg-primary';
+                case 3:
+                    return 'bg-success';
+                default:
+                    return 'bg-secondary';
+            }
+        }
+
+        orderData.orderItems.forEach(item => {
+            const totalPrice = (item.productprice || 0) * item.quantity;
+
+            // Vérification des images, si null, on utilise une image par défaut
+            const imageUrl = item.product_images1 ? `${imageBaseUrl}/${item.product_images1}` : 'path/to/default-image.jpg';
+
+            // Utilisation du nom du produit ou "N/A" si le nom est null
+            const productName = item.productname || 'N/A';
+
+            // Gestion du prix du produit (si nul, afficher 0.00)
+            const productPrice = item.productprice ? item.productprice.toFixed(2) : '0.00';
+
+            const statusText = getStatusText(item.orderItemsStatus);
+            const badgeClass = getStatusBadgeClass(item.orderItemsStatus);
+
+            const row = `
+            <tr>
+                <td><img src="${imageUrl}" alt="${productName}" class="img-fluid" style="max-width: 50px;"></td>
+                <td>${productName}</td>
+                <td>${item.quantity}</td>
+                <td>${productPrice} $</td>
+                <td>${totalPrice.toFixed(2)} FCFA</td>
+                <td><span class="badge ${badgeClass}">${statusText}</span></td>
+            </tr>
+        `;
+            modalBody.innerHTML += row;
+        });
+
+        // Calcul du sous-total, même si certains produits ont un prix nul
+        const subtotal = orderData.orderItems.reduce((total, item) => total + (item.productprice || 0) * item.quantity, 0);
+
+        const formattedSubtotal = subtotal.toLocaleString('fr-FR', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+
+        document.querySelector('#exampleModal .modal-body table tfoot th').textContent = `Sub Total:`;
+        document.querySelector('#exampleModal .modal-body table tfoot th + th').textContent = `${formattedSubtotal} FCFA`;
+    }
+
+
+
+    // function handleOrderDetailbutton(button) {
+    //     const orderData = JSON.parse(button.getAttribute('data-items-products'));
+    //     const imageBaseUrl = button.getAttribute('data-image-url');
+    //     const modalBody = document.querySelector('#exampleModal .modal-body table tbody');
+    //     modalBody.innerHTML = '';
+
+    //     console.log(orderData);
+
+    //     document.querySelector("#orderid").value = orderData.orderId;
+
+    //     function getStatusText(status) {
+    //         switch (status) {
+    //             case 1:
+    //                 return 'Pending';
+    //             case 2:
+    //                 return 'Processing';
+    //             case 3:
+    //                 return 'Validated';
+    //             default:
+    //                 return 'Unknown';
+    //         }
+    //     }
+
+    //     function getStatusBadgeClass(status) {
+    //         switch (status) {
+    //             case 1:
+    //                 return 'bg-warning';
+    //             case 2:
+    //                 return 'bg-primary';
+    //             case 3:
+    //                 return 'bg-success';
+    //             default:
+    //                 return 'bg-secondary';
+    //         }
+    //     }
+
+
+
+    //     orderData.orderItems.forEach(item => {
+    //         const totalPrice = item.productprice * item.quantity;
+    //         const imageUrl = `${imageBaseUrl}/${item.product_images1}`;
+
+    //         const statusText = getStatusText(item.orderItemsStatus);
+    //         const badgeClass = getStatusBadgeClass(item.orderItemsStatus);
+
+
+    //         const row = `
+    //             <tr>
+    //                 <td><img src="${imageUrl}" alt="${item.productname}" class="img-fluid" style="max-width: 50px;"></td>
+    //                 <td>${item.productname}</td>
+    //                 <td>${item.quantity}</td>
+    //                 <td>${item.productprice.toFixed(2)} $</td>
+    //                 <td>${totalPrice.toFixed(2)} FCFA</td>
+    //                 <td><span class="badge ${badgeClass}">${statusText}</span></td>
+
+    //             </tr>
+    //         `;
+    //         modalBody.innerHTML += row;
+    //     });
+
+    //     const subtotal = orderData.orderItems.reduce((total, item) => total + (item.productprice * item.quantity), 0);
+
+    //     const formattedSubtotal = subtotal.toLocaleString('fr-FR', {
+    //         minimumFractionDigits: 2,
+    //         maximumFractionDigits: 2
+    //     });
+
+    //     document.querySelector('#exampleModal .modal-body table tfoot th').textContent = `Sub Total:`;
+    //     document.querySelector('#exampleModal .modal-body table tfoot th + th').textContent = `${formattedSubtotal} FCFA`;
+    // }
+</script>
 
 
 
