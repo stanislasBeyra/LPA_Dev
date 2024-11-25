@@ -84,6 +84,72 @@
             </div>
             <div class="modal-body">
                 <!-- Carousel -->
+
+                <div id="carouselDarkVariant" class="carousel slide carousel-fade carousel-dark" data-mdb-ride="carousel" data-mdb-carousel-init>
+                    <!-- Indicators -->
+                    <div class="carousel-indicators">
+                        <button
+                            style="border-radius: 100%; width:10px; height:10px;background-color:aliceblue"
+                            data-mdb-target="#carouselDarkVariant"
+                            data-mdb-slide-to="0"
+                            class="active"
+                            aria-current="true"
+                            aria-label="Slide 1">
+                        </button>
+                        <button
+                            style="border-radius: 100%; width:10px; height:10px;background-color:aliceblue"
+                            data-mdb-target="#carouselDarkVariant"
+                            data-mdb-slide-to="1"
+                            aria-label="Slide 1">
+                        </button>
+                        <button
+                            style="border-radius: 100%; width:10px; height:10px;background-color:aliceblue"
+                            data-mdb-target="#carouselDarkVariant"
+                            data-mdb-slide-to="2"
+                            aria-label="Slide 1">
+                        </button>
+                    </div>
+
+                    <!-- Inner -->
+                    <div class="carousel-inner">
+                        <!-- Single item -->
+                        <div class="carousel-item active">
+                            <img src="" class="d-block " style="width: 100%; height: 250px; object-fit: cover;" alt="Motorbike Smoke" />
+                            <div class="carousel-caption d-none d-md-block">
+                                <h5 id="productDetailName"></h5>
+                            </div>
+                        </div>
+
+                        <!-- Single item -->
+                        <div class="carousel-item">
+                            <img src="" class="d-block" style="width: 100%; height: 250px; object-fit: cover;" alt="Mountaintop" />
+                            <div class="carousel-caption d-none d-md-block">
+                                <h5 id="productDetailName"></h5>
+                            </div>
+                        </div>
+
+                        <!-- Single item -->
+                        <div class="carousel-item">
+                            <img src="" class="d-block" style="width: 100%; height: 250px; object-fit: cover;" alt="Woman Reading a Book" />
+                            <div class="carousel-caption d-none d-md-block">
+                                <h5 id="productDetailName"></h5>
+
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Inner -->
+
+                    <!-- Controls -->
+                    <button class="carousel-control-prev" type="button" data-mdb-target="#carouselDarkVariant" data-mdb-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-mdb-target="#carouselDarkVariant" data-mdb-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+                
                 <div id="carouselDarkVariant" class="carousel slide carousel-fade carousel-dark" data-mdb-ride="carousel">
                     <div class="carousel-indicators">
                         <button style="border-radius: 100%; width:10px; height:10px;background-color:aliceblue" data-mdb-target="#carouselDarkVariant" data-mdb-slide-to="0" class="active"></button>
@@ -131,19 +197,8 @@
                     </div>
 
                 </div>
+
                 
-                <div class="accordion" id="accordionExample">
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="headingTwo">
-                            <button class="accordion-button collapsed" type="button" data-mdb-target="#collapseTwo" aria-expanded="false">
-                                Product description
-                            </button>
-                        </h2>
-                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-mdb-parent="#accordionExample">
-                            <div class="accordion-body" id="productDetailDescription"></div>
-                        </div>
-                    </div>
-                </div>
 
                 <div class="row d-flex mt-4">
                     <div class="col-md-6 mb-3">
