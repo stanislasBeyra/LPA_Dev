@@ -1,15 +1,90 @@
 @extends('components.appconfig') <!-- Extending the appconfig layout -->
 
 @section('content')
+
+<style>
+    /* Style de base du toggle switch */
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 40px;
+        height: 20px;
+    }
+
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: red;
+        transition: 0.4s;
+        border-radius: 34px;
+
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 15px;
+        width: 15px;
+        border-radius: 50%;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: 0.4s;
+    }
+
+    /* Lorsque l'interrupteur est activé (checked) */
+    input:checked+.slider {
+        background-color: #4CAF50;
+    }
+
+    input:checked+.slider:before {
+        transform: translateX(26px);
+    }
+</style>
+
 <div class="container-fluid pt-4">
 
-    <!-- Section contenant le bouton aligné à droite -->
-    <div class="text-end mb-3">
+    <div class="d-flex justify-content-between mb-3">
+        <div class="d-flex">
+            @if(session('error'))
+            <div class="alert alert-danger mb-0 me-3" id="error-message">
+                {{ session('error') }}
+            </div>
+            @endif
+
+            @if(session('success'))
+            <div class="alert alert-success mb-0 me-3" id="success-message">
+                {{ session('success') }}
+            </div>
+            @endif
+
+            @if($errors->any())
+            <div class="alert alert-danger mb-0 me-3" id="error-list">
+                <ul class="mb-0">
+                    @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
+        </div>
         <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary fs-5" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#exampleModal">
+        <button type="button" class="btn btn-primary fs-7" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#exampleModal">
             ADD EMPLOYEE
         </button>
     </div>
+    <!-- Section contenant le bouton aligné à droite -->
+
 
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -21,153 +96,113 @@
                 </div>
                 <div class="modal-body">
 
-                    <form>
-                        <!-- Section 1: Basic Information -->
-                        <h5 class="mb-4">Basic Information</h5>
+                    <form action="{{ route('employee.register') }}" method="POST">
+                        @csrf
+                        <!-- Section 4: Banking Details -->
+                        {{-- <h5 class="mb-4">Banking Details</h5> --}}
+
+
                         <div class="row mb-4">
                             <div class="col-md-6">
                                 <div class="form-outline">
-                                    <input type="text" id="vendorName" class="form-control" />
-                                    <label class="form-label" for="vendorName">Vendor Name</label>
+                                    <input type="number" id="national_id" name="national_id" class="form-control" />
+                                    <label class="form-label" for="national_id">National ID Number</label>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-outline">
-                                    <input type="text" id="contactPerson" class="form-control" />
-                                    <label class="form-label" for="contactPerson">Contact Person Name</label>
+                                    <input type="text" id="firstname" name="firstname" class="form-control" />
+                                    <label class="form-label" for="firstname">First Name</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="form-outline">
+                                    <input type="text" id="lastname" name="lastname" class="form-control" />
+                                    <label class="form-label" for="lastname">Last Name</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-outline">
+                                    <input type="phone" id="mobile" name="mobile" class="form-control" />
+                                    <label class="form-label" for="mobile">Phone Number</label>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row mb-4">
+
+                            <div class="col-md-6">
+                                <div class="form-outline">
+                                    <input type="text" id="username" name="username" class="form-control" />
+                                    <label class="form-label" for="username">Username</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-outline">
+                                    <input type="email" id="email" name="email" class="form-control" />
+                                    <label class="form-label" for="email">Email</label>
                                 </div>
                             </div>
                         </div>
 
                         <div class="row mb-4">
-                            <div class="col-md-6">
-                                <div class="form-outline">
-                                    <input type="email" id="email" class="form-control" />
-                                    <label class="form-label" for="email">Email Address</label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-outline">
-                                    <input type="tel" id="phone" class="form-control" />
-                                    <label class="form-label" for="phone">Phone Number</label>
-                                </div>
-                            </div>
-                        </div>
 
-                        <div class="row mb-4">
-                            <div class="col-md-6">
+                            <!-- <div class="col-md-6">
                                 <div class="form-outline">
-                                    <input type="password" id="password" class="form-control" />
+                                    <input type="password" id="password" name="password" class="form-control" />
                                     <label class="form-label" for="password">Password</label>
                                 </div>
+                            </div> -->
+
+
+
+                            <div class="col-md-6">
+                                <div class="">
+                                    <select name="agence_id" id="agence_id" class="form-select" required>
+
+                                        <option value="">Choose Name of Agency/Ministry</option>
+                                        @foreach ($agences as $agence )
+                                        <option value="{{ $agence->id }}">{{ $agence->agent_name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Section 2: Business Details -->
-                        <h5 class="mb-4">Business Details</h5>
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <div class="form-outline">
-                                    <input type="text" id="businessRegNo" class="form-control" />
-                                    <label class="form-label" for="businessRegNo">Business Registration Number</label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-outline">
-                                    <input type="text" id="tin" class="form-control" />
-                                    <label class="form-label" for="tin">Tax Identification Number (TIN)</label>
-                                </div>
-                            </div>
-                        </div>
 
                         <div class="row mb-4">
+
                             <div class="col-md-6">
-                                <div class="form-outline">
-                                    <input type="text" id="businessCategory" class="form-control" />
-                                    <label class="form-label" for="businessCategory">Business Category</label>
-                                </div>
+                                <p>Status :
+                                    <label class="switch shadow">
+                                        <input type="checkbox" class="toggle-status" name="status" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </p>
                             </div>
                         </div>
-
-                        <!-- Section 3: Address Details -->
-                        <h5 class="mb-4">Address Details</h5>
-                        <div class="row mb-4">
-                            <div class="col-md-12">
-                                <div class="form-outline">
-                                    <textarea id="businessAddress" class="form-control" rows="3"></textarea>
-                                    <label class="form-label" for="businessAddress">Business Address</label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Section 4: Banking Details -->
-                        <h5 class="mb-4">Banking Details</h5>
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <div class="form-outline">
-                                    <input type="text" id="bankName1" class="form-control" />
-                                    <label class="form-label" for="bankName1">Bank Name 1</label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-outline">
-                                    <input type="text" id="bankAccount1" class="form-control" />
-                                    <label class="form-label" for="bankAccount1">Bank Account Number 1</label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <div class="form-outline">
-                                    <input type="text" id="bankName2" class="form-control" />
-                                    <label class="form-label" for="bankName2">Bank Name 2</label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-outline">
-                                    <input type="text" id="bankAccount2" class="form-control" />
-                                    <label class="form-label" for="bankAccount2">Bank Account Number 2</label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <div class="form-outline">
-                                    <input type="text" id="accountHolder" class="form-control" />
-                                    <label class="form-label" for="accountHolder">Account Holder Name</label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Section 5: Verification Documents -->
-                        <h5 class="mb-4">Verification Documents</h5>
-                        <div class="row mb-4">
-                            <div class="col-md-4">
-                                <label class="form-label" for="businessCertificate">Business Registration Certificate</label>
-                                <input type="file" id="businessCertificate" class="form-control" accept=".pdf,.jpg,.png" />
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label" for="taxCertificate">Tax Clearance Certificate</label>
-                                <input type="file" id="taxCertificate" class="form-control" accept=".pdf,.jpg,.png" />
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label" for="passportId">Passport or Government-Issued ID</label>
-                                <input type="file" id="passportId" class="form-control" accept=".pdf,.jpg,.png" />
-                            </div>
-                        </div>
-
                         <!-- Submit button -->
                         <!-- <button type="submit" class="btn btn-primary btn-block">Submit</button> -->
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
+                            <!-- <button type="submit" class="btn btn-primary" data-mdb-ripple-init>Submit</button> -->
+                            <button type="submit" class="btn btn-primary" id="submitButton">
+                                <span id="buttonText">Submit</span>
+                                <div id="spinner" class="spinner-border text-light" style="display: none; width: 1.5rem; height: 1.5rem;" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </button>
+                        </div>
                     </form>
 
 
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" data-mdb-ripple-init>Submit</button>
-                </div>
+
             </div>
         </div>
     </div>
@@ -185,84 +220,60 @@
                     <table class="table table-hover text-nowrap">
                         <thead>
                             <tr>
-                                <th scope="col"></th>
-                                <th scope="col">Product Detail Views</th>
-                                <th scope="col">Unique Purchases</th>
-                                <th scope="col">Quantity</th>
-                                <th scope="col">Product Revenue</th>
-                                <th scope="col">Avg. Price</th>
+                                <th scope="col">ID</th>
+                                <th scope="col">National Id </th>
+                                <th scope="col">First Name </th>
+                                <th scope="col">Last Name</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Salary</th>
+                                <th scope="col">Agence/Ministry</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Action</th>
                             </tr>
                         </thead>
                         <tbody>
+                            @forelse ($employees as $key=>$employee)
                             <tr>
-                                <th scope="row">Value</th>
-                                <td>18,492</td>
-                                <td>228</td>
-                                <td>350</td>
-                                <td>$4,787.64</td>
-                                <td>$13.68</td>
+                                <th scope="row">{{ $key+1 }}</th>
+                                <td>{{ $employee->national_id }}</td>
+                                <td>{{ $employee->firstname }}</td>
+                                <td>{{ $employee->lastname }}</td>
+                                <td>{{ $employee->email }}</td>
+                                <td>{{ $employee->net_salary }}</td>
+                                <td>{{ $employee->agence->agent_name ?? 'No agence selected' }}</td>
+                                <td>
+                                    <label class="switch">
+                                        <input type="checkbox" {{ $employee->status == 1 ? 'checked' : '' }} data-id="{{
+                                        $employee->id }}" class="toggle-status">
+                                        <span class="slider"></span>
+                                    </label>
+                                    </p>
+                                </td>
+                                <td>Action</td>
                             </tr>
-                            <tr>
-                                <th scope="row">Percentage change</th>
-                                <td>
-                                    <span class="text-danger">
-                                        <i class="fas fa-caret-down me-1"></i><span>-48.8%</span>
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="text-success">
-                                        <i class="fas fa-caret-up me-1"></i><span>14.0%</span>
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="text-success">
-                                        <i class="fas fa-caret-up me-1"></i><span>46.4%</span>
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="text-success">
-                                        <i class="fas fa-caret-up me-1"></i><span>29.6%</span>
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="text-danger">
-                                        <i class="fas fa-caret-down me-1"></i><span>-11.5%</span>
-                                    </span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Absolute change</th>
-                                <td>
-                                    <span class="text-danger">
-                                        <i class="fas fa-caret-down me-1"></i><span>-17,654</span>
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="text-success">
-                                        <i class="fas fa-caret-up me-1"></i><span>28</span>
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="text-success">
-                                        <i class="fas fa-caret-up me-1"></i><span>111</span>
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="text-success">
-                                        <i class="fas fa-caret-up me-1"></i><span>$1,092.72</span>
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="text-danger">
-                                        <i class="fas fa-caret-down me-1"></i><span>$-1.78</span>
-                                    </span>
-                                </td>
-                            </tr>
+                            @empty
+                            <td>No Data</td>
+                            @endforelse
                         </tbody>
                     </table>
+                    {{ $employees->links('pagination::bootstrap-5') }}
+
                 </div>
             </div>
         </div>
     </section>
 </div>
+
+<script>
+    const submitButton = document.getElementById('submitButton');
+    const spinner = document.getElementById('spinner');
+    const buttonText = document.getElementById('buttonText');
+
+    submitButton.addEventListener('click', function(event) {
+        buttonText.style.display = 'none';
+        spinner.style.display = 'inline-block';
+
+
+    });
+</script>
 @endsection

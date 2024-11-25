@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AgenceController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
@@ -47,11 +48,15 @@ Route::middleware('auth:web')->group(function () {
     Route::post('NewvendorvalidateOrder',[OrderController::class,'NewvendorvalidateOrder'])->name('validated.order');
     Route::post('NewAdminVendorValidateOrder',[OrderController::class,'NewAdminVendorValidateOrder'])->name('AdminVendor.ValidateOrder');
 
+    //employee
+    Route::post('employee/register', [EmployeeController::class,'RegisterEmplyees'])->name('employee.register');
+
     Route::get('getallvendorcoonectproduct',[ProductController::class,'getallvendorcoonectproduct']);
     Route::get('getorders',[OrderController::class,'getorders']);
     Route::get('NewvendorvalidateOrder',[OrderController::class,'NewvendorvalidateOrder']);
     Route::get('getNewallvendorProducts',[ProductController::class,'getNewallvendorProducts']);
     Route::get('admingetvendororder',[OrderController::class,'admingetvendororder']);
+    Route::get('getEmployeeListe',[EmployeeController::class,'getEmployeeListe']);
     
 
     Route::post('/delete/vendor/Product',[ProductController::class,'newdeletevendorProduct'])->name('delete.product');

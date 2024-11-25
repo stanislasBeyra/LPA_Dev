@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('mobile2')->unique();
             $table->string('avatar')->nullable();
             $table->boolean('status')->default(true);
+            $table->string('national_id')->nullable();
             $table->double('net_salary')->nullable()->default(0);
             $table->string('ministry_agency')->nullable();
             $table->integer('agencescode')->nullable();

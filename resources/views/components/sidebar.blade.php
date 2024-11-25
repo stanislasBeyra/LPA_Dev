@@ -28,9 +28,9 @@
                 <i class="fas fa-truck fa-fw me-3"></i><span>Vendor Order</span>
             </a>
             <!-- Payments Section -->
-            <a href="/employee-paiement" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
+            <!-- <a href="/employee-paiement" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
                 <i class="fas fa-credit-card fa-fw me-3"></i><span>Payments</span>
-            </a>
+            </a> -->
 
             @endif
 

@@ -12,17 +12,20 @@ use Illuminate\Support\Facades\Log;
 
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OrderController;
-
+use App\Http\Controllers\EmployeeController;
+use App\Models\employee;
 
 class HomeController extends Controller
 {
     protected $productController;
     protected $orderController;
+    protected $employeeController;
 
-    public function __construct(ProductController $productController,OrderController $orderController)
+    public function __construct(ProductController $productController,OrderController $orderController, EmployeeController $employeeController)
     {
         $this->productController = $productController;
         $this->orderController = $orderController;
+        $this->employeeController=$employeeController;
     }
 
     
@@ -182,6 +185,11 @@ class HomeController extends Controller
         // get vendor product for admin
         $vendorproducts=$this->productController->getNewallvendorProducts();
         $vendororders=$this->orderController->admingetvendororder();
+    
+        // employeee
+        $agences = agence::all();
+        $employees = employee::with('agence')->orderBy('id','desc')->paginate(8);
+      //  dd($employees);
 
         //  dd($roles);
         // Sélectionner la vue en fonction de la page
@@ -207,7 +215,7 @@ class HomeController extends Controller
                 return view('adminComponent.manage-vendor', compact('roles', 'vendors'));
                 
             case 'manage-employees':
-                return view('adminComponent.manage-employee');
+                return view('adminComponent.manage-employee',compact('agences','employees'));
             case 'manage-agencies':
                 return view('adminComponent.manage-agencies',compact('agences'));
             case 'manage-categories':

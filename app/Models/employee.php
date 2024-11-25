@@ -13,6 +13,7 @@ class employee extends Authenticatable
     use HasFactory, Notifiable, HasApiTokens, SoftDeletes;
 
     protected $fillable = [
+        'national_id',
         'firstname',
         'lastname',
         'username',
@@ -30,6 +31,24 @@ class employee extends Authenticatable
         'role',
     ];
 
+    // protected $fillable = [
+    //     'firstname',
+    //     'lastname',
+    //     'username',
+    //     'middle_name',
+    //     'email',
+    //     'mobile',
+    //     'mobile2',
+    //     'avatar',
+    //     'status',
+    //     'net_salary',
+    //     'ministry_agency',
+    //     'agencescode',
+    //     'email_verified_at',
+    //     'password',
+    //     'role',
+    // ];
+
     // Attributs à traiter comme des dates
     protected $dates = ['email_verified_at', 'deleted_at'];
 
@@ -40,6 +59,10 @@ class employee extends Authenticatable
     }
     
     public function agences(){
+        return $this->belongsTo(agence::class, 'agencescode');
+    }
+
+    public function agence(){
         return $this->belongsTo(agence::class, 'agencescode');
     }
 
