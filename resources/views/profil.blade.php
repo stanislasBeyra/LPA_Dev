@@ -3,6 +3,30 @@
 @section('content')
 <div class="container-fluid pt-4">
 
+    <div class="d-flex animate__animated animate__zoomIn">
+        @if(session('error'))
+        <div class="alert alert-danger mb-0 me-3" id="error-message">
+            {{ session('error') }}
+        </div>
+        @endif
+
+        @if(session('success'))
+        <div class="alert alert-success mb-0 me-3" id="success-message">
+            {{ session('success') }}
+        </div>
+        @endif
+
+        @if($errors->any())
+        <div class="alert alert-danger mb-0 me-3" id="error-list">
+            <ul class="mb-0">
+                @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+        @endif
+    </div>
+
     <section>
         <div class="container-fluid py-5">
 
@@ -12,28 +36,37 @@
                     <div class="modal-content w-75">
                         <div class="modal-body p-4">
                             <img src="{{ Auth::user()->avatar ? asset('app/' . Auth::user()->avatar) : 'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp' }}" alt="avatar" class="rounded-circle position-absolute top-0 start-50 translate-middle h-50" />
-                            <form>
+                            <form action="{{ route('profile.updatePassword') }}" method="POST">
+                                @csrf
                                 <div>
-                                    <h5 class="pt-5 my-3">Maria Doe</h5>
+                                    <h5 class="pt-5 my-3"></h5>
 
 
                                     <!-- password input -->
                                     <div data-mdb-input-init class="form-outline mb-4">
-                                        <input type="password" id="password1" class="form-control" />
-                                        <label class="form-label" for="password1">Current Password</label>
+                                        <input type="password" name="current_password" id="current_password" class="form-control" />
+                                        <label class="form-label" for="current_password">Current Password</label>
                                     </div>
 
                                     <div data-mdb-input-init class="form-outline mb-4">
-                                        <input type="password" id="password1" class="form-control" />
-                                        <label class="form-label" for="password1">New Password</label>
+                                        <input type="password" name="new_password" id="new_password" class="form-control" />
+                                        <label class="form-label" for="new_password">New Password</label>
                                     </div>
                                     <div data-mdb-input-init class="form-outline mb-4">
-                                        <input type="password" id="password1" class="form-control" />
-                                        <label class="form-label" for="password1">Confirm Password</label>
+                                        <input type="password" name="new_password_confirmation" id="new_password_confirmation" class="form-control" />
+                                        <label class="form-label" for="new_password_confirmation">Confirm Password</label>
                                     </div>
 
                                     <!-- Submit button -->
-                                    <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary">Login</button>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary" id="submitButton">
+                                        <span id="buttonText">Submit</span>
+                                        <div id="spinner" class="spinner-border text-light" style="display: none; width: 1.5rem; height: 1.5rem;" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </button>
                                 </div>
                             </form>
                         </div>
@@ -52,15 +85,33 @@
                 </div>
             </div>
 
+
+
             <div class="row">
                 <div class="col-lg-4">
                     <div class="card mb-4">
                         <div class="card-body text-center">
-                            <img src="{{ Auth::user()->avatar ? asset('app/' . Auth::user()->avatar) : 'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp' }}" alt="avatar"
-                                class="rounded-circle img-fluid" style="width: 150px;">
+                            <!-- L'image cliquable -->
+                            <img
+                                src="{{ Auth::user()->avatar ? asset('app/' . Auth::user()->avatar) : 'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp' }}"
+                                alt="avatar"
+                                class="rounded-circle img-fluid"
+                                style="width: 150px; cursor: pointer;"
+                                id="avatar-image">
 
+                            <!-- Champ caché pour uploader l'image -->
+                            <form action="{{ route('profile.updateAvatar') }}" method="POST" enctype="multipart/form-data" id="avatar-form">
+                                @csrf
+                                <input
+                                    type="file"
+                                    name="avatar"
+                                    id="avatar-input"
+                                    style="display: none;"
+                                    accept="image/*"
+                                    onchange="document.getElementById('avatar-form').submit();">
+                            </form>
 
-                            <h5 class="my-3">{{Auth::user()->username }}</h5>
+                            <h5 class="my-3">{{ Auth::user()->username }}</h5>
                             <p class="text-muted mb-1">
                                 @php
                                 switch(auth()->user()->role) {
@@ -78,9 +129,9 @@
                                 }
                                 @endphp
                             </p>
-                            <p class="text-muted mb-4">{{Auth::user()->firstname}} {{Auth::user()->lastname}}</p>
+                            <p class="text-muted mb-4">{{ Auth::user()->firstname }} {{ Auth::user()->lastname }}</p>
                             <div class="d-flex justify-content-center mb-2">
-                                <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary" data-mdb-modal-init data-mdb-target="#staticBackdrop5">Reset Password</button>
+                                <button type="button" class="btn btn-primary" data-mdb-toggle="modal" data-mdb-target="#staticBackdrop5">Reset Password</button>
                             </div>
                         </div>
                     </div>
@@ -236,5 +287,11 @@
 
 </div>
 
+<script>
+    // Associe le clic sur l'image au champ de fichier
+    document.getElementById('avatar-image').addEventListener('click', function() {
+        document.getElementById('avatar-input').click();
+    });
+</script>
 
 @endsection
