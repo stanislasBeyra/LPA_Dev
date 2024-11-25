@@ -156,6 +156,7 @@
                                 <th scope="col">Actions</th>
                             </tr>
                         </thead>
+                        
                         <tbody>
                             @foreach($products as $key=>$product)
                             <tr>
