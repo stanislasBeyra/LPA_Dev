@@ -102,9 +102,9 @@
 
                                     <div id="save-avatar-section" style="display: none;" class="mt-2">
                                         <button type="submit" class="btn shadow btn-outline-success btn-sm">
-                                        <i class="fas fa-save"></i>
+                                        save
                                         </button>
-                                        <button type="button" class="btn btn-outline-danger shadow btn-sm ml-2" onclick="cancelAvatarChange()"><i class="fas fa-times"></i></button>
+                                        <button type="button" class="btn btn-outline-danger shadow btn-sm ml-2" onclick="cancelAvatarChange()">Cancel</i></button>
                                     </div>
                                 </form>
                             </div>
