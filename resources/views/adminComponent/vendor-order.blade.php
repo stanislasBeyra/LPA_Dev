@@ -147,7 +147,6 @@
 
                 </div>
             </form>
-
         </div>
     </div>
 </div>
@@ -181,6 +180,22 @@
 
 
 <script>
+
+
+const eiditButton = document.getElementById('editButton'); // Bouton de suppression
+    const spinneredit = document.getElementById('editSpinner'); // Spinner pour le bouton
+    const buttonTextedit = document.getElementById('editButtonText'); // Texte du bouton
+
+    // Ajout de l'événement sur le bouton
+    eiditButton.addEventListener('click', function(event) {
+        // Affiche le spinner et masque le texte
+        buttonTextedit.style.display = 'none'; // Masque le texte du bouton
+        spinneredit.style.display = 'inline-block'; // Affiche le spinner
+    });
+
+
+
+
     function handleOrderDetailbutton(button) {
         const orderData = JSON.parse(button.getAttribute('data-items-products'));
         const imageBaseUrl = button.getAttribute('data-image-url');
@@ -215,6 +230,15 @@
                 default:
                     return 'bg-secondary';
             }
+        }
+
+        const editButton = document.querySelector("#editButton");
+        if (orderData.orderStatus === 3) {
+            // Masquer le bouton si le statut est 3 (validé)
+            editButton.style.display = 'none';
+        } else {
+            // Afficher le bouton si le statut n'est pas 3
+            editButton.style.display = 'inline-block';
         }
 
         orderData.orderItems.forEach(item => {

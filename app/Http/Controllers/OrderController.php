@@ -634,43 +634,53 @@ class OrderController extends Controller
     }
 
     public function NewAdminVendorValidateOrder(Request $request)
-{
-    try {
-       
+    {
+        try {
 
-        // Récupérer le vendeur authentifié
-        $vendor = Auth::user();
 
-        if (!$vendor) {
-            return back()->with('error', 'Unauthorized access');
+            // Récupérer le vendeur authentifié
+            $vendor = Auth::user();
+
+            if (!$vendor) {
+                return back()->with('error', 'Unauthorized access');
+            }
+
+            $order = Order::find($request->orderid);
+            
+
+            if (!$order) {
+                return back()->with('error', 'Order not found.');
+            }
+
+            if($order->status==3){
+                return back()->with('error','The order has already been validated');
+
+            }
+
+            $allOrderItems = order_items::where('order_id', $order->id)->get();
+
+            $allOrderItemsHaveStatus2 = $allOrderItems->every(function ($orderItem) {
+                return $orderItem->status == 2;
+            });
+
+            if (!$allOrderItemsHaveStatus2) {
+                return back()->with('error', 'Validation failed because not all vendors have validated their products.');
+            }
+
+            $order->status = 3;
+            $order->save();
+
+            foreach ($allOrderItems as $item) {
+                $item->status = 3;
+                $item->save();
+            }
+
+            return back()->with('success', 'Order successfully processing.');
+        } catch (\Exception $e) {
+            Log::error('An error occurred: ' . $e->getMessage());
+            return back()->with('error', 'An error occurred: ' . $e->getMessage());
         }
-
-        $order = Order::find($request->orderid);
-
-        if (!$order) {
-            return back()->with('error', 'Order not found.');
-        }
-
-        $allOrderItems = order_items::where('order_id', $order->id)->get();
-
-        $allOrderItemsHaveStatus2 = $allOrderItems->every(function ($orderItem) {
-            return $orderItem->status == 2;
-        });
-
-        if (!$allOrderItemsHaveStatus2) {
-            return back()->with('error', 'Validation failed because not all vendors have validated their products.');
-        }
-
-        $order->status = 3; 
-        $order->save();
-
-        return back()->with('success', 'Order successfully processing.');
-
-    } catch (\Exception $e) {
-        Log::error('An error occurred: ' . $e->getMessage());
-        return back()->with('error', 'An error occurred: ' . $e->getMessage());
     }
-}
 
 
 
@@ -762,35 +772,35 @@ class OrderController extends Controller
                 ->orderBy('id', 'desc')
                 ->get();
 
-                $formattedOrders = $orders->map(function ($order) {
-                    return [
-                        "orderId" => $order->id,
-                        'orderTotal' => $order->total,
-                        'orderStatus' => $order->status,
-                        'ordercreated' => $order->created_at,
-                        'employeefirstname' => $order->employee->firstname ?? null,
-                        'employeelastname' => $order->employee->lastname ?? null,
-                        'employeeusername' => $order->employee->username ?? null,
-                        'employeemiddlename' => $order->employee->middle_name ?? null,
-                        'employeeemail' => $order->employee->email ?? null,
-                        'employeemobile' => $order->employee->mobile ?? null,
-                        'employeemobile2' => $order->employee->mobile2 ?? null,
-                        'orderItems' => $order->orderItems->map(function ($item) {
-                            return [
-                                'orderItemsId' => $item->id,
-                                'orderItemsStatus' => $item->status,
-                                'quantity' => $item->quantity,
-                                'productname' => $item->product->product_name ?? null,
-                                'productprice' => $item->product->price ?? null,
-                                'product_images1' => $item->product->product_images1 ?? null,
-                                'product_images2' => $item->product->product_images2 ?? null,
-                                'product_images3' => $item->product->product_images3 ?? null,
-                            ];
-                        }),
-                    ];
-                });
+            $formattedOrders = $orders->map(function ($order) {
+                return [
+                    "orderId" => $order->id,
+                    'orderTotal' => $order->total,
+                    'orderStatus' => $order->status,
+                    'ordercreated' => $order->created_at,
+                    'employeefirstname' => $order->employee->firstname ?? null,
+                    'employeelastname' => $order->employee->lastname ?? null,
+                    'employeeusername' => $order->employee->username ?? null,
+                    'employeemiddlename' => $order->employee->middle_name ?? null,
+                    'employeeemail' => $order->employee->email ?? null,
+                    'employeemobile' => $order->employee->mobile ?? null,
+                    'employeemobile2' => $order->employee->mobile2 ?? null,
+                    'orderItems' => $order->orderItems->map(function ($item) {
+                        return [
+                            'orderItemsId' => $item->id,
+                            'orderItemsStatus' => $item->status,
+                            'quantity' => $item->quantity,
+                            'productname' => $item->product->product_name ?? null,
+                            'productprice' => $item->product->price ?? null,
+                            'product_images1' => $item->product->product_images1 ?? null,
+                            'product_images2' => $item->product->product_images2 ?? null,
+                            'product_images3' => $item->product->product_images3 ?? null,
+                        ];
+                    }),
+                ];
+            });
 
-                return $formattedOrders;
+            return $formattedOrders;
         } catch (\Exception $e) {
             Log::info('An occured error' . $e->getMessage());
             return back()->with('error', 'An occured error');
