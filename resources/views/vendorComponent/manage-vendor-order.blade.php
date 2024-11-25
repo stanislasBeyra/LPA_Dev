@@ -37,9 +37,9 @@
                                     @if ($order['orderStatus'] == 1)
                                     <span class="badge bg-warning">pending</span>
                                     @elseif ($order['orderStatus'] == 2)
-                                    <span class="badge bg-primary">validated</span>
+                                    <span class="badge bg-primary">Processing</span>
                                     @elseif ($order['orderStatus'] == 3)
-                                    <span class="badge bg-success">Approuved</span>
+                                    <span class="badge bg-success">Validated</span>
                                     @else
                                     <span class="badge bg-danger">Cancelled</span>
                                     @endif
