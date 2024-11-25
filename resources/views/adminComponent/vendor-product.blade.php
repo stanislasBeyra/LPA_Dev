@@ -199,7 +199,7 @@
                             </div>
                             <div class="card-body">
                                 <p><strong>Product Category:</strong> <span id="productDetailCategory"></span></p>
-                                <p><strong>Status:</strong> <span id="productDetailStatus"></span></p>
+                                <p><strong>Status:</strong> <span id="productDetailStatusss"></span></p>
                             </div>
                         </div>
                     </div>
@@ -402,10 +402,10 @@
         document.querySelector("#productDetailcategorie").textContent = productData.category_name; // Exemple de revenu
 
         const status = productData.productstatus === 1 ? 'active' : 'inactive';
-        document.querySelector("#productDetailStatus").textContent = status
+        document.querySelector("#productDetailStatusss").textContent = status
 
 
-        const statusElement = document.querySelector("#productDetailStatus");
+        const statusElement = document.querySelector("#productDetailStatusss");
         if (status === 'active') {
             statusElement.classList.add('badge', 'bg-success');
         } else {
