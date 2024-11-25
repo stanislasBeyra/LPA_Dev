@@ -56,9 +56,9 @@
                                         onclick="handleOrderDetailbutton(this)">
                                         <i class="fas fa-eye"></i>
                                     </button>
-                                    <button type="button" class="btn btn-danger btn-sm" data-mdb-modal-init data-mdb-target="#exampleModal1">
+                                    <!-- <button type="button" class="btn btn-danger btn-sm" data-mdb-modal-init data-mdb-target="#exampleModal1">
                                         <i class="fas fa-trash-alt"></i>
-                                    </button>
+                                    </button> -->
                                 </td>
                             </tr>
                             @endforeach
@@ -89,7 +89,7 @@
                                 <th scope="col">Quantity</th>
                                 <th scope="col">Unit Price</th>
                                 <th scope="col">Total Price</th>
-                                <th scope="col">Validate</th>
+                                <th scope="col">Status</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -154,13 +154,45 @@
         const modalBody = document.querySelector('#exampleModal .modal-body table tbody');
         modalBody.innerHTML = ''; // Réinitialiser le corps du tableau pour éviter d'ajouter à des données précédentes
 
+        function getStatusText(status) {
+            switch (status) {
+                case 1:
+                    return 'Pending';
+                case 2:
+                    return 'Processing';
+                case 3:
+                    return 'Validated';
+                default:
+                    return 'Unknown';
+            }
+        }
+
+        // Fonction pour obtenir la classe CSS du badge en fonction du statut
+        function getStatusBadgeClass(status) {
+            switch (status) {
+                case 1:
+                    return 'bg-warning'; // Couleur pour "Pending"
+                case 2:
+                    return 'bg-primary'; // Couleur pour "Processing"
+                case 3:
+                    return 'bg-success'; // Couleur pour "Validated"
+                default:
+                    return 'bg-secondary'; // Couleur par défaut pour "Unknown"
+            }
+        }
+
+
+
         // Parcourir les éléments de commande et ajouter des lignes dynamiquement
         orderData.orderItems.forEach(item => {
             const totalPrice = item.productprice * item.quantity; // Prix total pour le produit
 
             // Utiliser la fonction asset() pour obtenir l'URL de l'image en PHP, et l'intégrer dans le JavaScript
             const imageUrl = `${imageBaseUrl}/${item.product_images1}`;
-            console.log('url',imageBaseUrl);
+
+            const statusText = getStatusText(item.orderItemsStatus);
+            const badgeClass = getStatusBadgeClass(item.orderItemsStatus);
+
 
             const row = `
                 <tr>
@@ -169,7 +201,8 @@
                     <td>${item.quantity}</td>
                     <td>${item.productprice.toFixed(2)} $</td>
                     <td>${totalPrice.toFixed(2)} FCFA</td>
-                    <td><button class="btn btn-outline-primary">Validate</button></td>
+                    <td><span class="badge ${badgeClass}">${statusText}</span></td>
+
                 </tr>
             `;
             modalBody.innerHTML += row; // Ajouter une nouvelle ligne au tableau
