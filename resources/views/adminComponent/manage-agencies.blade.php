@@ -84,7 +84,7 @@
 
     <!-- Section avec tableau -->
     <section class="mb-4">
-        <div class="card">
+        <div class="card animate__animated animate__zoomIn">
             <div class="card-header text-center py-3">
                 <h5 class="mb-0 text-center">
                     <strong>Search Agencies</strong>

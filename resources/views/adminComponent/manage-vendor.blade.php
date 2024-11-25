@@ -5,7 +5,7 @@
 
    <!-- Section contenant le bouton aligné à droite -->
    <div class="d-flex justify-content-between mb-3">
-      <div class="d-flex">
+      <div class="d-flex animate__animated animate__zoomIn">
          @if(session('error'))
          <div class="alert alert-danger mb-0 me-3" id="error-message">
             {{ session('error') }}
@@ -29,7 +29,7 @@
          @endif
       </div>
       <!-- Button trigger modal -->
-      <button type="button" class="btn btn-primary fs-5" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#exampleModal">
+      <button type="button" class="btn btn-primary fs-7 animate__animated animate__zoomIn" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#exampleModal">
          ADD VENDORS
       </button>
    </div>
@@ -230,7 +230,7 @@
 
    <!-- Section avec tableau -->
    <section class="mb-4">
-      <div class="card">
+      <div class="card animate__animated animate__zoomIn">
          <div class="card-header text-center py-3">
             <h5 class="mb-0 text-center">
                <strong>Vendors and Users</strong>
@@ -265,7 +265,10 @@
                         <td>{{ $user->email }}</td>
 
                         <td>
-                           <a href="/vendors-detail/{{$user->id}}" class="btn btn-info btn-sm"><i class="fas fa-eye"></i>Details</a>
+                           <a href="/vendors-detail/{{$user->id}}" 
+                           class="btn btn-info btn-sm">
+                           <i class="fas fa-eye"></i>
+                        </a>
 
                            <button data-mdb-button-init data-mdb-ripple-init
                               class="btn btn-outline-primary btn-sm"
@@ -273,10 +276,10 @@
                               data-user='@json($user)'
                               onclick="handleButtonClick(this)">
 
-                              <i class="fas fa-edit"></i> Edit
+                              <i class="fas fa-edit"></i>
                            </button>
                            <button type="button" class="btn btn-danger btn-sm" data-mdb-modal-init data-mdb-target="#exampleModal1" onclick="setVendors('{{ $user->id }}')">
-                              <i class="fas fa-trash-alt"></i> Delete
+                              <i class="fas fa-trash-alt"></i> 
                            </button>
                         </td>
                      </tr>

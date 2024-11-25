@@ -6,7 +6,7 @@
     @foreach($users as $user)
     <section>
         <div class="container-fluid py-5">
-            <div class="d-flex">
+            <div class="d-flex animate__animated animate__zoomIn">
                 @if(session('error'))
                 <div class="alert alert-danger mb-0 me-3" id="error-message">
                     {{ session('error') }}
@@ -67,7 +67,7 @@
 
             <!-- Modal -->
 
-            <div class="row">
+            <div class="row animate__animated animate__zoomIn">
                 <div class="col">
                     <nav aria-label="breadcrumb" class="bg-body-tertiary rounded-3 p-3 mb-4">
                         <ol class="breadcrumb mb-0">
@@ -81,7 +81,7 @@
             <div class="row">
                 <div class="col-lg-4">
                     <!-- Profile Card -->
-                    <div class="card mb-4">
+                    <div class="card mb-4 animate__animated animate__zoomIn">
                         <div class="card-body text-center">
                             <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar"
                                 class="rounded-circle img-fluid" style="width: 150px;">
@@ -95,7 +95,7 @@
                     </div>
 
 
-                    <div class="card mb-6 mb-lg-0">
+                    <div class="card mb-6 mb-lg-0 animate__animated animate__zoomIn">
                         <div class="card-body">
                             <h5 class="card-title">Address Details</h5>
                             <div class="row">
@@ -123,7 +123,7 @@
                 <div class="col-lg-8">
                     <!-- Basic Information Card -->
                     <!-- Basic Information Card -->
-                    <div class="card mb-4">
+                    <div class="card mb-4 animate__animated animate__zoomIn">
                         <div class="card-body">
                             <h5 class="card-title">Basic Information</h5>
                             <div class="row">
@@ -194,7 +194,7 @@
 
                     <!-- Business Details Card -->
                     <!-- Business Details Card -->
-                    <div class="card mb-4">
+                    <div class="card mb-4 animate__animated animate__zoomIn">
                         <div class="card-body">
                             <h5 class="card-title">Business Details</h5>
                             <div class="row">
@@ -232,7 +232,7 @@
 
                     <!-- Banking Details Card -->
                     <!-- Banking Details Card -->
-                    <div class="card mb-4">
+                    <div class="card mb-4 animate__animated animate__zoomIn">
                         <div class="card-body">
                             <h5 class="card-title">Banking Details</h5>
                             <div class="row">
@@ -292,7 +292,7 @@
 
                 </div>
             </div>
-            <div class="card mb-4">
+            <div class="card mb-4 animate__animated animate__zoomIn">
                 <div class="card-body">
                     <h5 class="card-title">Document Info</h5>
 

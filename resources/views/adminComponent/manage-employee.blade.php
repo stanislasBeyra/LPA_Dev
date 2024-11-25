@@ -79,7 +79,7 @@
             @endif
         </div>
         <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary fs-7" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#exampleModal">
+        <button type="button" class="btn btn-primary fs-7 animate__animated animate__zoomIn" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#exampleModal">
             ADD EMPLOYEE
         </button>
     </div>
@@ -209,7 +209,7 @@
 
     <!-- Section avec tableau -->
     <section class="mb-4">
-        <div class="card">
+        <div class="card animate__animated animate__zoomIn">
             <div class="card-header text-center py-3">
                 <h5 class="mb-0 text-center">
                     <strong>Sales Performance KPIs</strong>
