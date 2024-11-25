@@ -397,7 +397,7 @@
         });
         document.querySelector("#productDetailDescription").textContent = productData.product_description;
         document.querySelector("#productDetailNames").textContent = productData.product_name;
-        document.querySelector("#productDetailCategory").textContent=productData.category_name;s
+        document.querySelector("#productDetailCategory").textContent=productData.category_name;
 
         document.querySelector("#productDetailcategorie").textContent = productData.category_name; // Exemple de revenu
 
