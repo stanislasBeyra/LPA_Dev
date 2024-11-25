@@ -86,7 +86,7 @@
                             <div class="position-relative d-inline-block">
                                 <img src="{{ $user->avatar ? asset('app/' . $user->avatar) : 'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp' }}"
                                     alt="avatar"
-                                    class="rounded-circle img-fluid clickable-avatar"
+                                    class="rounded-circle shadow img-fluid clickable-avatar"
                                     style="width: 130px; height:130px; cursor: pointer;"
                                     onclick="document.getElementById('avatar-input').click()">
 
@@ -101,8 +101,10 @@
                                         onchange="previewAvatar(event)">
 
                                     <div id="save-avatar-section" style="display: none;" class="mt-2">
-                                        <button type="submit" class="btn btn-primary btn-sm">Save Avatar</button>
-                                        <button type="button" class="btn btn-secondary btn-sm ml-2" onclick="cancelAvatarChange()">Cancel</button>
+                                        <button type="submit" class="btn shadow btn-outline-success btn-sm">
+                                        <i class="fas fa-save"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-outline-danger shadow btn-sm ml-2" onclick="cancelAvatarChange()"><i class="fas fa-times"></i></button>
                                     </div>
                                 </form>
                             </div>
