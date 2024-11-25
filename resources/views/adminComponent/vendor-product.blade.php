@@ -35,7 +35,7 @@
                                 <td> <img src="{{ asset('app/public/' . $product['product_images1']) }}" height="60" width="60" class="shadow  rounded-3" alt="" /></td>
                                 <td>{{$product['product_name']}}</td>
                                 <td>{{$product['category_name']}}</td>
-                                
+
                                 <td>${{ number_format($product['productprice'], 2, '.', ',') }}</td>
                                 <td>{{$product['productstock']}}qty</td>
                                 <td>
@@ -151,7 +151,7 @@
                     </button>
                 </div>
 
-                
+
 
                 <div class="accordion" id="accordionExample">
 
@@ -176,7 +176,7 @@
 
                 </div>
 
-                
+
 
                 <div class="row d-flex mt-4">
                     <div class="col-md-6 mb-3">
@@ -206,7 +206,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -386,10 +386,10 @@
             }
         });
 
-        
+
         // Met à jour les informations du produit dans les cartes
         document.querySelector("#productDetailName").textContent = productData.product_name;
-        document.querySelector("#productDetailNames").textContent=productData.product_name;
+        document.querySelector("#productDetailNames").textContent = productData.product_name;
         document.querySelector("#productDetailQuantity").textContent = productData.productstock;
         document.querySelector("#productDetailPrice").textContent = "$" + (productData.productprice).toLocaleString('en-US', {
             minimumFractionDigits: 2,
@@ -397,7 +397,7 @@
         });
         document.querySelector("#productDetailDescription").textContent = productData.product_description;
         document.querySelector("#productDetailNames").textContent = productData.product_name;
-        document.querySelector("#productDetailCategory").textContent=productData.category_name;
+        document.querySelector("#productDetailCategory").textContent = productData.category_name;
 
         document.querySelector("#productDetailcategorie").textContent = productData.category_name;
 
