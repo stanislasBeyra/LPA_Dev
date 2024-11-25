@@ -150,30 +150,7 @@
                     </button>
                 </div>
 
-                <div id="carouselDarkVariant" class="carousel slide carousel-fade carousel-dark" data-mdb-ride="carousel">
-                    <div class="carousel-indicators">
-                        <button style="border-radius: 100%; width:10px; height:10px;background-color:aliceblue" data-mdb-target="#carouselDarkVariant" data-mdb-slide-to="0" class="active"></button>
-                        <button style="border-radius: 100%; width:10px; height:10px;background-color:aliceblue" data-mdb-target="#carouselDarkVariant" data-mdb-slide-to="1"></button>
-                        <button style="border-radius: 100%; width:10px; height:10px;background-color:aliceblue" data-mdb-target="#carouselDarkVariant" data-mdb-slide-to="2"></button>
-                    </div>
-                    <div class="carousel-inner">
-                        <div class="carousel-item active">
-                            <img src="" class="d-block w-100" style="height: 250px; object-fit: cover;" alt="Image 1" id="productImage1">
-                        </div>
-                        <div class="carousel-item">
-                            <img src="" class="d-block w-100" style="height: 250px; object-fit: cover;" alt="Image 2" id="productImage2">
-                        </div>
-                        <div class="carousel-item">
-                            <img src="" class="d-block w-100" style="height: 250px; object-fit: cover;" alt="Image 3" id="productImage3">
-                        </div>
-                    </div>
-                    <button class="carousel-control-prev" type="button" data-mdb-target="#carouselDarkVariant" data-mdb-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-mdb-target="#carouselDarkVariant" data-mdb-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    </button>
-                </div>
+                
 
                 <div class="accordion" id="accordionExample">
 
@@ -207,7 +184,7 @@
                                 <h5 class="mb-0">Product Information</h5>
                             </div>
                             <div class="card-body">
-                                <p><strong>Product Name:</strong> <span id="productDetailName"></span></p>
+                                <p><strong>Product Name:</strong> <span id="productDetailNames"></span></p>
                                 <p><strong>Quantity:</strong> <span id="productDetailQuantity"></span></p>
                                 <p><strong>Price:</strong> <span id="productDetailPrice"></span></p>
                             </div>
@@ -407,23 +384,11 @@
                 img.src = "{{ asset('app/public/') }}" + "/" + productData.product_images3; // Troisième image
             }
         });
+
         
-        // carouselItems.forEach((img, index) => {
-        //     let imagePath = '';
-        //     if (index === 0 && productData.product_images1) {
-        //         imagePath = "{{ asset('app/public/') }}" + "/" + productData.product_images1;
-        //     } else if (index === 1 && productData.product_images2) {
-        //         imagePath = "{{ asset('app/public/') }}" + "/" + productData.product_images2;
-        //     } else if (index === 2 && productData.product_images3) {
-        //         imagePath = "{{ asset('app/public/') }}" + "/" + productData.product_images3;
-        //     }
-
-        //     // Si l'image existe, on l'affiche, sinon on met l'image par défaut
-        //     img.src = checkImage(imagePath) ? imagePath : defaultImage;
-        // });
-
         // Met à jour les informations du produit dans les cartes
         document.querySelector("#productDetailName").textContent = productData.product_name;
+        document.querySelector("#productDetailNames").textContent=productData.product_name;
         document.querySelector("#productDetailQuantity").textContent = productData.productstock;
         document.querySelector("#productDetailPrice").textContent = "$" + (productData.productprice).toLocaleString('en-US', {
             minimumFractionDigits: 2,
@@ -431,6 +396,7 @@
         });
         document.querySelector("#productDetailDescription").textContent = productData.product_description;
         document.querySelector("#productDetailNames").textContent = productData.product_name;
+        document.querySelector("#productDetailCategory").textContent=productData.category_name;s
 
         const status = productData.productstatus === 1 ? 'active' : 'inactive';
         document.querySelector("#productDetailStatus").textContent = status;
