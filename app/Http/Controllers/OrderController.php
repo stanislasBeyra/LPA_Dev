@@ -514,35 +514,52 @@ class OrderController extends Controller
     {
         try {
             $vendor = Auth::user();
+            //  dd($vendor->id);
             if (!$vendor) {
                 return response()->json([
                     'error' => 'Unauthorized access'
                 ], 401);
             }
 
-            $orders = Order::with(['orderItems.product', 'employee'])
-                ->whereHas('orderItems', function ($query) use ($vendor) {
-                    $query->where('vendor_id', $vendor->id);
-                })
+            // $orders = Order::with(['orderItems.product', 'employee'])
+            //     ->whereHas('orderItems', function ($query) use ($vendor) {
+            //         $query->where('vendor_id', 70);
+            //     })
+            //     ->orderBy('id', 'desc')
+            //     ->get();
+
+
+            $orderIds = order_items::where('vendor_id', 70)
+                ->pluck('order_id');
+
+                $orders = Order::with([
+                    'orderItems' => function($query) use ($vendor) {
+                        $query->where('vendor_id', $vendor->id); // Filtre sur `vendor_id`
+                    },
+                    'orderItems.product',
+                    'employee'
+                ])
+                ->whereIn('id', $orderIds)
                 ->orderBy('id', 'desc')
                 ->get();
+            
 
             $formattedOrders = $orders->map(function ($order) {
                 return [
                     "orderId" => $order->id,
                     'orderTotal' => $order->total,
                     'orderStatus' => $order->status,
-                    'ordercreated'=>$order->created_at,
-                    'employeefirstname'=>$order->employee->firstname??null,
-                    'employeelastname'=>$order->employee->lastname??null,
-                    'employeeusername'=>$order->employee->username??null,
-                    'employeemiddlename'=>$order->employee->middle_name??null,
-                    'employeeemail'=>$order->employee->email??null,
-                    'employeemobile'=>$order->employee->mobile??null,
-                    'employeemobile2'=>$order->employee->mobile2??null,
+                    'ordercreated' => $order->created_at,
+                    'employeefirstname' => $order->employee->firstname ?? null,
+                    'employeelastname' => $order->employee->lastname ?? null,
+                    'employeeusername' => $order->employee->username ?? null,
+                    'employeemiddlename' => $order->employee->middle_name ?? null,
+                    'employeeemail' => $order->employee->email ?? null,
+                    'employeemobile' => $order->employee->mobile ?? null,
+                    'employeemobile2' => $order->employee->mobile2 ?? null,
                     'orderItems' => $order->orderItems->map(function ($item) {
                         return [
-                            'orderItemsId'=>$item->id,
+                            'orderItemsId' => $item->id,
                             'quantity' => $item->quantity,
                             'productname' => $item->product->product_name ?? null,
                             'productprice' => $item->product->price ?? null,
@@ -554,7 +571,7 @@ class OrderController extends Controller
                 ];
             });
 
-            return $formattedOrders;
+            return $orders;
         } catch (\Exception $e) {
             Log::error('An error occurred: ' . $e->getMessage());
             return response()->json([

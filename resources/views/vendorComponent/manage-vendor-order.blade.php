@@ -169,7 +169,7 @@
                     <td>${item.quantity}</td>
                     <td>${item.productprice.toFixed(2)} $</td>
                     <td>${totalPrice.toFixed(2)} FCFA</td>
-                    <td><button class="btn btn-primary">Validate</button></td>
+                    <td><button class="btn btn-outline-primary">Validate</button></td>
                 </tr>
             `;
             modalBody.innerHTML += row; // Ajouter une nouvelle ligne au tableau
