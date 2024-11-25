@@ -166,7 +166,7 @@ class HomeController extends Controller
 
         return $categories;
     }
-
+    
 
     public function getContent($page)
     {
@@ -228,7 +228,7 @@ class HomeController extends Controller
             case 'employee-paiement':
                 return view('adminComponent.employee-paiement');
             case 'user-profile':
-                return view('profil');
+                return view('profil'); 
 
             case'manage-vendor-product':
                 return view('vendorComponent.manage-vendor-product',compact('categories','products'));

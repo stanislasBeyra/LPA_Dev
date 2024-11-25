@@ -32,7 +32,7 @@
                             case 1:
                             echo 'admin';
                             break;
-                            case 2:
+                            case 2: 
                             echo 'client';
                             break;
                             case 3:
@@ -47,7 +47,7 @@
                 </li>
                 <hr>
                 <li>
-                    <a class="dropdown-item d-flex align-items-center" href="user-profile">
+                    <a class="dropdown-item d-flex align-items-center" href="{{ route('content.page', ['page' => 'user-profile']) }}">
                         <i class="fas fa-user me-2"></i> Profile
                     </a>
                 </li>
