@@ -44,6 +44,7 @@ Route::middleware('auth:web')->group(function () {
 
     //product
     Route::post('/vendor/product/store', [ProductController::class, 'storevendorproduct'])->name('vendor.product.store');
+    Route::post('NewvendorvalidateOrder',[OrderController::class,'NewvendorvalidateOrder'])->name('validated.order');
 
     Route::get('getallvendorcoonectproduct',[ProductController::class,'getallvendorcoonectproduct']);
     Route::get('getorders',[OrderController::class,'getorders']);

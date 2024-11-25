@@ -579,7 +579,7 @@ class OrderController extends Controller
             $vendor = Auth::user();
 
             // Vérifier si l'utilisateur est un vendor
-            if (!$vendor || $vendor->role !== 'vendor') {
+            if (!$vendor) {
                 return back()->with('error', 'Unauthorized access');
             }
 
@@ -588,28 +588,30 @@ class OrderController extends Controller
 
             // Vérifier si la commande existe
             if (!$order) {
-                return back()->with('error', 'Commande introuvable');
+                return back()->with('error', 'Order not found.');
             }
 
             // Récupérer les éléments de la commande associés au vendor
             $orderItems = order_items::where('vendor_id', $vendor->id)
-                ->where('order_id', $order->id)  // Utiliser 'order_id' ici
+                ->where('order_id', $order->id) 
                 ->get();
 
             // Vérifier si des éléments de commande ont été trouvés
             if ($orderItems->isEmpty()) {
-                return back()->with('error', 'Aucun élément de commande trouvé pour ce vendeur et cette commande');
+                return back()->with('error', 'No order items found for this seller and this order.');
             }
 
-            // Logique pour valider la commande, changer les statuts, etc.
-            // Exemple: Mettre à jour le statut des orderItems à 2
+
             foreach ($orderItems as $orderItem) {
+                if($orderItem->status == 2) {
+                    return back()->with('error', 'Order item is already processing.');
+                }                
+
                 $orderItem->status = 2;  // Mettre à jour le statut
                 $orderItem->save();
             }
-            
 
-            // Récupérer tous les éléments de commande liés à cette commande
+
             $allOrderItems = order_items::where('order_id', $order->id)->get();
 
             // Vérifier si tous les orderItems ont le statut 2
@@ -623,8 +625,7 @@ class OrderController extends Controller
                 $order->save();
             }
 
-            // Réponse de succès
-            return back()->with('success', 'Commande validée avec succès.');
+            return back()->with('success', 'Order successfully processing.');
         } catch (\Exception $e) {
             // Log des erreurs et gestion
             Log::error('An error occurred: ' . $e->getMessage());

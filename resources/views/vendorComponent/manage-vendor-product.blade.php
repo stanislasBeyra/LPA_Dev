@@ -436,7 +436,7 @@
                 <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
                 <form method="POST" action="{{ route('delete.product') }}">
                     @csrf
-                    <input type="hidden" id="productId" name="productId">
+                    <input type="hidden" id="Idproduct" name="productId">
 
                     <button type="submit" class="btn btn-danger" id="deleteButton">
                         <span id="deleteButtonText">Delete</span>
@@ -460,7 +460,7 @@
         const productData = JSON.parse(button.getAttribute('data-product'));
         console.log('delete::', productData)
 
-        document.querySelector("#productId").value = productData.id
+        document.querySelector("#Idproduct").value=productData.id
     }
 
     function handleEditButtonClick(button) {

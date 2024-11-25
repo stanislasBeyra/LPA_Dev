@@ -3,6 +3,33 @@
 @section('content')
 <div class="container-fluid pt-4">
 
+    <div class="d-flex justify-content-center align-items-center mb-3">
+        <!-- Affichage des messages d'erreur à gauche -->
+        <div class="d-flex flex-column align-items-center">
+            @if(session('error'))
+            <div class="alert alert-danger mb-0 me-3" id="error-message">
+                {{ session('error') }}
+            </div>
+            @endif
+
+            @if(session('success'))
+            <div class="alert alert-success mb-0 me-3" id="success-message">
+                {{ session('success') }}
+            </div>
+            @endif
+
+            @if($errors->any())
+            <div class="alert alert-danger mb-0 me-3" id="error-list">
+                <ul class="mb-0">
+                    @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
+        </div>
+    </div>
+
     <!-- Section avec tableau -->
     <section class="mb-4">
         <div class="card">
@@ -72,14 +99,13 @@
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg"> <!-- Adjusted width to 70% -->
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">order Details</h5>
                 <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <!-- Product Table -->
                 <div class="table-responsive">
                     <table class="table table-hover text-nowrap">
                         <thead>
@@ -105,9 +131,23 @@
                 </div>
 
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
-            </div>
+            <form method="POST" action="{{ route('validated.order') }}">
+                @csrf
+                <input type="hidden" id="orderid" name="orderid">
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                        data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
+
+                    <button type="submit" class="btn btn-outline-primary" id="editButton">
+                        <span id="editButtonText">approuved order</span>
+                        <div id="editSpinner" class="spinner-border text-primary" style="display: none; width: 1.5rem; height: 1.5rem;" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </button>
+
+                </div>
+            </form>
+
         </div>
     </div>
 </div>
@@ -126,9 +166,8 @@
             </div>
 
             <div class="modal-body d-flex flex-column align-items-center text-center">
-                <!-- Icône de suppression au-dessus du texte -->
-                <i class="fas fa-trash-alt mb-3 text-danger" style="font-size: 3rem;"></i> <!-- Icône de suppression -->
-                <p class="d-inline">Are you sure you want to delete this order?</p> <!-- Texte de confirmation -->
+                <i class="fas fa-trash-alt mb-3 text-danger" style="font-size: 3rem;"></i>
+                <p class="d-inline">Are you sure you want to delete this order?</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
@@ -139,20 +178,26 @@
 </div>
 
 
-<script>
-    // function handleOrderDetailbutton(button) {
-    //     // Récupérer les données JSON à partir de l'attribut 'data-items-products'
-    //     const OrderItemsData = JSON.parse(button.getAttribute('data-items-products'));
-    //     console.log('order items:', OrderItemsData);
-    // }
-</script>
+
 
 <script>
+    function handleOrderValidatedbutton(button) {
+
+    }
+
+
+
+
+
     function handleOrderDetailbutton(button) {
         const orderData = JSON.parse(button.getAttribute('data-items-products'));
         const imageBaseUrl = button.getAttribute('data-image-url');
         const modalBody = document.querySelector('#exampleModal .modal-body table tbody');
-        modalBody.innerHTML = ''; // Réinitialiser le corps du tableau pour éviter d'ajouter à des données précédentes
+        modalBody.innerHTML = '';
+
+        console.log(orderData.orderId);
+
+        document.querySelector("#orderid").value = orderData.orderId;
 
         function getStatusText(status) {
             switch (status) {
@@ -167,27 +212,23 @@
             }
         }
 
-        // Fonction pour obtenir la classe CSS du badge en fonction du statut
         function getStatusBadgeClass(status) {
             switch (status) {
                 case 1:
-                    return 'bg-warning'; // Couleur pour "Pending"
+                    return 'bg-warning';
                 case 2:
-                    return 'bg-primary'; // Couleur pour "Processing"
+                    return 'bg-primary';
                 case 3:
-                    return 'bg-success'; // Couleur pour "Validated"
+                    return 'bg-success';
                 default:
-                    return 'bg-secondary'; // Couleur par défaut pour "Unknown"
+                    return 'bg-secondary';
             }
         }
 
 
 
-        // Parcourir les éléments de commande et ajouter des lignes dynamiquement
         orderData.orderItems.forEach(item => {
-            const totalPrice = item.productprice * item.quantity; // Prix total pour le produit
-
-            // Utiliser la fonction asset() pour obtenir l'URL de l'image en PHP, et l'intégrer dans le JavaScript
+            const totalPrice = item.productprice * item.quantity;
             const imageUrl = `${imageBaseUrl}/${item.product_images1}`;
 
             const statusText = getStatusText(item.orderItemsStatus);
@@ -205,64 +246,20 @@
 
                 </tr>
             `;
-            modalBody.innerHTML += row; // Ajouter une nouvelle ligne au tableau
+            modalBody.innerHTML += row;
         });
 
-        // Calcul du sous-total
         const subtotal = orderData.orderItems.reduce((total, item) => total + (item.productprice * item.quantity), 0);
 
-        // Formater le sous-total avec séparateurs de milliers et deux décimales
         const formattedSubtotal = subtotal.toLocaleString('fr-FR', {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
         });
 
-        // Mettre à jour l'élément de la ligne de sous-total dans le tableau
         document.querySelector('#exampleModal .modal-body table tfoot th').textContent = `Sub Total:`;
         document.querySelector('#exampleModal .modal-body table tfoot th + th').textContent = `${formattedSubtotal} FCFA`;
     }
 </script>
-
-<!-- 
-<script>
-    function handleOrderDetailbutton(button) {
-        const orderData = JSON.parse(button.getAttribute('data-items-products'));
-        const modalBody = document.querySelector('#exampleModal .modal-body table tbody');
-        modalBody.innerHTML = ''; // Reset the table body to avoid appending to previous data
-
-        // Loop through the orderItems array and add rows dynamically
-        orderData.orderItems.forEach(item => {
-            const totalPrice = item.productprice * item.quantity; // Total price for the product
-            const row = `
-                <tr>
-                    <td><img src="${item.product_images1}" alt="${item.productname}" class="img-fluid" style="max-width: 50px;"></td>
-                    <td>${item.productname}</td>
-                    <td>${item.quantity}</td>
-                    <td>${item.productprice.toFixed(2)} $</td>
-                    <td>${totalPrice.toFixed(2)} FCFA</td>
-                    <td><button class="btn btn-primary">Validate</button></td>
-                </tr>
-            `;
-            modalBody.innerHTML += row; // Append new row
-        });
-
-        // Calcul du sous-total
-        const subtotal = orderData.orderItems.reduce((total, item) => total + (item.productprice * item.quantity), 0);
-
-        // Formater le sous-total avec séparateurs de milliers et deux décimales
-        const formattedSubtotal = subtotal.toLocaleString('fr-FR', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        });
-
-        // Mettre à jour l'élément de la ligne de sous-total dans le tableau
-        document.querySelector('#exampleModal .modal-body table tfoot th').textContent = `Sub Total:`;
-        document.querySelector('#exampleModal .modal-body table tfoot th + th').textContent = `${formattedSubtotal} FCFA`;
-
-       
-    }
-</script> -->
-
 
 
 
