@@ -52,7 +52,7 @@
                   <h5 class="mb-4">Basic Information</h5>
                   <div class="row mb-4">
                      <div class="col-md-6">
-                        <div class="form-outline">
+                        <div class="form-outline mb-3">
                            <input type="text" name="firstname" id="firstname" class="form-control" />
                            <label class="form-label" for="firstname">First Name</label>
                         </div>
@@ -66,7 +66,7 @@
                   </div>
 
                   <div class="row mb-4">
-                     <div class="col-md-6">
+                     <div class="col-md-6 mb-3">
                         <select name="role" class="form-select">
                            <option value="">Select role</option>
                            @foreach($roles as $role)
@@ -84,7 +84,7 @@
 
                   <div class="row mb-4">
                      <div class="col-md-6">
-                        <div class="form-outline">
+                        <div class="form-outline mb-3">
                            <input type="text" name="vendorname" id="vendorName" class="form-control" />
                            <label class="form-label" for="vendorName">Vendor Name</label>
                         </div>
@@ -99,7 +99,7 @@
 
                   <div class="row mb-4">
                      <div class="col-md-6">
-                        <div class="form-outline">
+                        <div class="form-outline mb-3">
                            <input type="email" name="businessemail" id="businessEmail" class="form-control" />
                            <label class="form-label" for="businessEmail">Business Email</label>
                         </div>
@@ -116,13 +116,13 @@
                   <h5 class="mb-4">Business Details</h5>
                   <div class="row mb-4">
                      <div class="col-md-6">
-                        <div class="form-outline">
+                        <div class="form-outline mb-3">
                            <input type="text" name="businessregno" id="businessRegNo" class="form-control" />
                            <label class="form-label" for="businessRegNo">Business Registration Number</label>
                         </div>
                      </div>
                      <div class="col-md-6">
-                        <div class="form-outline">
+                        <div class="form-outline ">
                            <input type="text" name="taxidnumber" id="tin" class="form-control" />
                            <label class="form-label" for="tin">Tax Identification Number (TIN)</label>
                         </div>
@@ -131,7 +131,7 @@
 
                   <div class="row mb-4">
                      <div class="col-md-6">
-                        <div class="form-outline">
+                        <div class="form-outline ">
                            <input type="text" name="businesscategory" id="businessCategory" class="form-control" />
                            <label class="form-label" for="businessCategory">Business Category</label>
                         </div>
@@ -142,7 +142,7 @@
                   <h5 class="mb-4">Address Details</h5>
                   <div class="row mb-4">
                      <div class="col-md-12">
-                        <div class="form-outline">
+                        <div class="form-outline ">
                            <textarea name="businessaddress" id="businessAddress" class="form-control" rows="3"></textarea>
                            <label class="form-label" for="businessAddress">Business Address</label>
                         </div>
@@ -153,13 +153,13 @@
                   <h5 class="mb-4">Banking Details</h5>
                   <div class="row mb-4">
                      <div class="col-md-6">
-                        <div class="form-outline">
+                        <div class="form-outline mb-3">
                            <input type="text" name="bank_name_1" id="bankName1" class="form-control" />
                            <label class="form-label" for="bankName1">Bank Name 1</label>
                         </div>
                      </div>
                      <div class="col-md-6">
-                        <div class="form-outline">
+                        <div class="form-outline ">
                            <input type="text" name="bankaccount1" id="bankAccount1" class="form-control" />
                            <label class="form-label" for="bankAccount1">Bank Account Number 1</label>
                         </div>
@@ -168,13 +168,13 @@
 
                   <div class="row mb-4">
                      <div class="col-md-6">
-                        <div class="form-outline">
+                        <div class="form-outline mb-3">
                            <input type="text" name="bankname2" id="bankName2" class="form-control" />
                            <label class="form-label" for="bankName2">Bank Name 2</label>
                         </div>
                      </div>
                      <div class="col-md-6">
-                        <div class="form-outline">
+                        <div class="form-outline ">
                            <input type="text" name="bankaccount2" id="bankAccount2" class="form-control" />
                            <label class="form-label" for="bankAccount2">Bank Account Number 2</label>
                         </div>
@@ -193,15 +193,15 @@
                   <!-- Section 5: Verification Documents -->
                   <h5 class="mb-4">Verification Documents</h5>
                   <div class="row mb-4">
-                     <div class="col-md-4">
+                     <div class="col-md-4 mb-3">
                         <label class="form-label" for="businessCertificate">Business Registration Certificate</label>
                         <input type="file" name="businesscertificate[]" id="businessCertificate" class="form-control" multiple accept=".pdf,.jpg,.png" />
                      </div>
-                     <div class="col-md-4">
+                     <div class="col-md-4 mb-3">
                         <label class="form-label" for="taxCertificate">Tax Clearance Certificate</label>
                         <input type="file" name="taxcertificate[]" id="taxCertificate" class="form-control" multiple accept=".pdf,.jpg,.png" />
                      </div>
-                     <div class="col-md-4">
+                     <div class="col-md-4 mb-3">
                         <label class="form-label" for="passportId">Passport or Government-Issued ID</label>
                         <input type="file" name="passportorID[]" id="passportId" class="form-control" multiple accept=".pdf,.jpg,.png" />
                      </div>
@@ -266,9 +266,9 @@
 
                         <td>
                            <a href="{{ url('/vendors-detail/' . $user->id) }}"
-                           class="btn btn-info btn-sm">
-                           <i class="fas fa-eye"></i>
-                        </a>
+                              class="btn btn-info btn-sm">
+                              <i class="fas fa-eye"></i>
+                           </a>
 
                            <button data-mdb-button-init data-mdb-ripple-init
                               class="btn btn-outline-primary btn-sm"
@@ -279,7 +279,7 @@
                               <i class="fas fa-edit"></i>
                            </button>
                            <button type="button" class="btn btn-danger btn-sm" data-mdb-modal-init data-mdb-target="#exampleModal1" onclick="setVendors('{{ $user->id }}')">
-                              <i class="fas fa-trash-alt"></i> 
+                              <i class="fas fa-trash-alt"></i>
                            </button>
                         </td>
                      </tr>
