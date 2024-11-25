@@ -156,7 +156,7 @@
                                 <th scope="col">Actions</th>
                             </tr>
                         </thead>
-                        
+
                         <tbody>
                             @foreach($products as $key=>$product)
                             <tr>
@@ -164,7 +164,7 @@
                                 <td>{{ $product->created_at->format('m/d/Y, h:i:s A') }}</td>
                                 <td> <img src="{{ asset('app/public/' . $product->product_images1) }}" height="60" width="60" class="shadow  rounded-3" alt="" /></td>
                                 <td>{{$product->product_name}}</td>
-                                <td>{{$product->category->categories_name}}</td>
+                                <td>{{$product->category->categories_name??'NA'}}</td>
                                 <td>{{ number_format($product->price, 2, '.', ',') }} $</td>
                                 <td>{{ number_format($product->stock, 0, '.', ',') }} qty</td>
 

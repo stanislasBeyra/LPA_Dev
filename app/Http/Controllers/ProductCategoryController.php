@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use App\Models\productcategories;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -156,6 +157,11 @@ class ProductCategoryController extends Controller
             if (!$category) {
                 return redirect()->route('content.page', ['page' => 'manage-categories'])->with('error', 'Category not found.');
             }
+            $productset=Product::where('categorie_id',$category->id)->first();
+            if($productset) {
+                return back()->with('error', 'This category cannot be deleted because it is already linked to an existing product.');
+            }
+            
             $category->delete();
             return redirect()->route('content.page', ['page' => 'manage-categories'])->with('success', 'Category deleted successfully.');
         } catch (\Exception $e) {
