@@ -228,7 +228,7 @@
                                 <th scope="col">Salary</th>
                                 <th scope="col">Agence/Ministry</th>
                                 <th scope="col">Status</th>
-                                <th scope="col">Action</th>
+                                <!-- <th scope="col">Action</th> -->
                             </tr>
                         </thead>
                         <tbody>
@@ -249,7 +249,7 @@
                                     </label>
                                     </p>
                                 </td>
-                                <td>Action</td>
+                                <!-- <td>Action</td> -->
                             </tr>
                             @empty
                             <td>No Data</td>
