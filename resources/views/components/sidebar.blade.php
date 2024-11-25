@@ -42,7 +42,7 @@
             <a href="/manage-vendor-product" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
                 <i class="fas fa-box fa-fw me-3"></i><span>manage Products</span>
             </a>
-            <a href="/my-orders" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
+            <a href="/manage-vendor-orders" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
                 <i class="fas fa-box-open fa-fw me-3"></i><span>My Orders</span>
             </a>
             @endif

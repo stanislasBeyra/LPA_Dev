@@ -11,16 +11,21 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\OrderController;
 
 
 class HomeController extends Controller
 {
     protected $productController;
+    protected $orderController;
 
-    public function __construct(ProductController $productController)
+    public function __construct(ProductController $productController,OrderController $orderController)
     {
         $this->productController = $productController;
+        $this->orderController = $orderController;
     }
+
+    
 
     public function loginform()
     {
@@ -172,6 +177,7 @@ class HomeController extends Controller
         $categories=$this->getproductCategorie();
 
         $products=$this->productController->getallvendorcoonectproduct();
+        $orders=$this->orderController->getOrders();
 
         //  dd($roles);
         // Sélectionner la vue en fonction de la page
@@ -214,6 +220,8 @@ class HomeController extends Controller
 
             case'manage-vendor-product':
                 return view('vendorComponent.manage-vendor-product',compact('categories','products'));
+            case 'manage-vendor-orders':
+                return view('vendorComponent.manage-vendor-order',compact('orders')); 
 
             case 'historiquemobile':
                 return view('transfert.historiquemobilemonney', ['transactions' => $transactions]);

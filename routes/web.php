@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AgenceController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\VendorController;
@@ -45,6 +46,7 @@ Route::middleware('auth:web')->group(function () {
     Route::post('/vendor/product/store', [ProductController::class, 'storevendorproduct'])->name('vendor.product.store');
 
     Route::get('getallvendorcoonectproduct',[ProductController::class,'getallvendorcoonectproduct']);
+    Route::get('getorders',[OrderController::class,'getorders']);
 
     Route::post('/delete/vendor/Product',[ProductController::class,'newdeletevendorProduct'])->name('delete.product');
     Route::post("/update/vendor/product",[ProductController::class,'NewupdateVendorProduct'])->name('update.product');

@@ -1,66 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
 </head>
 <!-- Font Awesome -->
 <link
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-  rel="stylesheet"
-/>
+  rel="stylesheet" />
 <!-- Google Fonts -->
 <link
   href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
-  rel="stylesheet"
-/>
+  rel="stylesheet" />
 <!-- MDB -->
 <link
   href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/8.0.0/mdb.min.css"
-  rel="stylesheet"
-/>
+  rel="stylesheet" />
 <style>
-    body {
-  background-color: #fbfbfb;
-}
-@media (min-width: 991.98px) {
-  main {
-    padding-left: 240px;
+  body {
+    background-color: #fbfbfb;
   }
-}
 
-/* Sidebar */
-.sidebar {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  padding: 58px 0 0; /* Height of navbar */
-  box-shadow: 0 2px 5px 0 rgb(0 0 0 / 5%), 0 2px 10px 0 rgb(0 0 0 / 5%);
-  width: 240px;
-  z-index: 600;
-}
+  @media (min-width: 991.98px) {
+    main {
+      padding-left: 240px;
+    }
+  }
 
-@media (max-width: 991.98px) {
+  /* Sidebar */
   .sidebar {
-    width: 100%;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    padding: 58px 0 0;
+    /* Height of navbar */
+    box-shadow: 0 2px 5px 0 rgb(0 0 0 / 5%), 0 2px 10px 0 rgb(0 0 0 / 5%);
+    width: 240px;
+    z-index: 600;
   }
-}
-.sidebar .active {
-  border-radius: 5px;
-  box-shadow: 0 2px 5px 0 rgb(0 0 0 / 16%), 0 2px 10px 0 rgb(0 0 0 / 12%);
-}
 
-.sidebar-sticky {
-  position: relative;
-  top: 0;
-  height: calc(100vh - 48px);
-  padding-top: 0.5rem;
-  overflow-x: hidden;
-  overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
-}
+  @media (max-width: 991.98px) {
+    .sidebar {
+      width: 100%;
+    }
+  }
+
+  .sidebar .active {
+    border-radius: 5px;
+    box-shadow: 0 2px 5px 0 rgb(0 0 0 / 16%), 0 2px 10px 0 rgb(0 0 0 / 12%);
+  }
+
+  .sidebar-sticky {
+    position: relative;
+    top: 0;
+    height: calc(100vh - 48px);
+    padding-top: 0.5rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+    /* Scrollable contents if viewport is shorter than content. */
+  }
 </style>
+
 <body>
   <!--Main Navigation-->
   <header>
@@ -215,7 +218,7 @@
   <!--Main layout-->
   <main style="margin-top: 58px">
     <div class="container pt-4">
-      
+
       <!-- Section: Main chart -->
 
       <!--Section: Sales Performance KPIs-->
@@ -621,4 +624,51 @@
 
 
 </body>
+
 </html>
+
+
+<table class="table table-hover text-nowrap">
+                        <thead>
+                        <tr>
+                                <th scope="col">#ID</th>
+                                <th scope="col">Product Name</th>
+                                <th scope="col">Username</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Total</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Actions</th> <!-- Nouvelle colonne pour les actions -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($orders as  $order)
+                            @foreach ($order['orderItems'] as $key=> $item)
+                            <tr>
+                                <td>{{ $key+1 }}</td>
+                                <td>{{ $item['productname'] ?? 'N/A' }}</td>
+                                <td>{{$order['employeeusername']}}</td>
+                                <td>{{$order['employeeusername']}}</td>
+                                <td>{{ number_format($order['orderTotal'], 2, '.', ',') }} FCFA</td>
+                                <td>
+                                    @if ($order['orderStatus'] == 1)
+                                    <span class="badge bg-success">Completed</span>
+                                    @elseif ($order['orderStatus'] == 2)
+                                    <span class="badge bg-warning">Pending</span>
+                                    @else
+                                    <span class="badge bg-danger">Cancelled</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <!-- Boutons Action -->
+                                    <button type="button" class="btn btn-info btn-sm" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#exampleModal">
+                                        <i class="fas fa-eye"></i> View Details
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-sm" data-mdb-modal-init data-mdb-target="#exampleModal1">
+                                        <i class="fas fa-trash-alt"></i> Delete
+                                    </button>
+                                </td>
+                            </tr>
+                            @endforeach
+                            @endforeach
+                        </tbody>
+                    </table>

@@ -436,7 +436,6 @@
                 <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
                 <form method="POST" action="{{ route('delete.product') }}">
                     @csrf
-
                     <input type="hidden" id="productId" name="productId">
 
                     <button type="submit" class="btn btn-danger" id="deleteButton">
@@ -513,9 +512,9 @@
 
         const statusElement = document.querySelector("#productDetailStatus");
         if (status === 'active') {
-            statusElement.style.color = 'green';
+            statusElement.classList.add('badge', 'bg-success');
         } else {
-            statusElement.style.color = 'red';
+            statusElement.classList.add('badge', 'bg-danger');
         }
     }
 
