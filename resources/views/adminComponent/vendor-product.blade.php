@@ -245,6 +245,18 @@
     </div>
 </div>
 <script>
+
+const deleteButton = document.getElementById('deleteButton'); // Bouton de suppression
+    const spinnerdelete = document.getElementById('deleteSpinner'); // Spinner pour le bouton
+    const buttonTextdelete = document.getElementById('deleteButtonText'); // Texte du bouton
+
+    // Ajout de l'événement sur le bouton
+    deleteButton.addEventListener('click', function(event) {
+        // Affiche le spinner et masque le texte
+        buttonTextdelete.style.display = 'none'; // Masque le texte du bouton
+        spinnerdelete.style.display = 'inline-block'; // Affiche le spinner
+    });
+    
     function handledeleteButtonClick(button) {
         const productData = JSON.parse(button.getAttribute('data-produt-delete'));
         console.log('product', productData);

@@ -404,7 +404,6 @@ class ProductController extends Controller
             $product = Product::where('id', $request->productId)
                 ->first();
 
-                dd($product);
 
             if (!$product) {
                 return back()->with('error', 'Product not found.');
