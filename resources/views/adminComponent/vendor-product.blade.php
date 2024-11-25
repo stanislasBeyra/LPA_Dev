@@ -233,7 +233,12 @@
                 <input type="hidden" id="Idproduct" name="productId">
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-danger">Delete</button>
+                    <button type="submit" class="btn btn-danger" id="deleteButton">
+                        <span id="deleteButtonText">Delete</span>
+                        <div id="deleteSpinner" class="spinner-border text-light" style="display: none; width: 1.5rem; height: 1.5rem;" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </button>
                 </div>
             </form>
         </div>
@@ -243,7 +248,7 @@
     function handledeleteButtonClick(button) {
         const productData = JSON.parse(button.getAttribute('data-produt-delete'));
         console.log('product', productData);
-        document.querySelector("#Idproduct").value=productData.id;
+        document.querySelector("#Idproduct").value = productData.id;
 
     }
 
