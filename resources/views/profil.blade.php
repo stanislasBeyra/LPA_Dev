@@ -96,7 +96,7 @@
                                 src="{{ Auth::user()->avatar ? asset('app/' . Auth::user()->avatar) : 'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp' }}"
                                 alt="avatar"
                                 class="rounded-circle img-fluid"
-                                style="width: 150px; cursor: pointer;"
+                                style="width: 130px; height:130px; cursor: pointer;"
                                 id="avatar-image">
 
                             <!-- Champ caché pour uploader l'image -->
