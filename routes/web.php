@@ -54,6 +54,8 @@ Route::middleware('auth:web')->group(function () {
 
     Route::post('/delete/vendor/Product',[ProductController::class,'newdeletevendorProduct'])->name('delete.product');
     Route::post("/update/vendor/product",[ProductController::class,'NewupdateVendorProduct'])->name('update.product');
+    //admin
+    Route::post('/admin/delete/Vendor/Product',[ProductController::class,'admindeleteVendorProduct'])->name('delete.VendorProduct');
 
 
     // Route::get('/{page}', [HomeController::class, 'getContent'])->name('content.page');

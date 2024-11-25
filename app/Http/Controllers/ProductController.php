@@ -360,13 +360,13 @@ class ProductController extends Controller
     {
         try {
             $vendorproduct = Product::with(['category', 'vendor'])
-            ->orderBy('id','desc')
-            ->get();
+                ->orderBy('id', 'desc')
+                ->get();
 
             $vendorProducts = $vendorproduct->map(function ($product) {
                 return [
                     'id' => $product->id,
-                    'created_at'=>$product->created_at,
+                    'created_at' => $product->created_at,
                     'product_name' => $product->product_name,
                     'product_description' => $product->product_description,
                     'productstock' => $product->stock,
@@ -389,6 +389,38 @@ class ProductController extends Controller
             return $vendorProducts;
         } catch (\Exception $e) {
             back()->with('error', 'An occurred error' . $e->getMessage());
+        }
+    }
+
+    public function admindeleteVendorProduct(Request $request)
+    {
+        try {
+            $vendor = Auth::user();
+            if (!$vendor) {
+                return back()->with('error', 'You must be logged in to access this section.');
+            }
+
+
+            $product = Product::where('id', $request->productId)
+                ->first();
+
+                dd($product);
+
+            if (!$product) {
+                return back()->with('error', 'Product not found.');
+            }
+
+            Log::info('delete info', [
+                "delete" => $product
+
+            ]);
+
+            // Supprimer le produit
+            $product->delete();
+
+            return redirect()->back()->with('success', 'Product delete successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'An unexpected error occurred. Please try again later.' . $e->getMessage());
         }
     }
 
