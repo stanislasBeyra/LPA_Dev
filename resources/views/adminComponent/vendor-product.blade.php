@@ -16,32 +16,50 @@
                     <table class="table table-hover text-nowrap">
                         <thead>
                             <tr>
-                                <th scope="col"></th>
-                                <th scope="col">Product Detail Views</th>
-                                <th scope="col">Unique Purchases</th>
-                                <th scope="col">Quantity</th>
-                                <th scope="col">Product Revenue</th>
-                                <th scope="col">Avg. Price</th>
+                                <th scope="col">#ID</th>
+                                <th scope="col">Creation Date</th>
+                                <th scope="col">Product Image</th>
+                                <th scope="col">Product Name</th>
+                                <th scope="col">Product Categorie</th>
+                                <th scope="col">Product Price</th>
+                                <th scope="col">Product Stock</th>
+                                <th scope="col">Product Status</th>
                                 <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
+                            @foreach($vendorproducts as $key=>$product)
                             <tr>
-                                <th scope="row">Value</th>
-                                <td>18,492</td>
-                                <td>228</td>
-                                <td>350</td>
-                                <td>$4,787.64</td> 
-                                <td>$13.68</td>
+                                <th scope="row">{{$key+1}}</th>
+                                <td>{{ $product['created_at']->format('m/d/Y, h:i:s A') }}</td>
+                                <td> <img src="{{ asset('app/public/' . $product['product_images1']) }}" height="60" width="60" class="shadow  rounded-3" alt="" /></td>
+                                <td>{{$product['product_name']}}</td>
+                                <td>{{$product['category_name']}}</td>
+                                <td>{{$product['productprice']}} $</td>
+                                <td>{{$product['productstock']}}</td>
+                                <td>
+                                    @switch($product['productstatus'])
+                                    @case(1)
+                                    <span class="badge bg-success">Active</span>
+                                    @break
+                                    @case(0)
+                                    <span class="badge bg-danger">Inactive</span>
+                                    @break
+                                    @default
+                                    <span class="badge bg-secondary">Unknown</span>
+                                    @endswitch
+                                </td>
+
                                 <td>
                                     <button type="button" class="btn btn-info btn-sm" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#exampleModal">
-                                        <i class="fas fa-eye"></i> View Details
+                                        <i class="fas fa-eye"></i>
                                     </button>
                                     <button type="button" class="btn btn-danger btn-sm" data-mdb-modal-init data-mdb-target="#exampleModal1">
-                                        <i class="fas fa-trash-alt"></i> Delete
+                                        <i class="fas fa-trash-alt"></i>
                                     </button>
                                 </td>
                             </tr>
+                            @endforeach
                             <!-- Repeat for other rows -->
                         </tbody>
                     </table>

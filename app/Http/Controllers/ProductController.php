@@ -356,38 +356,42 @@ class ProductController extends Controller
         }
     }
 
-    // public function getVendorProducts()
-    // {
-    //     try {
-    //         // Retrieve the currently authenticated user
-    //         $uservendor = Auth::user();
+    public function getNewallvendorProducts()
+    {
+        try {
+            $vendorproduct = Product::with(['category', 'vendor'])
+            ->orderBy('id','desc')
+            ->get();
 
-    //         if (!$uservendor) {
-    //             // Return a JSON response if the vendor is not found
-    //             return response()->json([
-    //                 'success' => false,
-    //                 'message' => 'Your are not authenticated.'
-    //             ], 404);
-    //         }
-    //         // Retrieve products associated with the vendor
-    //         $products = Product::where('vendor_id', $uservendor->id)
-    //             ->latest()
-    //             ->take(10)
-    //             ->get();
-    //         // Return a JSON response with the products
-    //         return response()->json([
-    //             'success' => true,
-    //             'products' => $products
-    //         ], 200);
-    //     } catch (\Exception $e) {
-    //         // Handle exceptions and return a JSON error response
-    //         return response()->json([
-    //             'success' => false,
-    //             'message' => 'An unexpected error occurred.',
-    //             'error' => $e->getMessage()
-    //         ], 500);
-    //     }
-    // }
+            $vendorProducts = $vendorproduct->map(function ($product) {
+                return [
+                    'id' => $product->id,
+                    'created_at'=>$product->created_at,
+                    'product_name' => $product->product_name,
+                    'product_description' => $product->product_description,
+                    'productstock' => $product->stock,
+                    'productstatus' => $product->status,
+                    'productprice' => $product->price,
+                    'product_images1' => $product->product_images1 ?? null,
+                    'product_images2' => $product->product_images2 ?? null,
+                    'product_images3' => $product->product_images3 ?? null,
+                    'category_name' => $product->category->categories_name,
+                    'category_description' => $product->category->categories_description,
+                    'vendor_name' => $product->vendor->firstname . ' ' . $product->vendor->lastname,
+                    'vendor_username' => $product->vendor->username,
+                    'vendor_email' => $product->vendor->email,
+                    'vendor_mobile' => $product->vendor->mobile,
+
+
+                ];
+            });
+
+            return $vendorProducts;
+        } catch (\Exception $e) {
+            back()->with('error', 'An occurred error' . $e->getMessage());
+        }
+    }
+
 
     public function getVendorProducts()
     {

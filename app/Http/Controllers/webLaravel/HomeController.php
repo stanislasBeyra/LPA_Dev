@@ -179,6 +179,9 @@ class HomeController extends Controller
         $products=$this->productController->getallvendorcoonectproduct();
         $orders=$this->orderController->getOrders();
 
+        // get vendor product for admin
+        $vendorproducts=$this->productController->getNewallvendorProducts();
+
         //  dd($roles);
         // Sélectionner la vue en fonction de la page
         switch ($page) {
@@ -209,7 +212,7 @@ class HomeController extends Controller
             case 'manage-categories':
                 return view('adminComponent.manage-categorie', ['categories' => $categories]);
             case 'vendor-product':
-                return view('adminComponent.vendor-product');
+                return view('adminComponent.vendor-product',compact('vendorproducts'));
             case 'vendor-order':
                 return view('adminComponent.vendor-order');
 
