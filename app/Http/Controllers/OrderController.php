@@ -571,7 +571,7 @@ class OrderController extends Controller
                 ];
             });
 
-            return $orders;
+            return $formattedOrders;
         } catch (\Exception $e) {
             Log::error('An error occurred: ' . $e->getMessage());
             return response()->json([
