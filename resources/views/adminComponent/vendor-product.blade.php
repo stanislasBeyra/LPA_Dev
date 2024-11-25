@@ -35,8 +35,9 @@
                                 <td> <img src="{{ asset('app/public/' . $product['product_images1']) }}" height="60" width="60" class="shadow  rounded-3" alt="" /></td>
                                 <td>{{$product['product_name']}}</td>
                                 <td>{{$product['category_name']}}</td>
-                                <td>{{$product['productprice']}} $</td>
-                                <td>{{$product['productstock']}}</td>
+                                
+                                <td>${{ number_format($product['productprice'], 2, '.', ',') }}</td>
+                                <td>{{$product['productstock']}}qty</td>
                                 <td>
                                     @switch($product['productstatus'])
                                     @case(1)
@@ -398,10 +399,11 @@
         document.querySelector("#productDetailNames").textContent = productData.product_name;
         document.querySelector("#productDetailCategory").textContent=productData.category_name;s
 
-        const status = productData.productstatus === 1 ? 'active' : 'inactive';
-        document.querySelector("#productDetailStatus").textContent = status;
-
         document.querySelector("#productDetailcategorie").textContent = productData.category_name; // Exemple de revenu
+
+        const status = productData.productstatus === 1 ? 'active' : 'inactive';
+        document.querySelector("#productDetailStatus").textContent = status
+
 
         const statusElement = document.querySelector("#productDetailStatus");
         if (status === 'active') {
