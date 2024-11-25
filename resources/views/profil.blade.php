@@ -103,10 +103,11 @@
                             <form action="{{ route('profile.updateAvatar') }}" method="POST" enctype="multipart/form-data" id="avatar-form">
                                 @csrf
                                 <input
+                                
                                     type="file"
                                     name="avatar"
                                     id="avatar-input"
-                                    style="display: none;"
+                                    style="display: none; cursor:pointer"
                                     accept="image/*"
                                     onchange="document.getElementById('avatar-form').submit();">
                             </form>
