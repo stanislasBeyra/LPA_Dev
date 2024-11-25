@@ -149,7 +149,7 @@
                         <span class="visually-hidden">Next</span>
                     </button>
                 </div>
-                
+
                 <div id="carouselDarkVariant" class="carousel slide carousel-fade carousel-dark" data-mdb-ride="carousel">
                     <div class="carousel-indicators">
                         <button style="border-radius: 100%; width:10px; height:10px;background-color:aliceblue" data-mdb-target="#carouselDarkVariant" data-mdb-slide-to="0" class="active"></button>
@@ -399,18 +399,28 @@
         const defaultImage = "{{ asset('app/public/images/default-product.jpg') }}"; // Image par défaut si l'image est manquante
 
         carouselItems.forEach((img, index) => {
-            let imagePath = '';
-            if (index === 0 && productData.product_images1) {
-                imagePath = "{{ asset('app/public/') }}" + "/" + productData.product_images1;
-            } else if (index === 1 && productData.product_images2) {
-                imagePath = "{{ asset('app/public/') }}" + "/" + productData.product_images2;
-            } else if (index === 2 && productData.product_images3) {
-                imagePath = "{{ asset('app/public/') }}" + "/" + productData.product_images3;
+            if (index === 0) {
+                img.src = "{{ asset('app/public/') }}" + "/" + productData.product_images1; // Première image du carousel
+            } else if (index === 1) {
+                img.src = "{{ asset('app/public/') }}" + "/" + productData.product_images2; // Deuxième image
+            } else if (index === 2) {
+                img.src = "{{ asset('app/public/') }}" + "/" + productData.product_images3; // Troisième image
             }
-
-            // Si l'image existe, on l'affiche, sinon on met l'image par défaut
-            img.src = checkImage(imagePath) ? imagePath : defaultImage;
         });
+        
+        // carouselItems.forEach((img, index) => {
+        //     let imagePath = '';
+        //     if (index === 0 && productData.product_images1) {
+        //         imagePath = "{{ asset('app/public/') }}" + "/" + productData.product_images1;
+        //     } else if (index === 1 && productData.product_images2) {
+        //         imagePath = "{{ asset('app/public/') }}" + "/" + productData.product_images2;
+        //     } else if (index === 2 && productData.product_images3) {
+        //         imagePath = "{{ asset('app/public/') }}" + "/" + productData.product_images3;
+        //     }
+
+        //     // Si l'image existe, on l'affiche, sinon on met l'image par défaut
+        //     img.src = checkImage(imagePath) ? imagePath : defaultImage;
+        // });
 
         // Met à jour les informations du produit dans les cartes
         document.querySelector("#productDetailName").textContent = productData.product_name;
