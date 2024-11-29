@@ -18,7 +18,7 @@ class EmployeeController extends Controller
 
         try {
 
-          //  dd($request->status);
+            //  dd($request->status);
             // Validation des données
             $validatedData = $request->validate([
                 'national_id' => 'required',
@@ -29,11 +29,11 @@ class EmployeeController extends Controller
                 'mobile' => 'required|string|max:255',
                 'agence_id' => 'required',
             ]);
-          //  dd($validatedData);
+            //  dd($validatedData);
 
             $status = $request->status == 'on' ? 1 : 0;
 
-         
+
 
 
             // Création d'un nouvel employé
@@ -58,14 +58,13 @@ class EmployeeController extends Controller
         }
     }
 
-    public function getEmployeeListe(){
-        try{
+    public function getEmployeeListe()
+    {
+        try {
             $employees = employee::with('agence')->latest()->paginate(8);
 
             return $employees;
-
-        }catch(\Exception $e){
-
+        } catch (\Exception $e) {
         }
     }
 
@@ -111,22 +110,6 @@ class EmployeeController extends Controller
         }
     }
 
-    // public function getallEmploye(){
-    //     try{
-    //         $employees = employee::all();
-    //         return response()->json([
-    //             'success' => true,
-    //             'employees' => $employees
-    //             ], 200);
-    //     }catch(\Exception $e){
-    //         return response()->json([
-    //             'success' => false,
-    //             'message' => 'Erreur lors de la récupération des employés',
-    //             'error' => $e->getMessage()
-    //             ], 500);
-    //     }
-
-    // }
 
     public function getAllEmploye()
     {
@@ -144,6 +127,67 @@ class EmployeeController extends Controller
                 'message' => 'Error while retrieving employees',
                 'error' => $e->getMessage()
             ], 500);
+        }
+    }
+
+    public function updateEmployesInfo(Request $request)
+    {
+        // Validate the form data
+        $validated = $request->validate([
+            'national_id' => 'nullable|string|unique:employees,mobile,' . $request->EmployeeId,
+            'firstname' => 'nullable|string|max:255',
+            'lastname' => 'nullable|string|max:255',
+            'mobile' => 'nullable|string|unique:employees,mobile,' . $request->EmployeeId,  // Ensure 'mobile' is unique except for this employee
+            'mobile_two' => 'nullable|string|unique:employees,mobile2,' . $request->EmployeeId, // Same for 'mobile_two'
+            'username' => 'nullable|string|max:255|unique:employees,username,' . $request->EmployeeId, // Ensure 'username' is unique except for this employee
+            'middle_name' => 'nullable|string|max:255',
+            'email' => 'nullable|email|max:255|unique:employees,email,' . $request->EmployeeId, // Same for 'email'
+            'agence_id' => 'nullable|exists:agences,id',
+        ],[
+            // Custom validation messages
+            'national_id.unique' => 'The National ID number must be unique, except for this employee.',
+            'mobile.unique' => 'The mobile number must be unique, except for this employee.',
+            'mobile_two.unique' => 'The second mobile number must be unique, except for this employee.',
+            'username.unique' => 'The username must be unique, except for this employee.',
+            'email.unique' => 'The email address must be unique, except for this employee.',
+            'email.email' => 'Please provide a valid email address.',
+            'firstname.string' => 'The first name must be a valid string.',
+            'lastname.string' => 'The last name must be a valid string.',
+            'mobile.string' => 'The mobile number must be a valid string.',
+            'mobile_two.string' => 'The second mobile number must be a valid string.',
+            'username.string' => 'The username must be a valid string.',
+            'middle_name.string' => 'The middle name must be a valid string.',
+            'agence_id.exists' => 'The selected agency does not exist.',
+            'firstname.max' => 'The first name must not exceed 255 characters.',
+            'lastname.max' => 'The last name must not exceed 255 characters.',
+            'username.max' => 'The username must not exceed 255 characters.',
+            'email.max' => 'The email address must not exceed 255 characters.',
+        ]);
+
+        try {
+            // Find the employee by ID
+            $employee = Employee::findOrFail($request->EmployeeId);
+
+            if(!$employee){
+                return back()->with('error','Employee Not found');
+            }
+            // Update employee details
+            $employee->update([
+                'national_id' => $validated['national_id'] ?? $employee->national_id,
+                'firstname' => $validated['firstname'] ?? $employee->firstname,
+                'lastname' => $validated['lastname'] ?? $employee->lastname,
+                'mobile' => $validated['mobile'] ?? $employee->mobile,
+                'mobile2' => $validated['mobile_two'] ?? $employee->mobile2,
+                'username' => $validated['username'] ?? $employee->username,
+                'middle_name' => $validated['middle_name'] ?? $employee->middle_name,
+                'email' => $validated['email'] ?? $employee->email,
+                'agence_id' => $validated['agence_id'] ?? $employee->agence_id,
+            ]);
+
+            return back()->with('success', 'Employee updated successfully.');
+        } catch (\Throwable $e) {
+            Log::info('An error occurred: ' . $e->getMessage());
+            return back()->with('error', 'An error occurred while updating the employee.');
         }
     }
 }

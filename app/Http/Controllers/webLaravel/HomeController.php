@@ -21,14 +21,14 @@ class HomeController extends Controller
     protected $orderController;
     protected $employeeController;
 
-    public function __construct(ProductController $productController,OrderController $orderController, EmployeeController $employeeController)
+    public function __construct(ProductController $productController, OrderController $orderController, EmployeeController $employeeController)
     {
         $this->productController = $productController;
         $this->orderController = $orderController;
-        $this->employeeController=$employeeController;
+        $this->employeeController = $employeeController;
     }
 
-    
+
 
     public function loginform()
     {
@@ -138,19 +138,19 @@ class HomeController extends Controller
 
 
     public function getUsersWithVendors()
-{
-    // Récupérer tous les utilisateurs avec leurs fournisseurs associés et leurs rôles
-    $users = User::with(['vendor', 'role'])
-        ->where('role',3)
-        ->orderBy('id', 'desc')
-        ->get();
+    {
+        // Récupérer tous les utilisateurs avec leurs fournisseurs associés et leurs rôles
+        $users = User::with(['vendor', 'role'])
+            ->where('role', 3)
+            ->orderBy('id', 'desc')
+            ->get();
 
         // dd($users->map(function ($user) {
         //     return $user->role;  // Accède à la relation 'role' de chaque utilisateur
         // }));
-    // Retourner les utilisateurs avec les relations chargées
-    return $users;
-}
+        // Retourner les utilisateurs avec les relations chargées
+        return $users;
+    }
 
 
     public function getagences()
@@ -159,14 +159,24 @@ class HomeController extends Controller
         return $agences;
     }
 
-    public function getproductCategorie(){
+    public function getproductCategorie()
+    {
         $categories = productcategories::where('status', 1)
-        ->orderBy('categories_name', 'asc')
-        ->get();
+            ->orderBy('categories_name', 'asc')
+            ->get();
 
         return $categories;
     }
-    
+    public function getAllRoles()
+    {
+       // $role = roles::orderBy('id','desc')->get();
+       $roles = roles::where('id', '!=', 2)
+                 ->orderBy('id', 'desc')
+                 ->get();
+
+        return $roles;
+    }
+
 
     public function getContent($page)
     {
@@ -176,20 +186,26 @@ class HomeController extends Controller
         $categories = $this->getNewCategories();
         $roles = $this->getvendorregisterrole();
         $vendors = $this->getUsersWithVendors();
-        $agences=$this->getagences();
-        $categories=$this->getproductCategorie();
+        $agences = $this->getagences();
+        $categories = $this->getproductCategorie();
 
-        $products=$this->productController->getallvendorcoonectproduct();
-        $orders=$this->orderController->getOrders();
+        $products = $this->productController->getallvendorcoonectproduct();
+        $orders = $this->orderController->getOrders();
 
         // get vendor product for admin
-        $vendorproducts=$this->productController->getNewallvendorProducts();
-        $vendororders=$this->orderController->admingetvendororder();
-    
+        $vendorproducts = $this->productController->getNewallvendorProducts();
+        $vendororders = $this->orderController->admingetvendororder();
+
         // employeee
         $agences = agence::all();
-        $employees = employee::with('agence')->orderBy('id','desc')->paginate(8);
-      //  dd($employees);
+        $employees = employee::with('agence')->orderBy('id', 'desc')->paginate(8);
+        //  dd($employees);
+
+        // roles
+        $roles = $this->getAllRoles();
+
+        // adminliste
+        $admins=User::where('role',1)->orderBy('id', 'desc')->get();
 
         //  dd($roles);
         // Sélectionner la vue en fonction de la page
@@ -213,27 +229,32 @@ class HomeController extends Controller
                 return view('transfert.historique', ['transactions' => $transactions]);
             case 'manage-vendors':
                 return view('adminComponent.manage-vendor', compact('roles', 'vendors'));
-                
+
             case 'manage-employees':
-                return view('adminComponent.manage-employee',compact('agences','employees'));
+                return view('adminComponent.manage-employee', compact('agences', 'employees'));
             case 'manage-agencies':
-                return view('adminComponent.manage-agencies',compact('agences'));
+                return view('adminComponent.manage-agencies', compact('agences'));
             case 'manage-categories':
                 return view('adminComponent.manage-categorie', ['categories' => $categories]);
             case 'vendor-product':
-                return view('adminComponent.vendor-product',compact('vendorproducts'));
+                return view('adminComponent.vendor-product', compact('vendorproducts'));
             case 'vendor-order':
-                return view('adminComponent.vendor-order',compact('vendororders'));
+                return view('adminComponent.vendor-order', compact('vendororders'));
 
             case 'employee-paiement':
                 return view('adminComponent.employee-paiement');
             case 'user-profile':
-                return view('profil'); 
+                return view('profil');
+            case 'manage-admin-role':
+                return view('adminComponent.manage-role', compact('roles'));
 
-            case'manage-vendor-product':
-                return view('vendorComponent.manage-vendor-product',compact('categories','products'));
+            case'manage-admin':
+                return view('adminComponent.manage-admin',compact('roles','admins'));
+
+            case 'manage-vendor-product':
+                return view('vendorComponent.manage-vendor-product', compact('categories', 'products'));
             case 'manage-vendor-orders':
-                return view('vendorComponent.manage-vendor-order',compact('orders')); 
+                return view('vendorComponent.manage-vendor-order', compact('orders'));
 
             case 'historiquemobile':
                 return view('transfert.historiquemobilemonney', ['transactions' => $transactions]);

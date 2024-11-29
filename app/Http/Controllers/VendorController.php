@@ -37,6 +37,8 @@ class VendorController extends Controller
         // Retrieve the User by ID
         $user = User::findOrFail($request->user_id);
 
+        $vendor = Vendor::where('user_id', $user->id)->first();
+
         // Validate the input data
         $validated = $request->validate([
             // User table section
@@ -60,27 +62,27 @@ class VendorController extends Controller
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('vendors', 'vendorname')->ignore(optional($vendor ?? null)->id),
+                Rule::unique('vendors', 'vendorname')->ignore($vendor->id??null),
             ],
             'contactpersonname' => 'required|string|max:255',
             'businessregno' => [
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('vendors', 'businessregno')->ignore(optional($vendor ?? null)->id),
+                Rule::unique('vendors', 'businessregno')->ignore($vendor->id??null),
             ],
             'taxidnumber' => [
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('vendors', 'taxidnumber')->ignore(optional($vendor ?? null)->id),
+                Rule::unique('vendors', 'taxidnumber')->ignore($vendor->id??null),
             ],
             'businesscategory' => 'required|string|max:255',
             'businessaddress' => 'required|string',
             'businessemail' => [
                 'nullable',
                 'email',
-                Rule::unique('vendors', 'businessemail')->ignore(optional($vendor ?? null)->id),
+                Rule::unique('vendors', 'businessemail')->ignore($vendor->id??null),
             ],
             'bank_name_1' => 'nullable|string|max:255',
             'bankaccount1' => 'nullable|string|max:255',
@@ -120,7 +122,7 @@ class VendorController extends Controller
         ]);
 
         // Find Vendor by user_id or create a new one
-        $vendor = Vendor::where('user_id', $user->id)->first();
+        // $vendor = Vendor::where('user_id', $user->id)->first();
 
         if ($vendor) {
             // Update the existing vendor
@@ -159,6 +161,116 @@ class VendorController extends Controller
             return back()->with('success', 'Vendor updated successfully.');
         }
     }
+
+
+//     public function VendorinfoUpdate(Request $request)
+// {
+//     try {
+//         // Retrieve the User by ID
+//         $user = User::findOrFail($request->user_id);
+
+//         // Validate the input data
+//         $validated = $request->validate([
+//             // User table section
+//             'firstname' => 'required|string|max:255',
+//             'lastname' => 'required|string|max:255',
+//             'role' => 'required|integer',
+//             'email' => 'nullable|email|max:255|unique:users,email,' . $request->user_id,
+//             'mobile' => 'nullable|string|max:20|unique:users,mobile,' . $request->user_id,
+//             'vendorname' => 'nullable|string|max:255|unique:vendors,vendorname,' . $request->user_id,
+//             'contactpersonname' => 'required|string|max:255',
+//             'businessregno' => 'nullable|string|max:255|unique:vendors,businessregno,' . $request->user_id,
+//             'taxidnumber' => 'nullable|string|max:255|unique:vendors,taxidnumber,' . $request->user_id,
+
+//             'businesscategory' => 'required|string|max:255',
+//             'businessaddress' => 'required|string',
+//             'businessemail' => 'nullable|string|max:20|unique:vendors,businessemail,' . $request->user_id,
+
+//             'bank_name_1' => 'nullable|string|max:255',
+//             'bankaccount1' => 'nullable|string|max:255',
+//             'bankname2' => 'nullable|string|max:255',
+//             'bankaccount2' => 'nullable|string|max:255',
+//             'accountholdername' => 'nullable|string|max:255',
+//         ], [
+//             // Custom messages for the user section
+//             'firstname.required' => 'The first name is required.',
+//             'lastname.required' => 'The last name is required.',
+//             'role.required' => 'The role is required.',
+//             'email.required' => 'The email address is required.',
+//             'email.email' => 'The email address must be valid.',
+//             'email.unique' => 'This email address is already in use.',
+//             'mobile.required' => 'The mobile number is required.',
+//             'mobile.max' => 'The mobile number must not exceed 15 characters.',
+//             'mobile.unique' => 'This mobile number is already in use.',
+
+//             // Custom messages for the vendor section
+//             'vendorname.required' => 'The vendor name is required.',
+//             'contactpersonname.required' => 'The contact person name is required.',
+//             'businessregno.required' => 'The business registration number is required.',
+//             'taxidnumber.required' => 'The tax identification number is required.',
+//             'businesscategory.required' => 'The business category is required.',
+//             'businessaddress.required' => 'The business address is required.',
+//             'businessemail.email' => 'The business email must be valid.',
+//             'businessemail.unique' => 'This business email is already in use.',
+//         ]);
+
+//         // Update user data
+//         $user->update([
+//             'firstname' => $validated['firstname'],
+//             'lastname' => $validated['lastname'],
+//             'role' => $validated['role'],
+//             'email' => $validated['email'],
+//             'mobile' => $validated['mobile'],
+//         ]);
+
+//         // Find Vendor by user_id or create a new one
+//         $vendor = Vendor::where('user_id', $user->id)->first();
+
+//         if ($vendor) {
+//             // Update the existing vendor
+//             $vendor->update([
+//                 'vendorname' => $validated['vendorname'],
+//                 'contactpersonname' => $validated['contactpersonname'],
+//                 'businessregno' => $validated['businessregno'],
+//                 'taxidnumber' => $validated['taxidnumber'],
+//                 'businesscategory' => $validated['businesscategory'],
+//                 'businessaddress' => $validated['businessaddress'],
+//                 'businessemail' => $validated['businessemail'],
+//                 'bank_name_1' => $validated['bank_name_1'],
+//                 'bankaccount1' => $validated['bankaccount1'],
+//                 'bankname2' => $validated['bankname2'],
+//                 'bankaccount2' => $validated['bankaccount2'],
+//                 'accountholdername' => $validated['accountholdername'],
+//             ]);
+//             return back()->with('success', 'Vendor information updated successfully.');
+//         } else {
+//             // Create a new vendor
+//             Vendor::create([
+//                 'user_id' => $user->id,
+//                 'vendorname' => $validated['vendorname'],
+//                 'contactpersonname' => $validated['contactpersonname'],
+//                 'businessregno' => $validated['businessregno'],
+//                 'taxidnumber' => $validated['taxidnumber'],
+//                 'businesscategory' => $validated['businesscategory'],
+//                 'businessaddress' => $validated['businessaddress'],
+//                 'businessemail' => $validated['businessemail'],
+//                 'bank_name_1' => $validated['bank_name_1'],
+//                 'bankaccount1' => $validated['bankaccount1'],
+//                 'bankname2' => $validated['bankname2'],
+//                 'bankaccount2' => $validated['bankaccount2'],
+//                 'accountholdername' => $validated['accountholdername'],
+//             ]);
+//             return back()->with('success', 'Vendor created successfully.');
+//         }
+//     } catch (\Throwable $e) {
+//         // Log the error and return a failure message
+//         Log::error('Error updating vendor info: ' . $e->getMessage());
+//         return back()->with('error', 'An error occurred while updating the vendor information. Please try again later.' . $e->getMessage());
+//     }
+// }
+
+
+
 
 
     public function UpdateVendorPassword(Request $request)
@@ -253,8 +365,8 @@ class VendorController extends Controller
 
         // Récupérer le vendeur
         $vendor = User::findOrFail($vendorId);
-        if(!$vendor){
-            return back()->with('error','vendor Not found');
+        if (!$vendor) {
+            return back()->with('error', 'vendor Not found');
         }
 
         // Créer le dossier avatars s'il n'existe pas

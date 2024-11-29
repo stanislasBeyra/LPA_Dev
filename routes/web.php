@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AgenceController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\webLaravel\HomeController;
 use Illuminate\Support\Facades\Route;
@@ -26,6 +28,14 @@ Route::middleware('auth:web')->group(function () {
     Route::get('/', function () {
         return view('index');
     });
+
+    //add admin
+    Route::post('/add/admins',[AdminController::class,'addAdmin'])->name('add.admins');
+    //roles info
+
+    Route::post('/add/roles', [RoleController::class, 'addroles'])->name('roles.add');
+    Route::post('/roles/update', [RoleController::class, 'updateRole'])->name('roles.update');
+    Route::post('/roles/delete', [RoleController::class, 'deleteRoles'])->name('roles.delete');
 
     // update User Auth avatar
     Route::post('/profile/update-avatar', [VendorController::class, 'updatevendorlogo'])->name('profile.updateAvatar');
@@ -50,24 +60,25 @@ Route::middleware('auth:web')->group(function () {
 
     //product
     Route::post('/vendor/product/store', [ProductController::class, 'storevendorproduct'])->name('vendor.product.store');
-    Route::post('NewvendorvalidateOrder',[OrderController::class,'NewvendorvalidateOrder'])->name('validated.order');
-    Route::post('NewAdminVendorValidateOrder',[OrderController::class,'NewAdminVendorValidateOrder'])->name('AdminVendor.ValidateOrder');
+    Route::post('NewvendorvalidateOrder', [OrderController::class, 'NewvendorvalidateOrder'])->name('validated.order');
+    Route::post('NewAdminVendorValidateOrder', [OrderController::class, 'NewAdminVendorValidateOrder'])->name('AdminVendor.ValidateOrder');
 
     //employee
-    Route::post('employee/register', [EmployeeController::class,'RegisterEmplyees'])->name('employee.register');
+    Route::post('employee/register', [EmployeeController::class, 'RegisterEmplyees'])->name('employee.register');
+    Route::post('/employee/update', [EmployeeController::class, 'updateEmployesInfo'])->name('employee.update');
 
-    Route::get('getallvendorcoonectproduct',[ProductController::class,'getallvendorcoonectproduct']);
-    Route::get('getorders',[OrderController::class,'getorders']);
-    Route::get('NewvendorvalidateOrder',[OrderController::class,'NewvendorvalidateOrder']);
-    Route::get('getNewallvendorProducts',[ProductController::class,'getNewallvendorProducts']);
-    Route::get('admingetvendororder',[OrderController::class,'admingetvendororder']);
-    Route::get('getEmployeeListe',[EmployeeController::class,'getEmployeeListe']);
-    
+    Route::get('getallvendorcoonectproduct', [ProductController::class, 'getallvendorcoonectproduct']);
+    Route::get('getorders', [OrderController::class, 'getorders']);
+    Route::get('NewvendorvalidateOrder', [OrderController::class, 'NewvendorvalidateOrder']);
+    Route::get('getNewallvendorProducts', [ProductController::class, 'getNewallvendorProducts']);
+    Route::get('admingetvendororder', [OrderController::class, 'admingetvendororder']);
+    Route::get('getEmployeeListe', [EmployeeController::class, 'getEmployeeListe']);
 
-    Route::post('/delete/vendor/Product',[ProductController::class,'newdeletevendorProduct'])->name('delete.product');
-    Route::post("/update/vendor/product",[ProductController::class,'NewupdateVendorProduct'])->name('update.product');
+
+    Route::post('/delete/vendor/Product', [ProductController::class, 'newdeletevendorProduct'])->name('delete.product');
+    Route::post("/update/vendor/product", [ProductController::class, 'NewupdateVendorProduct'])->name('update.product');
     //admin
-    Route::post('/admin/delete/Vendor/Product',[ProductController::class,'admindeleteVendorProduct'])->name('delete.VendorProduct');
+    Route::post('/admin/delete/Vendor/Product', [ProductController::class, 'admindeleteVendorProduct'])->name('delete.VendorProduct');
 
 
     // Route::get('/{page}', [HomeController::class, 'getContent'])->name('content.page');

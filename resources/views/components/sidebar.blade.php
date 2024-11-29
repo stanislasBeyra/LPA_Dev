@@ -14,19 +14,28 @@
             <a href="/manage-employees" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
                 <i class="fas fa-users fa-fw me-3"></i><span>Manage Employees</span>
             </a>
+             <!-- Vendor Orders and Products -->
+             <a href="/vendor-product" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
+                <i class="fas fa-cogs fa-fw me-3"></i><span>Vendor Product</span>
+            </a>
+            <a href="/vendor-order" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
+                <i class="fas fa-truck fa-fw me-3"></i><span>Vendor Order</span>
+            </a>
             <a href="/manage-agencies" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
                 <i class="fas fa-building fa-fw me-3"></i><span>Manage Agencies</span>
             </a>
             <a href="/manage-categories" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
                 <i class="fas fa-th-large fa-fw me-3"></i><span>Manage Categories</span>
             </a>
-            <!-- Vendor Orders and Products -->
-            <a href="/vendor-product" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
-                <i class="fas fa-cogs fa-fw me-3"></i><span>Vendor Product</span>
+
+            <a href="/manage-admin" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
+                <i class="fas fa-th-large fa-fw me-3"></i><span>Manage admins</span>
             </a>
-            <a href="/vendor-order" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
-                <i class="fas fa-truck fa-fw me-3"></i><span>Vendor Order</span>
+
+            <a href="/manage-admin-role" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
+                <i class="fas fa-th-large fa-fw me-3"></i><span>Manage roles</span>
             </a>
+           
             <!-- Payments Section -->
             <!-- <a href="/employee-paiement" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
                 <i class="fas fa-credit-card fa-fw me-3"></i><span>Payments</span>
