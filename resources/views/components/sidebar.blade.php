@@ -35,6 +35,9 @@
             <a href="/manage-admin-role" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
                 <i class="fas fa-th-large fa-fw me-3"></i><span>Manage roles</span>
             </a>
+            <a href="/manage-banner" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
+                <i class="fas fa-th-large fa-fw me-3"></i><span>Manage Banner</span>
+            </a>
            
             <!-- Payments Section -->
             <!-- <a href="/employee-paiement" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>

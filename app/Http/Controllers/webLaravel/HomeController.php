@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\EmployeeController;
+use App\Models\Banner;
 use App\Models\employee;
 
 class HomeController extends Controller
@@ -177,6 +178,16 @@ class HomeController extends Controller
         return $roles;
     }
 
+    public function getBannerforAdmin()
+    {
+        try {
+            $banners = Banner::where('is_active', 1)->get();
+            return $banners;
+        } catch (\Exception $e) {
+            Log::info('An ocured error' . $e->getMessage(),);
+            return back()->with('error', 'Acured error' . $e->getMessage());
+        }
+    }
 
     public function getContent($page)
     {
@@ -207,8 +218,8 @@ class HomeController extends Controller
         // adminliste
         $admins=User::where('role',1)->orderBy('id', 'desc')->get();
 
-        //  dd($roles);
-        // Sélectionner la vue en fonction de la page
+        //banner
+        $banners=$this->getBannerforAdmin();
         switch ($page) {
             case 'index':
                 return view('index');
@@ -258,6 +269,8 @@ class HomeController extends Controller
 
             case 'historiquemobile':
                 return view('transfert.historiquemobilemonney', ['transactions' => $transactions]);
+            case 'manage-banner':
+                return view('adminComponent.manage-banner',compact('banners'));
             default:
                 return abort(404);
         }

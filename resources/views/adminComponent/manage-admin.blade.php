@@ -95,7 +95,7 @@
                             <select name="role" id="editUserRole" class="form-select @error('role') is-invalid @enderror" required>
                                 <option value="">Select role</option>
                                 @foreach($roles as $role)
-                                <option value="{{ $role->id }}" >{{ $role->role_name }}</option>
+                                <option value="{{ $role->id }}">{{ $role->role_name }}</option>
                                 @endforeach
                             </select>
                             @error('role')
@@ -153,20 +153,21 @@
                                 <td> {{ $admin->mobile}}</td>
                                 <!-- Description de la catégorie -->
                                 <td class="text-center">
-                                    <button type="button" data-mdb-button-init data-mdb-ripple-init
-                                        class="btn btn-outline-primary btn-sm"
-                                        data-mdb-modal-init data-mdb-target="#staticBackdrop1"
-                                        data-id="{{ $admin->id }}"
-                                        data-name="{{ $admin->firstname }}"
-                                        data-description="{{ $admin->lastname }}"
+
+                                    <button type="button"
+                                        data-mdb-button-init data-mdb-ripple-init
+                                        class="btn btn-outline-primary"
+                                        data-mdb-modal-init data-mdb-target="#staticBackdrop2"
+                                        data-admin='@json($admin)'
                                         onclick="populateEditModal(this)">
-                                        <i class="fas fa-edit"></i> Edit
+                                        <i class="fas fa-edit"></i>
                                     </button>
-                                    <!-- <button type="button" class="btn btn-danger btn-sm"
-                                     data-mdb-modal-init data-mdb-target="#exampleModal1"
-                                      onclick="setCategoryId('{{ $admin->id }}')">
-                                        <i class="fas fa-trash-alt"></i> Delete
-                                    </button> -->
+
+                                    <button type="button" class="btn btn-danger btn-sm"
+                                        data-mdb-modal-init data-mdb-target="#exampleModal1"
+                                        onclick="setCategoryId('{{ $admin->id }}')">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
                                 </td>
                             </tr>
                             @endforeach
@@ -179,6 +180,7 @@
 
 </div>
 
+<!-- modal de supression -->
 
 <div class="modal top fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true" data-mdb-backdrop="true" data-mdb-keyboard="true">
     <div class="modal-dialog modal-sm">
@@ -187,9 +189,9 @@
                 <h5 class="modal-title text-white text-center" id="deleteConfirmationModalLabel">Delete Confirmation</h5>
             </div>
 
-            <form id="deleteForm" action="{{ route('roles.delete') }}" method="POST">
+            <form id="deleteForm" action="{{ route('delete.admin') }}" method="POST">
                 @csrf
-                <input type="hidden" id="categoryId" name="roleId">
+                <input type="hidden" id="categoryId" name="AdminId">
                 <div class="modal-body text-center">
                     <i class="fas fa-trash-alt mb-3 text-danger" style="font-size: 3rem;"></i>
                     <p>Are you sure you want to delete this category? This action cannot be undone.</p>
@@ -209,6 +211,66 @@
     </div>
 </div>
 
+<!-- Button trigger modal -->
+
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop2" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+    <div class="modal-dialog d-flex justify-content-center">
+        <div class="modal-content ">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel2">Edit Admin</h5>
+                <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form>
+                    <input type="hidden" name="" id="AdminID">
+                    <!-- Name input -->
+                    <div data-mdb-input-init class="form-outline mb-4">
+                        <input type="text" id="FirstName" class="form-control" />
+                        <label class="form-label" for="FirstName">First Name</label>
+                    </div>
+
+                    <div data-mdb-input-init class="form-outline mb-4">
+                        <input type="text" id="LastName" class="form-control" />
+                        <label class="form-label" for="LastName">Last Name</label>
+                    </div>
+
+                    <div data-mdb-input-init class="form-outline mb-4">
+                        <input type="text" id="Username" class="form-control" />
+                        <label class="form-label" for="Username">User Name</label>
+                    </div>
+
+                    <!-- adrees info -->
+                    <div data-mdb-input-init class="form-outline mb-4">
+                        <input type="text" id="MobileNumber" class="form-control" />
+                        <label class="form-label" for="MobileNumber">Mobile Number</label>
+                    </div>
+                    <div data-mdb-input-init class="form-outline mb-4">
+                        <input type="email" id="AdressEmail" class="form-control" />
+                        <label class="form-label" for="AdressEmail">Email address</label>
+                    </div>
+
+                    <div class="form-outline mb-4">
+                        <select name="role" id="editUserRoles" class="form-select @error('role') is-invalid @enderror" required>
+                            <option value="">Select role</option>
+                            @foreach($roles as $role)
+                            <option value="{{ $role->id }}">{{ $role->role_name }}</option>
+                            @endforeach
+                        </select>
+                        @error('role')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <!-- Submit button -->
+                    <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-block">Sign up</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
 
 <!-- Modal -->
 <div class="modal fade" id="staticBackdrop1" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true">
@@ -221,6 +283,7 @@
                 <form method="POST" action="{{ route('roles.update') }}">
                     @csrf
                     <input type="hidden" id="editCategoryId" name="roleId" />
+
 
                     <!-- Nom de la catégorie -->
                     <div class="form-outline mb-4">
@@ -291,19 +354,29 @@
 <!-- recupertaion des info a editer -->
 
 <script>
-    document.querySelectorAll('[data-mdb-target="#staticBackdrop1"]').forEach(button => {
-        button.addEventListener('click', function() {
-            // Récupérer les données du bouton
-            const id = this.getAttribute('data-id');
-            const name = this.getAttribute('data-name');
-            const description = this.getAttribute('data-description');
+    function populateEditModal(button) {
+        // Récupérer les données de l'employé à partir de l'attribut 'data-user' du bouton
+        const admin = JSON.parse(button.getAttribute('data-admin'));
+        console.log(admin);
 
-            // Remplir les champs du formulaire
-            document.getElementById('editCategoryId').value = id;
-            document.getElementById('editCategoryName').value = name;
-            document.getElementById('editCategoryDescription').value = description;
+        // Remplir les champs du formulaire avec les informations de l'employé
+        document.getElementById('AdminID').value = admin.id;
+        document.getElementById('FirstName').value = admin.firstname;
+        document.getElementById('LastName').value = admin.lastname;
+        document.getElementById('MobileNumber').value = admin.mobile;
+        document.getElementById('Username').value = admin.username;
+        document.getElementById('AdressEmail').value = admin.email;
+        document.getElementById('editUserRoles').value = admin.role;
+
+        
+        // Initialiser les éléments de formulaire après avoir rempli les valeurs
+        document.querySelectorAll('.form-outline').forEach((formOutline) => {
+            new mdb.Input(formOutline).init();
         });
-    });
+
+        // Initialiser le select pour les agences
+        new mdb.Select(document.getElementById('editUserRoles')).init();
+    }
 </script>
 
 

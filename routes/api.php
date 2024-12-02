@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AgenceController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BannerController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\Employee\EmployeeappController;
@@ -116,6 +117,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/valided/customer/order',[SalaryController::class,'Rhvalidatedorder']);
 
 });
+
+// getbanner
+Route::get('getbanners',[BannerController::class,'getBannerforEmployee']);
 
 Route::get('getallvendororder',[OrderController::class,'getallvendororder']);
 

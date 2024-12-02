@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AgenceController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BannerController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductCategoryController;
@@ -31,6 +32,7 @@ Route::middleware('auth:web')->group(function () {
 
     //add admin
     Route::post('/add/admins',[AdminController::class,'addAdmin'])->name('add.admins');
+    Route::post('/delete/admin',[AdminController::class,'deleteAdmin'])->name('delete.admin');
     //roles info
 
     Route::post('/add/roles', [RoleController::class, 'addroles'])->name('roles.add');
@@ -58,6 +60,8 @@ Route::middleware('auth:web')->group(function () {
     Route::get('/vendors-detail/{id}', [VendorController::class, 'getUsersWithVendors'])->name('users.vendors');
     Route::post('/vendor/reset-password', [VendorController::class, 'resetVendorPassword'])->name('vendor.resetPassword');
 
+    //Banner
+    Route::post('storeBanner',[BannerController::class,'storeBanner'])->name('banners.store');
     //product
     Route::post('/vendor/product/store', [ProductController::class, 'storevendorproduct'])->name('vendor.product.store');
     Route::post('NewvendorvalidateOrder', [OrderController::class, 'NewvendorvalidateOrder'])->name('validated.order');

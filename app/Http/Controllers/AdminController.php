@@ -116,22 +116,15 @@ class AdminController extends Controller
     public function deleteAdmin(Request $request)
     {
         try {
-            // Find the admin in the database
             $admin = User::findOrFail($request->AdminId);
             if(!$admin){
                 return back()->with('error','Admin Not Found');
             }
-
-            // Delete the admin
             $admin->delete();
-
-            // Return with success message
             return back()->with('success', 'The admin has been successfully deleted.');
         } catch (ModelNotFoundException $e) {
-            // If the admin is not found
             return back()->with('error', 'The specified admin could not be found.');
         } catch (\Exception $e) {
-            // Log the error
             Log::error('Error occurred while deleting the admin: ' . $e->getMessage());
             return back()->with('error', 'An error occurred while deleting the admin. Please try again.');
         }
