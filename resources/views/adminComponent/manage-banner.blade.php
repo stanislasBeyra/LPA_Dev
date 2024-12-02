@@ -34,7 +34,7 @@
 
         <!-- Bouton à droite -->
         <button type="button" class="btn btn-primary fs-7 animate__animated animate__zoomIn" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#addCategoryModal">
-            Add Roles
+            Add banners
         </button>
     </div>
 

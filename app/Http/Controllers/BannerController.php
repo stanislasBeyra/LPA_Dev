@@ -48,7 +48,9 @@ class BannerController extends Controller
     public function getBannerforAdmin()
     {
         try {
-            $banners = Banner::where('is_active', 1)->get();
+            $banners = Banner::where('is_active', 1)
+            ->orderBy('id','desc')
+            ->get();
             return $banners;
         } catch (\Exception $e) {
             Log::info('An ocured error' . $e->getMessage(),);
@@ -59,7 +61,10 @@ class BannerController extends Controller
     public function getBannerforEmployee()
     {
         try {
-            $banners = Banner::where('is_active', 1)->get();
+            $banners = Banner::where('is_active', 1)
+            ->orderBy('id','desc')
+            ->take(5)   
+            ->get();
             return response()->json(['success',true,'banners'=>$banners]);
         } catch (\Exception $e) {
             Log::info('An ocured error' . $e->getMessage(),);

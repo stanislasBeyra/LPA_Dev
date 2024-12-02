@@ -1473,4 +1473,55 @@ class ProductController extends Controller
             ], 500); // 500 Internal Server Error
         }
     }
+
+    public function search(Request $request)
+    {
+        // Valider l'entrée
+        $request->validate([
+            'query' => 'required|string|min:1',
+        ]);
+
+        // Récupérer le terme de recherche
+        $query = $request->input('query');
+
+        // Rechercher d'abord la catégorie par nom
+        $category = productcategories::where('categories_name', 'like', "%$query%")
+            ->select('id', 'categories_name') // Sélectionner uniquement les colonnes nécessaires
+            ->first();
+
+        if ($category) {
+            // Si une catégorie est trouvée, récupérer tous les produits associés à cette catégorie
+            $products = Product::with('category')
+                ->select('id', 'product_name', 'stock', 'price', 'categorie_id', 'product_images1')
+                ->where('categorie_id', $category->id)
+                ->paginate(15)  // Pagination pour améliorer la performance
+                ->map(function ($product) {
+
+                    $product->categories_name = $product->category->categories_name;
+
+                    $product->makeHidden(['category']);
+
+                    return $product;
+                });
+        } else {
+            // Si aucune catégorie n'est trouvée, effectuer la recherche sur le nom du produit
+            $products = Product::with('category')
+                ->select('id', 'product_name', 'stock', 'price', 'categorie_id', 'product_images1')
+                ->where('product_name', 'like', "%$query%")
+                ->paginate(15)
+                ->map(function ($product) {
+                    $product->categories_name = $product->category->categories_name;
+
+                    $product->makeHidden(['category']);
+
+                    return $product;
+                });
+        }
+
+        // Retourner les résultats sous forme de JSON
+        return response()->json([
+            'success' => true,
+            'data' => $products
+        ]);
+    }
 }
