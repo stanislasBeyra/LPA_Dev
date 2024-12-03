@@ -247,8 +247,10 @@
                         <th scope="col">Username</th>
                         <th scope="col">Phone number</th>
                         <th scope="col">Email</th>
-
+                        @if(auth()->user()->role != 5)
                         <th scope="col">Action</th>
+                        @endif
+
                      </tr>
                   </thead>
                   <tbody>
@@ -261,9 +263,19 @@
                         <td>{{ $user->firstname }} {{ $user->lastname }}</td>
                         <td>{{ $user->username }}</td>
                         <td>{{$user->mobile}}</td>
-
+                        <th scope="col">Status</th>
                         <td>{{ $user->email }}</td>
+                        <td>
 
+                           <p style="cursor: pointer;" data-mdb-toggle="modal"
+                              data-mdb-target="#staticBackdrop5"
+                              class="badge {{ $user->status == 1 ? 'bg-success' : 'bg-danger' }}">
+                              {{ $user->status == 1 ? 'Active' : 'Inactive' }}
+                           </p>
+
+                        </td>
+
+                        @if(auth()->user()->role != 5)
                         <td>
                            <a href="{{ url('/vendors-detail/' . $user->id) }}"
                               class="btn btn-info btn-sm">
@@ -278,10 +290,15 @@
 
                               <i class="fas fa-edit"></i>
                            </button>
-                           <button type="button" class="btn btn-danger btn-sm" data-mdb-modal-init data-mdb-target="#exampleModal1" onclick="setVendors('{{ $user->id }}')">
+                           <button type="button" class="btn btn-danger btn-sm"
+                            data-mdb-modal-init data-mdb-target="#exampleModal1"
+                             onclick="setVendors('{{ $user->id }}')">
                               <i class="fas fa-trash-alt"></i>
                            </button>
                         </td>
+                        @endif
+
+
                      </tr>
 
 

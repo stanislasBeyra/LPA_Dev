@@ -225,7 +225,10 @@
                                 <th scope="col">Salary</th>
                                 <th scope="col">Agence/Ministry</th>
                                 <th scope="col">Status</th>
+                                @if(auth()->user()->role != 5)
                                 <th scope="col">Action</th>
+                                @endif
+
                             </tr>
                         </thead>
                         <tbody>
@@ -248,6 +251,8 @@
                                     </p>
 
                                 </td>
+
+                                @if(auth()->user()->role != 5)
                                 <td>
                                     <button data-mdb-button-init data-mdb-ripple-init
                                         class="btn btn-outline-primary btn-sm"
@@ -259,10 +264,12 @@
                                     </button>
                                     <button type="button" class="btn btn-danger btn-sm"
                                         data-mdb-modal-init data-mdb-target="#exampleModal1"
-                                        onclick="setVendors('{{ $employee->id }}')">
+                                        onclick="setEmployees('{{ $employee->id }}')">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
                                 </td>
+                                @endif
+
                             </tr>
                             @empty
                             <td>No Data</td>
@@ -286,7 +293,7 @@
                 <div class="modal-body p-4">
                     <form action="{{ route('employee.update') }}" method="POST">
                         @csrf
-                        <input type="hidden" id="EmployeeID"name="EmployeeId">
+                        <input type="hidden" id="EmployeeID" name="EmployeeId">
                         <!-- Première ligne -->
                         <div class="row mb-4">
                             <div class="col-md-6">
@@ -358,9 +365,10 @@
                                     <select name="agence_id" id="agence_id" class="form-select" required>
                                         <option value="">Choose Name of Agency/Ministry</option>
                                         @foreach ($agences as $agence)
-                                        <option value="{{ $agence->id }}" {{ $agence->id == $employee->agence->id ? 'selected' : '' }}>
-                                            {{ $agence->agent_name }}
+                                        <option value="{{ $agence->id ?? '' }}" {{ isset($agence) && $agence->id == $employee->agence->id ? 'selected' : '' }}>
+                                            {{ $agence->agent_name ?? 'No Agence' }}
                                         </option>
+
                                         @endforeach
                                     </select>
                                 </div>
@@ -387,11 +395,45 @@
         </div>
     </div>
 
+    <div class="modal top fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true" data-mdb-backdrop="true" data-mdb-keyboard="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header bg-danger d-flex justify-content-center w-100">
+                    <h5 class="modal-title text-white text-center" id="deleteConfirmationModalLabel">Delete Confirmation</h5>
+                </div>
+
+                <form id="deleteForm" action="{{ route('delete.employee') }}" method="POST">
+                    @csrf
+                    <input type="hidden" id="employeeId" name="EmployeeId">
+                    <div class="modal-body text-center">
+                        <i class="fas fa-trash-alt mb-3 text-danger" style="font-size: 3rem;"></i>
+                        <p>Are you sure you want to delete this category? This action cannot be undone.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-danger" id="deleteButton">
+                            <span id="deleteButtonText">Delete</span>
+                            <div id="deleteSpinner" class="spinner-border text-light" style="display: none; width: 1.5rem; height: 1.5rem;" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 
 
 <script>
+    function setEmployees(employeeid) {
+        document.getElementById('employeeId').value = employeeid;
+        console.log(employeeid);
+    };
+
     const submitButton = document.getElementById('submitButton');
     const spinner = document.getElementById('spinner');
     const buttonText = document.getElementById('buttonText');
@@ -409,7 +451,7 @@
         console.log(employee);
 
         // Remplir les champs du formulaire avec les informations de l'employé
-        document.getElementById('EmployeeID').value=employee.id;
+        document.getElementById('EmployeeID').value = employee.id;
         document.getElementById('nationalid').value = employee.national_id;
         document.getElementById('firstnames').value = employee.firstname;
         document.getElementById('lastnames').value = employee.lastname;

@@ -190,4 +190,31 @@ class EmployeeController extends Controller
             return back()->with('error', 'An error occurred while updating the employee.');
         }
     }
+
+    public function deleteEmployee(Request $request)
+{
+    try {
+        // Find the employee by the provided ID
+        $employee = Employee::find($request->EmployeeId);
+
+        // Check if the employee exists
+        if (!$employee) {
+            return back()->with('error', 'This employee was not found.');
+        }
+
+        // Delete the employee
+        $employee->delete();
+        
+        // Return success message
+        return back()->with('success', 'Employee has been successfully deleted.');
+
+    } catch (\Throwable $e) {
+        // Log the error
+        Log::error('An error occurred: ' . $e->getMessage());
+        
+        // Return error message
+        return back()->with('error', 'An error occurred while deleting the employee.');
+    }
+}
+
 }

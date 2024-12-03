@@ -45,7 +45,7 @@ class AdminController extends Controller
                 'email' => $validated['email'],
                 'mobile' => $validated['mobile'],
                 'username' => $validated['username'],
-                'password' => Hash::make('1234567'), // Secure password hashing
+                'password' => Hash::make('12345678'), // Secure password hashing
                 'role' => $validated['role'],
             ]);
 

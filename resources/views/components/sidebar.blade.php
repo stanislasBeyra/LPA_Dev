@@ -75,10 +75,7 @@
                 <i class="fas fa-truck fa-fw me-3"></i><span>Vendor Order</span>
             </a>
 
-            <a href="/manage-admin" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
-                <i class="fas fa-th-large fa-fw me-3"></i><span>Manage admins</span>
-            </a>
-
+           
             <a href="/manage-banner" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
                 <i class="fas fa-th-large fa-fw me-3"></i><span>Manage Banner</span>
             </a>
