@@ -6,6 +6,7 @@
                 <i class="fas fa-tachometer-alt fa-fw me-3"></i><span>Dashboard</span>
             </a>
 
+            <!-- pour le role admin -->
             @if(auth()->user()->role == 1)
             <!-- principal admin -->
             <a href="{{ route('content.page', ['page' => 'manage-vendors']) }}" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
@@ -14,8 +15,8 @@
             <a href="/manage-employees" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
                 <i class="fas fa-users fa-fw me-3"></i><span>Manage Employees</span>
             </a>
-             <!-- Vendor Orders and Products -->
-             <a href="/vendor-product" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
+            <!-- Vendor Orders and Products -->
+            <a href="/vendor-product" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
                 <i class="fas fa-cogs fa-fw me-3"></i><span>Vendor Product</span>
             </a>
             <a href="/vendor-order" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
@@ -38,13 +39,15 @@
             <a href="/manage-banner" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
                 <i class="fas fa-th-large fa-fw me-3"></i><span>Manage Banner</span>
             </a>
-           
+
             <!-- Payments Section -->
             <!-- <a href="/employee-paiement" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
                 <i class="fas fa-credit-card fa-fw me-3"></i><span>Payments</span>
             </a> -->
 
             @endif
+
+            <!-- pour le role vendor -->
 
             @if(auth()->user()->role == 3)
             <!-- vendors-->
@@ -56,6 +59,28 @@
             </a>
             <a href="/manage-vendor-orders" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
                 <i class="fas fa-box-open fa-fw me-3"></i><span>My Orders</span>
+            </a>
+            @endif
+
+            <!-- pour le role CSA -->
+
+            @if(auth()->user()->role == 5)
+            <a href="{{ route('content.page', ['page' => 'manage-vendors']) }}" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
+                <i class="fas fa-users-cog fa-fw me-3"></i><span>Manage Vendors</span>
+            </a>
+            <a href="/manage-employees" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
+                <i class="fas fa-users fa-fw me-3"></i><span>Manage Employees</span>
+            </a>
+            <a href="/vendor-order" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
+                <i class="fas fa-truck fa-fw me-3"></i><span>Vendor Order</span>
+            </a>
+
+            <a href="/manage-admin" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
+                <i class="fas fa-th-large fa-fw me-3"></i><span>Manage admins</span>
+            </a>
+
+            <a href="/manage-banner" class="list-group-item list-group-item-action py-2" data-mdb-ripple-init>
+                <i class="fas fa-th-large fa-fw me-3"></i><span>Manage Banner</span>
             </a>
             @endif
 

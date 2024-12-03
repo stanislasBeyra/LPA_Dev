@@ -281,7 +281,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content ">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel1">Edit Vendor</h5>
+                    <h5 class="modal-title" id="exampleModalLabel1">Edit Employee</h5>
                 </div>
                 <div class="modal-body p-4">
                     <form action="{{ route('employee.update') }}" method="POST">

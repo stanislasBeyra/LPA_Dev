@@ -59,7 +59,7 @@
                                 <td>{{$order['ordercreated']->format('m/d/Y, h:i:s A')}}</td>
                                 <td>{{$order['employeeusername']}}</td>
                                 <td>{{$order['employeeusername']}}</td>
-                                <td>{{ number_format($order['orderTotal'], 2, '.', ',') }} FCFA</td>
+                                <td class="text-start">${{ number_format($order['orderTotal'], 2, '.', ',') }}</td>
                                 <td>
                                     @if ($order['orderStatus'] == 1)
                                     <span class="badge bg-warning">pending</span>
@@ -124,7 +124,7 @@
                         <tfoot>
                             <tr>
                                 <th colspan="5" class="text-end">Sub Total:</th>
-                                <th>0.00 FCFA</th>
+                                <th>$0.00</th>
                             </tr>
                         </tfoot>
                     </table>
@@ -261,8 +261,8 @@ const eiditButton = document.getElementById('editButton'); // Bouton de suppress
                 <td><img src="${imageUrl}" alt="${productName}" class="img-fluid" style="max-width: 50px;"></td>
                 <td>${productName}</td>
                 <td>${item.quantity}</td>
-                <td>${productPrice} $</td>
-                <td>${totalPrice.toFixed(2)} FCFA</td>
+                <td class="text-start">$${productPrice}</td>
+                <td class="text-start">$${totalPrice.toFixed(2)}</td>
                 <td><span class="badge ${badgeClass}">${statusText}</span></td>
             </tr>
         `;
@@ -278,7 +278,7 @@ const eiditButton = document.getElementById('editButton'); // Bouton de suppress
         });
 
         document.querySelector('#exampleModal .modal-body table tfoot th').textContent = `Sub Total:`;
-        document.querySelector('#exampleModal .modal-body table tfoot th + th').textContent = `${formattedSubtotal} FCFA`;
+        document.querySelector('#exampleModal .modal-body table tfoot th + th').textContent = `$${formattedSubtotal}`;
     }
 
 

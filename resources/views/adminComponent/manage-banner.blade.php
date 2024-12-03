@@ -189,19 +189,19 @@
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
             <div class="modal-header bg-danger d-flex justify-content-center">
-                <h5 class="modal-title text-white text-center">Confirmation de suppression</h5>
+                <h5 class="modal-title text-white text-center">Delete Confirmation</h5>
             </div>
             <div class="modal-body text-center">
                 <i class="fas fa-trash-alt mb-3 text-danger" style="font-size: 3rem;"></i>
-                <p>Êtes-vous sûr de vouloir supprimer cette bannière ? Cette action est irréversible.</p>
+                <p>Are you sure you want to delete this banner? This action is irreversible.</p>
                 <input type="hidden" id="bannerId" name="bannerId">
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Cancel</button>
                 <button type="button" onclick="DeleteBanner()" class="btn btn-danger" id="deleteButton">
-                    <span id="deleteButtonText">Supprimer</span>
+                    <span id="deleteButtonText">Delete</span>
                     <div id="deleteSpinner" class="spinner-border text-light" style="display: none; width: 1.5rem; height: 1.5rem;" role="status">
-                        <span class="visually-hidden">Chargement...</span>
+                        <span class="visually-hidden">Loading...</span>
                     </div>
                 </button>
             </div>

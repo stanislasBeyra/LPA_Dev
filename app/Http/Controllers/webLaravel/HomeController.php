@@ -170,19 +170,30 @@ class HomeController extends Controller
     }
     public function getAllRoles()
     {
-       // $role = roles::orderBy('id','desc')->get();
-       $roles = roles::where('id', '!=', 2)
-                 ->orderBy('id', 'desc')
-                 ->get();
+        // $role = roles::orderBy('id','desc')->get();
+        $roles = roles::where('id', '!=', 2)
+            ->orderBy('id', 'desc')
+            ->get();
 
         return $roles;
     }
 
+    public function getmanageadminrole()
+    {
+        // Récupérer tous les rôles sauf ceux ayant les ID 1 et 3
+        $roles = roles::whereNotIn('id', [2, 3])
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return $roles;
+    }
+
+
     public function getBannerforAdmin()
     {
         try {
-            $banners = Banner::orderBy('id','desc')
-            ->get();
+            $banners = Banner::orderBy('id', 'desc')
+                ->get();
             return $banners;
         } catch (\Exception $e) {
             Log::info('An ocured error' . $e->getMessage(),);
@@ -217,10 +228,12 @@ class HomeController extends Controller
         $roles = $this->getAllRoles();
 
         // adminliste
-        $admins=User::where('role',1)->orderBy('id', 'desc')->get();
+        $admins = User::whereIn('role', [1,5])->orderBy('id', 'desc')->get();
+
+        $manageadminsroles=$this->getmanageadminrole();
 
         //banner
-        $banners=$this->getBannerforAdmin();
+        $banners = $this->getBannerforAdmin();
         switch ($page) {
             case 'index':
                 return view('index');
@@ -260,8 +273,8 @@ class HomeController extends Controller
             case 'manage-admin-role':
                 return view('adminComponent.manage-role', compact('roles'));
 
-            case'manage-admin':
-                return view('adminComponent.manage-admin',compact('roles','admins'));
+            case 'manage-admin':
+                return view('adminComponent.manage-admin', compact('manageadminsroles', 'admins'));
 
             case 'manage-vendor-product':
                 return view('vendorComponent.manage-vendor-product', compact('categories', 'products'));
@@ -271,7 +284,7 @@ class HomeController extends Controller
             case 'historiquemobile':
                 return view('transfert.historiquemobilemonney', ['transactions' => $transactions]);
             case 'manage-banner':
-                return view('adminComponent.manage-banner',compact('banners'));
+                return view('adminComponent.manage-banner', compact('banners'));
             default:
                 return abort(404);
         }

@@ -33,6 +33,7 @@ Route::middleware('auth:web')->group(function () {
     //add admin
     Route::post('/add/admins',[AdminController::class,'addAdmin'])->name('add.admins');
     Route::post('/delete/admin',[AdminController::class,'deleteAdmin'])->name('delete.admin');
+    Route::post('/updateAdmin',[AdminController::class,'updateAdmin'])->name('update.admins');
     //roles info
 
     Route::post('/add/roles', [RoleController::class, 'addroles'])->name('roles.add');

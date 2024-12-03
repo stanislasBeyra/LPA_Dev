@@ -178,7 +178,7 @@
     <div class="modal-dialog ">
         <div class="modal-content ">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel1">Edit category</h5>
+                <h5 class="modal-title" id="exampleModalLabel1">Edit Role</h5>
             </div>
             <div class="modal-body p-4">
                 <form method="POST" action="{{ route('roles.update') }}">

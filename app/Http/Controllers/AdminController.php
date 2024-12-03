@@ -76,6 +76,7 @@ class AdminController extends Controller
                 'email' => 'sometimes|required|email|max:255|unique:users,email,' . $admin->id,
                 'mobile' => 'sometimes|required|string|max:20|unique:users,mobile,' . $admin->id,
                 'username' => 'sometimes|required|string|max:100|unique:users,username,' . $admin->id,
+                'role'=>'sometimes|'
             ], [
                 // Custom error messages
                 'firstname.required' => 'The first name is required.',
@@ -97,6 +98,7 @@ class AdminController extends Controller
                 'email' => $validated['email'] ?? $admin->email,
                 'mobile' => $validated['mobile'] ?? $admin->mobile,
                 'username' => $validated['username'] ?? $admin->username,
+                'role'=>$validated['role']??$admin->role
             ]);
 
             // Return with success message

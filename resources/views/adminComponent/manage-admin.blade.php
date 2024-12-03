@@ -94,7 +94,7 @@
                         <div class="form-outline mb-4">
                             <select name="role" id="editUserRole" class="form-select @error('role') is-invalid @enderror" required>
                                 <option value="">Select role</option>
-                                @foreach($roles as $role)
+                                @foreach($manageadminsroles as $role)
                                 <option value="{{ $role->id }}">{{ $role->role_name }}</option>
                                 @endforeach
                             </select>
@@ -223,38 +223,39 @@
                 <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4">
-                <form>
-                    <input type="hidden" name="" id="AdminID">
+                <form method="POST" action="{{ route('update.admins') }}">
+                    @csrf
+                    <input type="hidden" name="AdminId" id="AdminID">
                     <!-- Name input -->
                     <div data-mdb-input-init class="form-outline mb-4">
-                        <input type="text" id="FirstName" class="form-control" />
+                        <input type="text" name="firstname" id="FirstName" class="form-control" />
                         <label class="form-label" for="FirstName">First Name</label>
                     </div>
 
                     <div data-mdb-input-init class="form-outline mb-4">
-                        <input type="text" id="LastName" class="form-control" />
+                        <input type="text" name="lastname" id="LastName" class="form-control" />
                         <label class="form-label" for="LastName">Last Name</label>
                     </div>
 
                     <div data-mdb-input-init class="form-outline mb-4">
-                        <input type="text" id="Username" class="form-control" />
+                        <input type="text" name="username" id="Username" class="form-control" />
                         <label class="form-label" for="Username">User Name</label>
                     </div>
 
                     <!-- adrees info -->
                     <div data-mdb-input-init class="form-outline mb-4">
-                        <input type="text" id="MobileNumber" class="form-control" />
+                        <input type="text" name="mobile" id="MobileNumber" class="form-control" />
                         <label class="form-label" for="MobileNumber">Mobile Number</label>
                     </div>
                     <div data-mdb-input-init class="form-outline mb-4">
-                        <input type="email" id="AdressEmail" class="form-control" />
+                        <input type="email" name="email" id="AdressEmail" class="form-control" />
                         <label class="form-label" for="AdressEmail">Email address</label>
                     </div>
 
                     <div class="form-outline mb-4">
                         <select name="role" id="editUserRoles" class="form-select @error('role') is-invalid @enderror" required>
                             <option value="">Select role</option>
-                            @foreach($roles as $role)
+                            @foreach($manageadminsroles as $role)
                             <option value="{{ $role->id }}">{{ $role->role_name }}</option>
                             @endforeach
                         </select>
@@ -264,7 +265,12 @@
                     </div>
 
                     <!-- Submit button -->
-                    <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-block">Sign up</button>
+                    <button type="submit" class="btn btn-primary" id="editButton">
+                        <span id="editButtonText">Update Admin</span>
+                        <div id="editSpinner" class="spinner-border text-light" style="display: none; width: 1.5rem; height: 1.5rem;" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </button>
                 </form>
             </div>
         </div>
@@ -368,7 +374,7 @@
         document.getElementById('AdressEmail').value = admin.email;
         document.getElementById('editUserRoles').value = admin.role;
 
-        
+
         // Initialiser les éléments de formulaire après avoir rempli les valeurs
         document.querySelectorAll('.form-outline').forEach((formOutline) => {
             new mdb.Input(formOutline).init();
