@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\employee;
+use App\Models\order;
 use App\Models\User;
 use Illuminate\Auth\Events\Validated;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -12,6 +14,27 @@ use Illuminate\Support\Facades\Log;
 class AdminController extends Controller
 {
     //
+
+    public function index()
+    {
+        // Récupérer le total des employés
+        $totalEmployees = employee::count();  // Compte tous les employés
+
+        $totalVendor = User::where('role', 3)->count();
+
+        $totalpendingorder = order::where('status', 1)->count();
+
+        // Récupérer le total des commandes avec le statut 2
+        $totalrefuseorder = Order::where('status', 3)->count();
+
+        // Récupérer le total des commandes avec le statut 3
+        $totalvalidateorder = Order::where('status', 4)->count();
+
+
+        // Passer cette donnée à la vue
+        return view('index', compact('totalEmployees','totalVendor','totalpendingorder', 'totalvalidateorder', 'totalrefuseorder'));
+    }
+
     public function addAdmin(Request $request)
     {
         try {

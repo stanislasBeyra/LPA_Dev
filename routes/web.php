@@ -31,6 +31,8 @@ Route::middleware('auth:web')->group(function () {
         return view('index');
     });
 
+    Route::get('/',[AdminController::class,'index']);
+
     //add admin
     Route::post('/add/admins',[AdminController::class,'addAdmin'])->name('add.admins');
     Route::post('/delete/admin',[AdminController::class,'deleteAdmin'])->name('delete.admin');

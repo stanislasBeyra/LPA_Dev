@@ -23,6 +23,10 @@
         rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-3d"></script>
+
+
 
     <style>
         body {
@@ -90,9 +94,9 @@
             }
 
             .custom-modal {
-            max-width: 100% !important;
-            /* Adjust the width as needed */
-        }
+                max-width: 100% !important;
+                /* Adjust the width as needed */
+            }
         }
 
         .list-group-item.active {
@@ -205,43 +209,45 @@
         });
     </script>
 
- <!-- login des buton -->
+    <!-- login des buton -->
 
- <script>
-   
-    const submitButton = document.getElementById('submitButton');
-    const spinner = document.getElementById('spinner');
-    const buttonText = document.getElementById('buttonText');
+    <script>
+        const submitButton = document.getElementById('submitButton');
+        const spinner = document.getElementById('spinner');
+        const buttonText = document.getElementById('buttonText');
 
-    submitButton.addEventListener('click', function(event) {
-        buttonText.style.display = 'none';
-        spinner.style.display = 'inline-block';
+        submitButton.addEventListener('click', function(event) {
+            buttonText.style.display = 'none';
+            spinner.style.display = 'inline-block';
 
 
-    });
+        });
 
-    const deleteButton = document.getElementById('deleteButton'); // Bouton de suppression
-    const spinnerdelete = document.getElementById('deleteSpinner'); // Spinner pour le bouton
-    const buttonTextdelete = document.getElementById('deleteButtonText'); // Texte du bouton
+        const deleteButton = document.getElementById('deleteButton'); // Bouton de suppression
+        const spinnerdelete = document.getElementById('deleteSpinner'); // Spinner pour le bouton
+        const buttonTextdelete = document.getElementById('deleteButtonText'); // Texte du bouton
 
-    // Ajout de l'événement sur le bouton
-    deleteButton.addEventListener('click', function(event) {
-        // Affiche le spinner et masque le texte
-        buttonTextdelete.style.display = 'none'; // Masque le texte du bouton
-        spinnerdelete.style.display = 'inline-block'; // Affiche le spinner
-    });
+        // Ajout de l'événement sur le bouton
+        deleteButton.addEventListener('click', function(event) {
+            // Affiche le spinner et masque le texte
+            buttonTextdelete.style.display = 'none'; // Masque le texte du bouton
+            spinnerdelete.style.display = 'inline-block'; // Affiche le spinner
+        });
 
-    const eiditButton = document.getElementById('editButton'); // Bouton de suppression
-    const spinneredit = document.getElementById('editSpinner'); // Spinner pour le bouton
-    const buttonTextedit = document.getElementById('editButtonText'); // Texte du bouton
+        const eiditButton = document.getElementById('editButton'); // Bouton de suppression
+        const spinneredit = document.getElementById('editSpinner'); // Spinner pour le bouton
+        const buttonTextedit = document.getElementById('editButtonText'); // Texte du bouton
 
-    // Ajout de l'événement sur le bouton
-    eiditButton.addEventListener('click', function(event) {
-        // Affiche le spinner et masque le texte
-        buttonTextedit.style.display = 'none'; // Masque le texte du bouton
-        spinneredit.style.display = 'inline-block'; // Affiche le spinner
-    });
-</script>
+        // Ajout de l'événement sur le bouton
+        eiditButton.addEventListener('click', function(event) {
+            // Affiche le spinner et masque le texte
+            buttonTextedit.style.display = 'none'; // Masque le texte du bouton
+            spinneredit.style.display = 'inline-block'; // Affiche le spinner
+        });
+    </script>
+
+
+
 
 
 </body>
