@@ -467,7 +467,7 @@ class AuthController extends Controller
             }
 
             Auth::login($user);
-            return redirect()->route('content.page', ['page' => 'index'])->with('success', 'Login successful.');
+            return redirect()->route('index.home',)->with('success', 'Login successful.');
         } catch (\Illuminate\Validation\ValidationException $e) {
             return back()->withErrors($e->validator)->withInput();
         } catch (\Exception $e) {

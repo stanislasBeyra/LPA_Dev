@@ -27,11 +27,11 @@ use Illuminate\Support\Facades\Route;
 
 // Route pour la page d'accueil, protégée par le middleware 'auth:web'
 Route::middleware('auth:web')->group(function () {
-    Route::get('/', function () {
-        return view('index');
-    });
+    // Route::get('/', function () {
+    //     return view('index');
+    // });
 
-    Route::get('/',[AdminController::class,'index']);
+    Route::get('/',[AdminController::class,'index'])->name('index.home');
 
     //add admin
     Route::post('/add/admins',[AdminController::class,'addAdmin'])->name('add.admins');
