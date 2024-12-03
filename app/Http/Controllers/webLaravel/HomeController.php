@@ -181,7 +181,8 @@ class HomeController extends Controller
     public function getBannerforAdmin()
     {
         try {
-            $banners = Banner::where('is_active', 1)->get();
+            $banners = Banner::orderBy('id','desc')
+            ->get();
             return $banners;
         } catch (\Exception $e) {
             Log::info('An ocured error' . $e->getMessage(),);

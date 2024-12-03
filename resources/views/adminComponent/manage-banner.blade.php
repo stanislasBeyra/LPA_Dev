@@ -100,16 +100,51 @@
         <div class="col-md-3 mb-4">
             <div class="card">
                 <img src="{{ asset('app/public/'.$banner->image_url) }}"
-                    class="card-img-top" alt="Fissure in Sandstone" />
-                <div class="card-body">
-                    <!-- <h5 class="card-title">Card title</h5>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> -->
-                    <a href="#!" class="btn btn-primary" data-mdb-ripple-init>Button</a>
+                    class="card-img-top" alt="Banner Image" />
+
+                <div class="card-body d-flex align-items-center justify-content-between">
+                    <div class="form-check form-switch me-3">
+                        <input class="form-check-input banner-status-switch"
+                            type="checkbox"
+                            role="switch"
+                            id="bannerSwitch{{ $banner->id }}"
+                            data-banner-id="{{ $banner->id }}"
+                            {{ $banner->is_active ? 'checked' : '' }} />
+                    </div>
+                    <button type="button" class="btn btn-danger btn-sm"
+                        data-mdb-modal-init data-mdb-target="#exampleModal1"
+                        onclick="setBanner('{{ $banner->id }}')">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
                 </div>
             </div>
         </div>
         @endforeach
     </div>
+
+
+    <!-- Note: class .show is used for demo purposes. Remove it when using it in the real project. -->
+
+
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <div id="successToast" class="toast alert-success" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header alert-success">
+                <strong class="me-auto">Success</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="successToastBody"></div>
+        </div>
+
+        <div id="errorToast" class="toast alert-danger" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto alert-danger">Erreur</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="errorToastBody"></div>
+        </div>
+    </div>
+
+
 
 
 
@@ -153,34 +188,161 @@
 <div class="modal top fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true" data-mdb-backdrop="true" data-mdb-keyboard="true">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
-            <div class="modal-header bg-danger d-flex justify-content-center w-100">
-                <h5 class="modal-title text-white text-center" id="deleteConfirmationModalLabel">Delete Confirmation</h5>
+            <div class="modal-header bg-danger d-flex justify-content-center">
+                <h5 class="modal-title text-white text-center">Confirmation de suppression</h5>
             </div>
-
-            <form id="deleteForm" action="{{ route('roles.delete') }}" method="POST">
-                @csrf
-                <input type="hidden" id="categoryId" name="roleId">
-                <div class="modal-body text-center">
-                    <i class="fas fa-trash-alt mb-3 text-danger" style="font-size: 3rem;"></i>
-                    <p>Are you sure you want to delete this category? This action cannot be undone.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-danger" id="deleteButton">
-                        <span id="deleteButtonText">Delete</span>
-                        <div id="deleteSpinner" class="spinner-border text-light" style="display: none; width: 1.5rem; height: 1.5rem;" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                    </button>
-                </div>
-
-            </form>
+            <div class="modal-body text-center">
+                <i class="fas fa-trash-alt mb-3 text-danger" style="font-size: 3rem;"></i>
+                <p>Êtes-vous sûr de vouloir supprimer cette bannière ? Cette action est irréversible.</p>
+                <input type="hidden" id="bannerId" name="bannerId">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Annuler</button>
+                <button type="button" onclick="DeleteBanner()" class="btn btn-danger" id="deleteButton">
+                    <span id="deleteButtonText">Supprimer</span>
+                    <div id="deleteSpinner" class="spinner-border text-light" style="display: none; width: 1.5rem; height: 1.5rem;" role="status">
+                        <span class="visually-hidden">Chargement...</span>
+                    </div>
+                </button>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- Modal -->
 
+<script>
+    function setBanner(BannerId) {
+        document.getElementById('bannerId').value = BannerId;
+    };
+
+
+    function DeleteBanner() {
+    const deleteButton = document.getElementById('deleteButton');
+    const deleteSpinner = document.getElementById('deleteSpinner');
+    const deleteButtonText = document.getElementById('deleteButtonText');
+    const bannerId = document.getElementById('bannerId').value;
+
+    deleteButton.disabled = true;
+    deleteSpinner.style.display = 'inline-block';
+    deleteButtonText.style.display = 'none';
+
+    fetch("{{ route('delete.banner') }}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({
+            bannerId: bannerId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Afficher le toast de succès
+            
+
+            // Fermer le modal
+            const deleteModal = mdb.Modal.getInstance(document.getElementById('exampleModal1'));
+            if (deleteModal) {
+                deleteModal.hide();
+            }
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+
+            const successToast = document.getElementById('successToast');
+            const successToastBody = document.getElementById('successToastBody');
+            successToastBody.textContent = data.message || 'Bannière supprimée avec succès';
+            
+            // Initialiser et afficher le toast
+            const toastInstance = new mdb.Toast(successToast);
+            toastInstance.show();
+
+            // Actualiser la page après un court délai pour permettre l'affichage du toast
+            
+        } else {
+            // Afficher le toast d'erreur
+            const errorToast = document.getElementById('errorToast');
+            const errorToastBody = document.getElementById('errorToastBody');
+            errorToastBody.textContent = data.message || 'Une erreur est survenue';
+            
+            // Initialiser et afficher le toast d'erreur
+            const toastInstance = new mdb.Toast(errorToast);
+            toastInstance.show();
+        }
+    })
+    .catch(error => {
+        // Afficher le toast d'erreur en cas d'erreur réseau
+        const errorToast = document.getElementById('errorToast');
+        const errorToastBody = document.getElementById('errorToastBody');
+        errorToastBody.textContent = 'Erreur de connexion';
+        
+        const toastInstance = new mdb.Toast(errorToast);
+        toastInstance.show();
+
+        console.error('Erreur:', error);
+    })
+    .finally(() => {
+        deleteButton.disabled = false;
+        deleteSpinner.style.display = 'none';
+        deleteButtonText.style.display = 'inline-block';
+    });
+}
+
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const bannerSwitches = document.querySelectorAll('.banner-status-switch');
+
+        bannerSwitches.forEach(switchElement => {
+            switchElement.addEventListener('change', function() {
+                const bannerId = this.getAttribute('data-banner-id');
+                const isActive = this.checked ? 'on' : 'off';
+                const originalState = !this.checked;
+
+                fetch("{{ route('banner.status.update') }}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            bannerId: bannerId,
+                            is_active: isActive
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Afficher le toast de succès
+                            document.getElementById('successToastBody').textContent = data.message;
+                            var successToast = new mdb.Toast(document.getElementById('successToast'));
+                            successToast.show();
+                        } else {
+                            // Rétablir l'interrupteur si la mise à jour échoue
+                            this.checked = originalState;
+
+                            // Afficher le toast d'erreur
+                            document.getElementById('errorToastBody').textContent = data.message;
+                            var errorToast = new mdb.Toast(document.getElementById('errorToast'));
+                            errorToast.show();
+                        }
+                    })
+                    .catch(error => {
+                        // Rétablir l'interrupteur en cas d'erreur
+                        this.checked = originalState;
+
+                        // Afficher le toast d'erreur
+                        document.getElementById('errorToastBody').textContent = 'Une erreur est survenue lors de la mise à jour';
+                        var errorToast = new mdb.Toast(document.getElementById('errorToast'));
+                        errorToast.show();
+                    });
+            });
+        });
+    });
+</script>
 
 <script>
     function previewImage(event) {

@@ -62,6 +62,8 @@ Route::middleware('auth:web')->group(function () {
 
     //Banner
     Route::post('storeBanner',[BannerController::class,'storeBanner'])->name('banners.store');
+    Route::post('/banner/change/status', [BannerController::class, 'desactivebanner'])->name('banner.status.update');
+    Route::post('/DeleteBanner',[BannerController::class,'DeleteBanner'])->name('delete.banner');
     //product
     Route::post('/vendor/product/store', [ProductController::class, 'storevendorproduct'])->name('vendor.product.store');
     Route::post('NewvendorvalidateOrder', [OrderController::class, 'NewvendorvalidateOrder'])->name('validated.order');
