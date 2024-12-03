@@ -127,7 +127,7 @@
         <div class="card animate__animated animate__zoomIn">
             <div class="card-header text-center py-3">
                 <h5 class="mb-0 text-center">
-                    <strong>Roles</strong>
+                    <strong>Admins List</strong>
                 </h5>
             </div>
             <div class="card-body">
