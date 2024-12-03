@@ -113,7 +113,7 @@ class BannerController extends Controller
     {
         try {
             $banners = Banner::where('is_active', 1)
-                ->orderBy('id', 'desc')
+                ->orderBy('id', 'asc')
                 ->take(5)
                 ->get();
             return response()->json(['success', true, 'banners' => $banners]);
