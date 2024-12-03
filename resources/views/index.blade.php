@@ -11,7 +11,7 @@
           <div class="card-body">
             <div class="d-flex justify-content-between px-md-1">
               <div class="align-self-center">
-                <i class="far fa-user text-tertiary fa-3x"></i>
+                <i class="far fa-user text-primary fa-3x"></i>
               </div>
               <div class="text-end">
                 <h3>{{ $totalVendor }}</h3>
