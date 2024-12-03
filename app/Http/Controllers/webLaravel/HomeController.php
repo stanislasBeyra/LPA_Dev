@@ -15,6 +15,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\EmployeeController;
 use App\Models\Banner;
 use App\Models\employee;
+use App\Models\order;
 
 class HomeController extends Controller
 {
@@ -199,6 +200,30 @@ class HomeController extends Controller
             Log::info('An ocured error' . $e->getMessage(),);
             return back()->with('error', 'Acured error' . $e->getMessage());
         }
+    }
+
+    public function index()
+    {
+        // Récupérer le total des employés
+        $totalEmployees = Employee::count();  // Compte tous les employés
+
+        $totalVendor = User::where('role', 3)->count();
+
+        $totalpendingorder = order::where('status', 1)->count();
+
+        // Récupérer le total des commandes avec le statut 2
+        $totalrefuseorder = Order::where('status', 3)->count();
+
+        // Récupérer le total des commandes avec le statut 3
+        $totalvalidateorder = Order::where('status', 4)->count();
+
+        return [
+            "totalEmployees"=>$totalEmployees,
+            'totalVendor'=>$totalVendor,
+            'totalpendingorder'=>$totalpendingorder,
+            'totalrefuseorder'=>$totalrefuseorder,
+            'totalvalidateorder'=>$totalvalidateorder,
+        ];
     }
 
     public function getContent($page)
