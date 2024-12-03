@@ -9,6 +9,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserDeactivationReasonController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\webLaravel\HomeController;
 use Illuminate\Support\Facades\Route;
@@ -74,6 +75,7 @@ Route::middleware('auth:web')->group(function () {
     Route::post('employee/register', [EmployeeController::class, 'RegisterEmplyees'])->name('employee.register');
     Route::post('/employee/update', [EmployeeController::class, 'updateEmployesInfo'])->name('employee.update');
     Route::post('/deleteEmployee',[EmployeeController::class,'deleteEmployee'])->name('delete.employee');
+    Route::post('/deactivateemployee',[UserDeactivationReasonController::class,'deactivateEmployee'])->name('deactivate.employee');
 
     Route::get('getallvendorcoonectproduct', [ProductController::class, 'getallvendorcoonectproduct']);
     Route::get('getorders', [OrderController::class, 'getorders']);

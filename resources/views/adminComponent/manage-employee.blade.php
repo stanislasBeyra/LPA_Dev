@@ -177,31 +177,7 @@
         </div>
     </div>
 
-    <div class="modal top fade" id="staticBackdrop5" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-mdb-backdrop="true" data-mdb-keyboard="true">
-        <div class="modal-dialog modal-dialog-centered text-center d-flex justify-content-center">
-            <div class="modal-content w-75">
-                <div class="modal-body p-4">
-                    <form method="POST">
-                        @csrf
 
-                        <div data-mdb-input-init class="form-outline mb-4">
-                            <input type="password" name="new_password_confirmation" id="new_password_confirmation" class="form-control" />
-                            <label class="form-label" for="new_password_confirmation">motif</label>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary" id="submitButton">
-                                <span id="buttonText">Change Status</span>
-                                <div id="spinner" class="spinner-border text-light" style="display: none; width: 1.5rem; height: 1.5rem;" role="status">
-                                    <span class="visually-hidden">Loading...</span>
-                                </div>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Section avec tableau -->
     <section class="mb-4">
@@ -244,7 +220,9 @@
                                 <td>{{ $employee->agence->agent_name ?? 'No agence selected' }}</td>
                                 <td>
 
-                                    <p style="cursor: pointer;" data-mdb-toggle="modal"
+                                    <p style="cursor: pointer;"
+                                        onclick="setStatus('{{ $employee->id }}')"
+                                        data-mdb-toggle="modal"
                                         data-mdb-target="#staticBackdrop5"
                                         class="badge {{ $employee->status == 1 ? 'bg-success' : 'bg-danger' }}">
                                         {{ $employee->status == 1 ? 'Active' : 'Inactive' }}
@@ -374,9 +352,6 @@
                                 </div>
                             </div>
                         </div>
-
-
-
                         <!-- Boutons de la modal -->
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
@@ -390,6 +365,36 @@
                     </form>
 
 
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal top fade" id="staticBackdrop5" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-mdb-backdrop="true" data-mdb-keyboard="true">
+        <div class="modal-dialog modal-dialog-centered text-center d-flex justify-content-center">
+            <div class="modal-content w-75">
+                <div class="modal-body p-4">
+                    <form id="deactivateForm" action="{{ route('deactivate.employee') }}" method="POST">
+                        @csrf
+                        <input type="hidden" id="EmployeeId" name="employeeId">
+                        @if(auth()->user()->role == 5)
+                        <div data-mdb-input-init class="form-outline mb-4">
+                            <input type="text" name="reason" id="motif" class="form-control" />
+                            <label class="form-label" for="reason">motif</label>
+                            <span id="reasonError" class="invalid-feedback mt-1" style=" display: none;">Please provide a reason.</span>
+                        </div>
+                        @endif
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" id="submitButton">
+                                <span id="buttonText">Change Status</span>
+                                <div id="spinner" class="spinner-border text-light" style="display: none; width: 1.5rem; height: 1.5rem;" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -429,6 +434,29 @@
 
 
 <script>
+    document.getElementById('deactivateForm').addEventListener('submit', function (e) {
+    var reason = document.getElementById('motif').value.trim();  // Récupère la valeur du champ "reason"
+    var errorMessage = document.getElementById('reasonError');   // Sélectionne le message d'erreur
+    
+    // Si le champ est vide
+    if (reason === '') {
+        e.preventDefault();  // Empêche l'envoi du formulaire
+        
+        // Affiche le message d'erreur
+        errorMessage.style.display = 'inline';  // Change à 'inline' pour afficher le message sous le champ
+    } else {
+        // Si le champ est rempli, cacher le message d'erreur
+        errorMessage.style.display = 'none';
+    }
+});
+
+
+
+    function setStatus(employeeid) {
+        document.getElementById('EmployeeId').value = employeeid;
+        console.log(employeeid);
+    }
+
     function setEmployees(employeeid) {
         document.getElementById('employeeId').value = employeeid;
         console.log(employeeid);
