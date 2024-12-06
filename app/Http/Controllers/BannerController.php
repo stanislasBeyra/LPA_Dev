@@ -11,40 +11,40 @@ class BannerController extends Controller
 {
     //
 
-    public function storeBanner(Request $request)
-    {
-        // Validation des champs
-        try {
-            $request->validate([
-                'banner_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            ]);
+    // public function storeBanner(Request $request)
+    // {
+    //     // Validation des champs
+    //     try {
+    //         $request->validate([
+    //             'banner_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+    //         ]);
 
-            $imagePath = null;
+    //         $imagePath = null;
 
-            // Chemin du répertoire de stockage des bannières
-            $directory = public_path('app/public/banners');
+    //         // Chemin du répertoire de stockage des bannières
+    //         $directory = public_path('app/public/banners');
 
-            if (!file_exists($directory)) {
-                mkdir($directory, 0755, true);
-            }
+    //         if (!file_exists($directory)) {
+    //             mkdir($directory, 0755, true);
+    //         }
 
-            if ($request->hasFile('banner_image')) {
-                $image = $request->file('banner_image');
-                $imageName = 'Banber' . time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
-                $image->move($directory, $imageName);
-                $imagePath = 'banners/' . $imageName;
-            }
-            Banner::create([
-                'image_url' => $imagePath,
-            ]);
+    //         if ($request->hasFile('banner_image')) {
+    //             $image = $request->file('banner_image');
+    //             $imageName = 'Banber' . time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+    //             $image->move($directory, $imageName);
+    //             $imagePath = 'banners/' . $imageName;
+    //         }
+    //         Banner::create([
+    //             'image_url' => $imagePath,
+    //         ]);
 
-            // Retourner une réponse avec succès
-            return back()->with('success', 'Banner uploaded successfully.');
-        } catch (\Exception $e) {
-            Log::info('An ocured error' . $e->getMessage(),);
-            return back()->with('error', 'Acured error' . $e->getMessage());
-        }
-    }
+    //         // Retourner une réponse avec succès
+    //         return back()->with('success', 'Banner uploaded successfully.');
+    //     } catch (\Exception $e) {
+    //         Log::info('An ocured error' . $e->getMessage(),);
+    //         return back()->with('error', 'Acured error' . $e->getMessage());
+    //     }
+    // }
 
     //     public function storeBanner(Request $request)
     // {
