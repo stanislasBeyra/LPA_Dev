@@ -123,7 +123,7 @@
                                         data-name="{{ $role->role_name }}"
                                         data-description="{{ $role->description }}"
                                         onclick="populateEditModal(this)">
-                                        <i class="fas fa-edit"></i> Edit
+                                        <i class="fas fa-edit"></i>
                                     </button>
                                     <!-- <button type="button" class="btn btn-danger btn-sm"
                                      data-mdb-modal-init data-mdb-target="#exampleModal1"
@@ -155,7 +155,7 @@
                 <input type="hidden" id="categoryId" name="roleId">
                 <div class="modal-body text-center">
                     <i class="fas fa-trash-alt mb-3 text-danger" style="font-size: 3rem;"></i>
-                    <p>Are you sure you want to delete this category? This action cannot be undone.</p>
+                    <p>Are you sure you want to delete this Role? This action cannot be undone.</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>

@@ -30,7 +30,7 @@
             @endif
         </div>
         <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary fs-5" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#addAgencyModal">
+        <button type="button" class="btn btn-primary fs-7" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#addAgencyModal">
             ADD AGENCIES
         </button>
     </div>
@@ -120,14 +120,14 @@
                                         data-description="{{ $agence->description }}"
                                         data-code="{{ $agence->agency_code }}"
                                         onclick="populateEditModal(this)">
-                                        <i class="fas fa-edit"></i> Edit
+                                        <i class="fas fa-edit"></i>
                                     </button>
                                     <!-- <button class="btn btn-sm btn-outline-primary"> <i class="fas fa-edit"></i> Edit</button> -->
                                     <button type="button" class="btn btn-danger btn-sm"
                                         data-mdb-modal-init
                                         data-mdb-target="#exampleModal1"
                                         onclick="setAgneciesID('{{ $agence->id }}')">
-                                        <i class="fas fa-trash-alt"></i> Delete
+                                        <i class="fas fa-trash-alt"></i>
                                     </button>
                                 </td>
                             </tr>

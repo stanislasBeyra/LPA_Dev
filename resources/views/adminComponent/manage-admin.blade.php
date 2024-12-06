@@ -154,9 +154,10 @@
                                 <!-- Description de la catégorie -->
                                 <td class="text-center">
 
+                                
                                     <button type="button"
                                         data-mdb-button-init data-mdb-ripple-init
-                                        class="btn btn-outline-primary"
+                                        class="btn btn-outline-primary btn-sm"
                                         data-mdb-modal-init data-mdb-target="#staticBackdrop2"
                                         data-admin='@json($admin)'
                                         onclick="populateEditModal(this)">
@@ -194,7 +195,7 @@
                 <input type="hidden" id="categoryId" name="AdminId">
                 <div class="modal-body text-center">
                     <i class="fas fa-trash-alt mb-3 text-danger" style="font-size: 3rem;"></i>
-                    <p>Are you sure you want to delete this category? This action cannot be undone.</p>
+                    <p>Are you sure you want to delete this Admin? This action cannot be undone.</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>

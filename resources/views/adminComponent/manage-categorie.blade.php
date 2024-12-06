@@ -120,12 +120,12 @@
                                         data-name="{{ $category->categories_name }}"
                                         data-description="{{ $category->categories_description }}"
                                         onclick="populateEditModal(this)">
-                                        <i class="fas fa-edit"></i> Edit
+                                        <i class="fas fa-edit"></i>
                                     </button>
                                     <button type="button" class="btn btn-danger btn-sm"
                                      data-mdb-modal-init data-mdb-target="#exampleModal1"
                                       onclick="setCategoryId('{{ $category->id }}')">
-                                        <i class="fas fa-trash-alt"></i> Delete
+                                        <i class="fas fa-trash-alt"></i>
                                     </button>
                                 </td>
                             </tr>

@@ -81,13 +81,13 @@
 
                         <div class="row mb-4">
                             <div class="col-md-6">
-                                <div class="form-outline">
+                                <div class="form-outline mb-3">
                                     <input type="number" id="national_id" name="national_id" class="form-control" />
                                     <label class="form-label" for="national_id">National ID Number</label>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-outline">
+                                <div class="form-outline ">
                                     <input type="text" id="firstname" name="firstname" class="form-control" />
                                     <label class="form-label" for="firstname">First Name</label>
                                 </div>
@@ -95,7 +95,7 @@
                         </div>
                         <div class="row mb-4">
                             <div class="col-md-6">
-                                <div class="form-outline">
+                                <div class="form-outline mb-3">
                                     <input type="text" id="lastname" name="lastname" class="form-control" />
                                     <label class="form-label" for="lastname">Last Name</label>
                                 </div>
@@ -112,7 +112,7 @@
                         <div class="row mb-4">
 
                             <div class="col-md-6">
-                                <div class="form-outline">
+                                <div class="form-outline mb-3">
                                     <input type="text" id="username" name="username" class="form-control" />
                                     <label class="form-label" for="username">Username</label>
                                 </div>
@@ -261,7 +261,7 @@
         </div>
     </section>
 
-
+  
     <div class="modal fade" id="staticBackdrop1" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content ">
@@ -275,7 +275,7 @@
                         <!-- Première ligne -->
                         <div class="row mb-4">
                             <div class="col-md-6">
-                                <div class="form-outline">
+                                <div class="form-outline mb-3">
                                     <input type="number" id="nationalid" name="national_id" class="form-control" />
                                     <label class="form-label" for="national_id">National ID Number</label>
                                 </div>
@@ -291,7 +291,7 @@
                         <!-- Deuxième ligne -->
                         <div class="row mb-4">
                             <div class="col-md-6">
-                                <div class="form-outline">
+                                <div class="form-outline mb-3">
                                     <input type="text" id="lastnames" name="lastname" class="form-control" />
                                     <label class="form-label" for="lastname">Last Name</label>
                                 </div>
@@ -307,7 +307,7 @@
                         <!-- Troisième ligne -->
                         <div class="row mb-4">
                             <div class="col-md-6">
-                                <div class="form-outline">
+                                <div class="form-outline mb-3">
                                     <input type="text" id="MobileTwo" name="mobile_two" class="form-control" />
                                     <label class="form-label" for="mobile_two">Mobile Two</label>
                                 </div>
@@ -323,7 +323,7 @@
                         <!-- Quatrième ligne -->
                         <div class="row mb-4">
                             <div class="col-md-6">
-                                <div class="form-outline">
+                                <div class="form-outline mb-3">
                                     <input type="text" id="MiddleName" name="middle_name" class="form-control" />
                                     <label class="form-label" for="middle_name">Middle Name</label>
                                 </div>
