@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Intervention\Image\Facades\Image;
 
+
+
 class BannerController extends Controller
 {
     //
@@ -70,7 +72,7 @@ class BannerController extends Controller
 
             // Redimensionner l'image avec Intervention Image
             $resizedImage = Image::make($image)
-                ->fit(1600, 480, function ($constraint) {
+                ->fit(1680, 480, function ($constraint) {
                     $constraint->upsize(); // Empêche d'agrandir une image plus petite
                 });
 
