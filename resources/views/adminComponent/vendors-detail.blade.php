@@ -368,7 +368,7 @@
                                         <img src="{{ $filePath }}" class="d-block w-100" style="height: 600px; width: auto; object-fit: contain;" alt="Business Registration Certificate">
                                         @else
                                         <!-- Si le type de fichier n'est pas supporté -->
-                                        <p class="text-muted mb-0">Aucun document valide trouvé</p>
+                                        <p class="text-muted mb-0">No valid document found</p>
                                         @endif
                                     </div>
                                     @endforeach
@@ -378,16 +378,16 @@
                                 <!-- Controls -->
                                 <button class="carousel-control-prev text-danger " type="button" data-mdb-target="#carouselBasicExample" data-mdb-slide="prev">
                                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Précédent</span>
+                                    <span class="visually-hidden">previous</span>
                                 </button>
                                 <button class="carousel-control-next text-danger" type="button" data-mdb-target="#carouselBasicExample" data-mdb-slide="next">
                                     <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Suivant</span>
+                                    <span class="visually-hidden">next</span>
                                 </button>
                             </div>
                             <!-- Carousel wrapper -->
                             @else
-                            <p class="text-muted mb-0">Aucun document valide trouvé</p>
+                            <p class="text-muted mb-0">No valid document found</p>
                             @endif
                         </div>
                     </div>
@@ -439,7 +439,8 @@
                                         <!-- Affichage image -->
                                         <img src="{{ $filePath }}" class="d-block w-100" style="height: 600px; width: auto; object-fit: contain;" alt="Tax Clearance Certificate">
                                         @else
-                                        <p class="text-muted mb-0">Aucun document valide trouvé</p>
+                                        <p class="text-muted mb-0">No valid document found</p>
+
                                         @endif
                                     </div>
                                     @endforeach
@@ -449,16 +450,17 @@
                                 <!-- Controls -->
                                 <button class="carousel-control-prev text-danger" type="button" data-mdb-target="#carouselTaxCertificate" data-mdb-slide="prev">
                                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Précédent</span>
+                                    <span class="visually-hidden">previous</span>
                                 </button>
                                 <button class="carousel-control-next text-danger" type="button" data-mdb-target="#carouselTaxCertificate" data-mdb-slide="next">
                                     <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Suivant</span>
+                                    <span class="visually-hidden">next</span>
                                 </button>
                             </div>
                             <!-- Carousel wrapper -->
                             @else
-                            <p class="text-muted mb-0">Aucun document valide trouvé</p>
+                            <p class="text-muted mb-0">No valid document found</p>
+
                             @endif
                         </div>
                     </div>
@@ -510,7 +512,7 @@
                                         <!-- Affichage image -->
                                         <img src="{{ $filePath }}" class="d-block w-100" style="height: 600px; width: auto; object-fit: contain;" alt="Passport or Government-Issued ID">
                                         @else
-                                        <p class="text-muted mb-0">Aucun document valide trouvé</p>
+                                        <p class="text-muted mb-0">No valid document found</p>
                                         @endif
                                     </div>
                                     @endforeach
@@ -520,16 +522,17 @@
                                 <!-- Controls -->
                                 <button class="carousel-control-prev text-danger" type="button" data-mdb-target="#carouselPassportOrID" data-mdb-slide="prev">
                                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Précédent</span>
+                                    <span class="visually-hidden">previous</span>
                                 </button>
                                 <button class="carousel-control-next text-danger" type="button" data-mdb-target="#carouselPassportOrID" data-mdb-slide="next">
                                     <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Suivant</span>
+                                    <span class="visually-hidden">next</span>
                                 </button>
                             </div>
                             <!-- Carousel wrapper -->
                             @else
-                            <p class="text-muted mb-0">Aucun document valide trouvé</p>
+                            <p class="text-muted mb-0">No valid document found</p>
+
                             @endif
                         </div>
                     </div>
