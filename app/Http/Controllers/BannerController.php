@@ -13,90 +13,90 @@ class BannerController extends Controller
 {
     //
 
-    // public function storeBanner(Request $request)
-    // {
-    //     // Validation des champs
-    //     try {
-    //         $request->validate([
-    //             'banner_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-    //         ]);
-
-    //         $imagePath = null;
-
-    //         // Chemin du répertoire de stockage des bannières
-    //         $directory = public_path('app/public/banners');
-
-    //         if (!file_exists($directory)) {
-    //             mkdir($directory, 0755, true);
-    //         }
-
-    //         if ($request->hasFile('banner_image')) {
-    //             $image = $request->file('banner_image');
-    //             $imageName = 'Banber' . time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
-    //             $image->move($directory, $imageName);
-    //             $imagePath = 'banners/' . $imageName;
-    //         }
-    //         Banner::create([
-    //             'image_url' => $imagePath,
-    //         ]);
-
-    //         // Retourner une réponse avec succès
-    //         return back()->with('success', 'Banner uploaded successfully.');
-    //     } catch (\Exception $e) {
-    //         Log::info('An ocured error' . $e->getMessage(),);
-    //         return back()->with('error', 'Acured error' . $e->getMessage());
-    //     }
-    // }
-
     public function storeBanner(Request $request)
-{
-    try {
+    {
         // Validation des champs
-        $request->validate([
-            'banner_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+        try {
+            $request->validate([
+                'banner_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            ]);
 
-        $imagePath = null;
+            $imagePath = null;
 
-        // Chemin du répertoire de stockage des bannières
-        $directory = public_path('app/public/banners');
+            // Chemin du répertoire de stockage des bannières
+            $directory = public_path('app/public/banners');
 
-        // Créer le dossier s'il n'existe pas
-        if (!file_exists($directory)) {
-            mkdir($directory, 0755, true);
+            if (!file_exists($directory)) {
+                mkdir($directory, 0755, true);
+            }
+
+            if ($request->hasFile('banner_image')) {
+                $image = $request->file('banner_image');
+                $imageName = 'Banber' . time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+                $image->move($directory, $imageName);
+                $imagePath = 'banners/' . $imageName;
+            }
+            Banner::create([
+                'image_url' => $imagePath,
+            ]);
+
+            // Retourner une réponse avec succès
+            return back()->with('success', 'Banner uploaded successfully.');
+        } catch (\Exception $e) {
+            Log::info('An ocured error' . $e->getMessage(),);
+            return back()->with('error', 'Acured error' . $e->getMessage());
         }
-
-        if ($request->hasFile('banner_image')) {
-            $image = $request->file('banner_image');
-            $imageName = 'Banner_' . time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
-
-            // Redimensionner l'image avec Intervention Image
-            $resizedImage = Image::make($image)
-                ->fit(1680, 480, function ($constraint) {
-                    $constraint->upsize(); // Empêche d'agrandir une image plus petite
-                });
-
-            // Enregistrer l'image redimensionnée
-            $resizedImage->save($directory . '/' . $imageName);
-
-            // Chemin relatif à enregistrer dans la base de données
-            $imagePath = 'banners/' . $imageName;
-        }
-
-        // Créer une nouvelle entrée dans la base de données
-        Banner::create([
-            'image_url' => $imagePath,
-        ]);
-
-        // Retourner une réponse avec succès
-        return back()->with('success', 'Banner uploaded and resized successfully.');
-    } catch (\Exception $e) {
-        // Log de l'erreur pour débogage
-        Log::error('An error occurred: ' . $e->getMessage());
-
-        return back()->with('error', 'An error occurred: ' . $e->getMessage());
     }
-}
+
+//     public function storeBanner(Request $request)
+// {
+//     try {
+//         // Validation des champs
+//         $request->validate([
+//             'banner_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+//         ]);
+
+//         $imagePath = null;
+
+//         // Chemin du répertoire de stockage des bannières
+//         $directory = public_path('app/public/banners');
+
+//         // Créer le dossier s'il n'existe pas
+//         if (!file_exists($directory)) {
+//             mkdir($directory, 0755, true);
+//         }
+
+//         if ($request->hasFile('banner_image')) {
+//             $image = $request->file('banner_image');
+//             $imageName = 'Banner_' . time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+
+//             // Redimensionner l'image avec Intervention Image
+//             $resizedImage = Image::make($image->getRealPath())
+//                 ->fit(1680, 480, function ($constraint) {
+//                     $constraint->upsize(); // Empêche d'agrandir une image plus petite
+//                 });
+
+//             // Enregistrer l'image redimensionnée
+//             $resizedImage->save($directory . '/' . $imageName);
+
+//             // Chemin relatif à enregistrer dans la base de données
+//             $imagePath = 'banners/' . $imageName;
+//         }
+
+//         // Créer une nouvelle entrée dans la base de données
+//         Banner::create([
+//             'image_url' => $imagePath,
+//         ]);
+
+//         // Retourner une réponse avec succès
+//         return back()->with('success', 'Banner uploaded and resized successfully.');
+//     } catch (\Exception $e) {
+//         // Log de l'erreur pour débogage
+//         Log::error('An error occurred: ' . $e->getMessage());
+
+//         return back()->with('error', 'An error occurred: ' . $e->getMessage());
+//     }
+// }
 
     //     public function storeBanner(Request $request)
     // {
