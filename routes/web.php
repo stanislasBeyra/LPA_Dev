@@ -82,8 +82,9 @@ Route::middleware('auth:web')->group(function () {
     Route::post('employee/register', [EmployeeController::class, 'RegisterEmplyees'])->name('employee.register');
     Route::post('/employee/update', [EmployeeController::class, 'updateEmployesInfo'])->name('employee.update');
     Route::post('/deleteEmployee',[EmployeeController::class,'deleteEmployee'])->name('delete.employee');
+    Route::get('/Search/employee',[EmployeeController::class,'SearchEmployee'])->name('Search.employee');
+    
     Route::post('/deactivateemployee',[UserDeactivationReasonController::class,'deactivateEmployee'])->name('deactivate.employee');
-
     Route::get('getallvendorcoonectproduct', [ProductController::class, 'getallvendorcoonectproduct']);
     Route::get('getorders', [OrderController::class, 'getorders']);
     Route::get('NewvendorvalidateOrder', [OrderController::class, 'NewvendorvalidateOrder']);

@@ -234,7 +234,6 @@
          <div class="card-header text-center py-3">
 
             <div class="d-flex justify-content-between align-items-center">
-
                <h5 class="mb-0 text-center">
                   <strong>Vendors List</strong>
                </h5>
@@ -661,9 +660,9 @@
                                 </p>
                                 </td>
                                 <td class="text-center">
-                                <a href="${vendorDetailUrl}" class="btn btn-info btn-sm">
-                     <i class="fas fa-eye"></i>
-                  </a>
+                                 <a href="${vendorDetailUrl}" class="btn btn-info btn-sm">
+                                       <i class="fas fa-eye"></i>
+                                  </a>
                                     <button type="button"
                                         data-mdb-button-init 
                                         data-mdb-ripple-init
@@ -695,7 +694,6 @@
             }
          });
       });
-
 
    });
 </script>

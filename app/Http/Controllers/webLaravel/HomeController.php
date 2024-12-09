@@ -146,11 +146,7 @@ class HomeController extends Controller
             ->where('role', 3)
             ->orderBy('id', 'desc')
             ->get();
-
-        // dd($users->map(function ($user) {
-        //     return $user->role;  // Accède à la relation 'role' de chaque utilisateur
-        // }));
-        // Retourner les utilisateurs avec les relations chargées
+    
         return $users;
     }
 

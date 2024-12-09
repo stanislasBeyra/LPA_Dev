@@ -183,9 +183,18 @@
     <section class="mb-4">
         <div class="card animate__animated animate__zoomIn">
             <div class="card-header text-center py-3">
-                <h5 class="mb-0 text-center">
-                    <strong>Employee Liste</strong>
-                </h5>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 text-center">
+                        <strong>Employee Liste</strong>
+                    </h5>
+
+                    <div class="input-group " style="width: 30%;">
+                        <div class="form-outline" data-mdb-input-init>
+                            <input type="search" id="form1" class="form-control" placeholder="Search Vendos" />
+                            <label class="form-label" for="form1">Search</label>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -193,6 +202,7 @@
                         <thead>
                             <tr>
                                 <th scope="col">ID</th>
+                                <th scope="col">Creation Date</th>
                                 <th scope="col">National Id </th>
                                 <th scope="col">First Name </th>
                                 <th scope="col">Last Name</th>
@@ -211,6 +221,7 @@
                             @forelse ($employees as $key=>$employee)
                             <tr>
                                 <th scope="row">{{ $key+1 }}</th>
+                                <td>{{ $employee->created_at->format('m/d/Y, h:i:s A') }}</td>
                                 <td>{{ $employee->national_id }}</td>
                                 <td>{{ $employee->firstname }}</td>
                                 <td>{{ $employee->lastname }}</td>
@@ -261,7 +272,7 @@
         </div>
     </section>
 
-  
+
     <div class="modal fade" id="staticBackdrop1" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content ">
@@ -412,7 +423,7 @@
                     <input type="hidden" id="employeeId" name="EmployeeId">
                     <div class="modal-body text-center">
                         <i class="fas fa-trash-alt mb-3 text-danger" style="font-size: 3rem;"></i>
-                        <p>Are you sure you want to delete this category? This action cannot be undone.</p>
+                        <p>Are you sure you want to delete this Employee? This action cannot be undone.</p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
@@ -432,23 +443,25 @@
 </div>
 
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 
 <script>
-    document.getElementById('deactivateForm').addEventListener('submit', function (e) {
-    var reason = document.getElementById('motif').value.trim();  // Récupère la valeur du champ "reason"
-    var errorMessage = document.getElementById('reasonError');   // Sélectionne le message d'erreur
-    
-    // Si le champ est vide
-    if (reason === '') {
-        e.preventDefault();  // Empêche l'envoi du formulaire
-        
-        // Affiche le message d'erreur
-        errorMessage.style.display = 'inline';  // Change à 'inline' pour afficher le message sous le champ
-    } else {
-        // Si le champ est rempli, cacher le message d'erreur
-        errorMessage.style.display = 'none';
-    }
-});
+    document.getElementById('deactivateForm').addEventListener('submit', function(e) {
+        var reason = document.getElementById('motif').value.trim(); // Récupère la valeur du champ "reason"
+        var errorMessage = document.getElementById('reasonError'); // Sélectionne le message d'erreur
+
+        // Si le champ est vide
+        if (reason === '') {
+            e.preventDefault(); // Empêche l'envoi du formulaire
+
+            // Affiche le message d'erreur
+            errorMessage.style.display = 'inline'; // Change à 'inline' pour afficher le message sous le champ
+        } else {
+            // Si le champ est rempli, cacher le message d'erreur
+            errorMessage.style.display = 'none';
+        }
+    });
 
 
 
@@ -506,5 +519,103 @@
         // Initialiser le select pour les agences
         new mdb.Select(document.getElementById('agence_id')).init();
     }
+</script>
+
+
+
+<script>
+    $(document).ready(function() {
+        $('#form1').on('keyup', function() {
+            let searchQuery = $(this).val();
+            let keyIncremented = 0;
+
+            // Effectuer une requête AJAX
+            $.ajax({
+                url: "{{ route('Search.employee') }}",
+                type: "GET",
+                data: {
+                    search: searchQuery
+                },
+                success: function(response) {
+                    // Vider le tableau
+                    $('tbody').empty();
+                    console.log(response);
+                    if (response.employees.length > 0) {
+                        response.employees.forEach((employee, index) => {
+                            keyIncremented++;
+
+                            let formattedDate = new Date(employee.created_at).toLocaleString('en-US', {
+                                month: '2-digit',
+                                day: '2-digit',
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit',
+                                hour12: true
+                            });
+                            let employeeJson = JSON.stringify(employee).replace(/"/g, '&quot;');
+
+                            let statusClass = employee.status == 1 ? 'bg-success' : 'bg-danger';
+                            let statusText = employee.status == 1 ? 'Active' : 'Inactive';
+
+                            // Formater l'URL correctement avec Blade
+                            let employeeDetailUrl = `/vendors-detail/${employee.id}`;
+
+
+
+                            console.log("nationalId:::", employee.national_id)
+
+                            $('tbody').append(`
+                            <tr>
+                            <td>${keyIncremented}</td>
+                                <td>${formattedDate}</td>
+                                <td>${employee.national_id}</td>
+                                <td>${employee.firstname}</td>
+                                <td>${employee.lastname??''}</td>
+                                <td>${employee.middle_name}</td>
+                                <td>${employee.email}</td>
+                                <td>$ ${employee.net_salary}</td>
+                                 <td>${employee.agences.agent_name}</td>
+                                <td>
+                                <p style="cursor: pointer;" data-mdb-toggle="modal"
+                                   data-mdb-target="#staticBackdrop5"
+                                   class="badge ${statusClass}">
+                                   ${statusText}
+                                </p>
+                                </td>
+                                <td class="text-center">
+                                    <button type="button"
+                                        data-mdb-button-init 
+                                        data-mdb-ripple-init
+                                        class="btn btn-outline-primary btn-sm edit-role"
+                                        data-mdb-modal-init 
+                                        data-mdb-target="#staticBackdrop1"
+                                       data-user="${employeeJson}"
+                                        onclick="handleButtonClick(this)"
+                                    >
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+
+                                     <button type="button" class="btn btn-danger btn-sm"
+                              data-mdb-modal-init data-mdb-target="#exampleModal1"
+                              onclick="setEmployees(${employee.id})">
+                              <i class="fas fa-trash-alt"></i>
+                           </button>
+                                </td>
+                            </tr>
+                        `);
+                        });
+
+                    } else {
+                        $('tbody').append('<tr><td colspan="4" class="text-center">No results found</td></tr>');
+                    }
+                },
+                error: function(xhr) {
+                    console.error(xhr.responseText);
+                }
+            });
+        });
+
+    });
 </script>
 @endsection

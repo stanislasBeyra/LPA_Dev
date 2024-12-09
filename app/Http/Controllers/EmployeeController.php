@@ -143,7 +143,7 @@ class EmployeeController extends Controller
             'middle_name' => 'nullable|string|max:255',
             'email' => 'nullable|email|max:255|unique:employees,email,' . $request->EmployeeId, // Same for 'email'
             'agence_id' => 'nullable|exists:agences,id',
-        ],[
+        ], [
             // Custom validation messages
             'national_id.unique' => 'The National ID number must be unique, except for this employee.',
             'mobile.unique' => 'The mobile number must be unique, except for this employee.',
@@ -168,8 +168,8 @@ class EmployeeController extends Controller
             // Find the employee by ID
             $employee = Employee::findOrFail($request->EmployeeId);
 
-            if(!$employee){
-                return back()->with('error','Employee Not found');
+            if (!$employee) {
+                return back()->with('error', 'Employee Not found');
             }
             // Update employee details
             $employee->update([
@@ -192,29 +192,70 @@ class EmployeeController extends Controller
     }
 
     public function deleteEmployee(Request $request)
-{
-    try {
-        // Find the employee by the provided ID
-        $employee = Employee::find($request->EmployeeId);
+    {
+        try {
+            // Find the employee by the provided ID
+            $employee = Employee::find($request->EmployeeId);
 
-        // Check if the employee exists
-        if (!$employee) {
-            return back()->with('error', 'This employee was not found.');
+            // Check if the employee exists
+            if (!$employee) {
+                return back()->with('error', 'This employee was not found.');
+            }
+
+            // Delete the employee
+            $employee->delete();
+
+            // Return success message
+            return back()->with('success', 'Employee has been successfully deleted.');
+        } catch (\Throwable $e) {
+            // Log the error
+            Log::error('An error occurred: ' . $e->getMessage());
+
+            // Return error message
+            return back()->with('error', 'An error occurred while deleting the employee.');
         }
-
-        // Delete the employee
-        $employee->delete();
-        
-        // Return success message
-        return back()->with('success', 'Employee has been successfully deleted.');
-
-    } catch (\Throwable $e) {
-        // Log the error
-        Log::error('An error occurred: ' . $e->getMessage());
-        
-        // Return error message
-        return back()->with('error', 'An error occurred while deleting the employee.');
     }
-}
 
+    public function SearchEmployee(Request $request)
+    {
+        try {
+            try {
+                $searchTerm = $request->input('search');
+
+                if (!$searchTerm) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Veuillez fournir un terme de recherche.'
+                    ], 400);
+                }
+
+                // Remplacez 'role' par la colonne correcte pour identifier les administrateurs
+                $employees = employee::with(['role', 'agences'])
+                    ->orderby('id', 'desc')
+                    ->where(function ($query) use ($searchTerm) {
+                        $query->where('firstname', 'like', '%' . $searchTerm . '%')
+                            ->orWhere('lastname', 'like', '%' . $searchTerm . '%')
+                            ->orWhere('username', 'like', '%' . $searchTerm . '%')
+                            ->orWhere('middle_name', 'like', '%' . $searchTerm . '%')
+                            ->orWhere('mobile2', 'like', '%' . $searchTerm . '%')
+                            ->orWhere('mobile', 'like', '%' . $searchTerm . '%')
+                            ->orWhere('agencescode', 'like', '%' . $searchTerm . '%')
+                            ->orWhere('email', 'like', '%' . $searchTerm . '%');
+                    })
+                    ->get();
+
+                return response()->json([
+                    'success' => true,
+                    'employees' => $employees
+                ], 200);
+            } catch (\Throwable $t) {
+                Log::info('Une erreur s\'est produite : ' . $t->getMessage());
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Une erreur s\'est produite : ' . $t->getMessage()
+                ], 500);
+            }
+        } catch (\Throwable $t) {
+        }
+    }
 }

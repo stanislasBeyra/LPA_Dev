@@ -44,26 +44,26 @@ class RouteMonitoring
         // Enregistrer les données dans la base de données
 
         // Fetch the existing login history for the user
-$loginhistory = loginhistory::where('user_id', 5)->first();
+        $loginhistory = loginhistory::where('user_id', 5)->first();
 
-// Prepare device information
-$deviceInfo = $device['browser'] . ' ' . $device['platform'];
+        // Prepare device information
+        $deviceInfo = $device['browser'] . ' ' . $device['platform'];
 
-// If an existing login history is found, update it
-if ($loginhistory) {
-    $loginhistory->login_time = $dateTime;
-    $loginhistory->ip_address = $ip;
-    $loginhistory->device = $deviceInfo;
-    $loginhistory->save(); // Save the updated record
-} else {
-    // Otherwise, create a new login history entry
-    loginhistory::create([
-        'user_id' => 5,
-        'login_time' => $dateTime,
-        'ip_address' => $ip,
-        'device' => $deviceInfo, // Store device details
-    ]);
-}
+        // If an existing login history is found, update it
+        if ($loginhistory) {
+            $loginhistory->login_time = $dateTime;
+            $loginhistory->ip_address = $ip;
+            $loginhistory->device = $deviceInfo;
+            $loginhistory->save(); // Save the updated record
+        } else {
+            // Otherwise, create a new login history entry
+            loginhistory::create([
+                'user_id' => 5,
+                'login_time' => $dateTime,
+                'ip_address' => $ip,
+                'device' => $deviceInfo, // Store device details
+            ]);
+        }
 
 
         // if ($user) {
