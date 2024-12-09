@@ -353,7 +353,9 @@
                                 <div class="form-outline">
                                     <select name="agence_id" id="agence_id" class="form-select" required>
                                         <option value="">Choose Name of Agency/Ministry</option>
-                                        
+                                        @foreach ($agences as $agence )
+                                        <option value="{{ $agence->id }}">{{ $agence->agent_name }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
