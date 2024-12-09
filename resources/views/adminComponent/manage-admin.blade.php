@@ -135,7 +135,7 @@
 
                     <div class="input-group " style="width: 30%;">
                         <div class="form-outline" data-mdb-input-init>
-                            <input type="search" id="form1" class="form-control" placeholder="Search Roles" />
+                            <input type="search" id="form1" class="form-control" placeholder="Search Admin" />
                             <label class="form-label" for="form1">Search</label>
                         </div>
                     </div>
