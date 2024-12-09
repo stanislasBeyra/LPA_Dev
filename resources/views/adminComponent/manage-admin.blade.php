@@ -125,11 +125,25 @@
     <!-- Section avec tableau -->
     <section class="mb-4">
         <div class="card animate__animated animate__zoomIn">
+
             <div class="card-header text-center py-3">
-                <h5 class="mb-0 text-center">
-                    <strong>Admins List</strong>
-                </h5>
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <h5 class="mb-0 text-center">
+                        <strong>Admins List</strong>
+                    </h5>
+
+                    <div class="input-group " style="width: 30%;">
+                        <div class="form-outline" data-mdb-input-init>
+                            <input type="search" id="form1" class="form-control" placeholder="Search Roles" />
+                            <label class="form-label" for="form1">Search</label>
+                        </div>
+                    </div>
+                </div>
+
             </div>
+
+
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-hover text-nowrap">
@@ -138,6 +152,7 @@
                                 <th scope="col">Creation Date</th>
                                 <th scope="col">First Name</th>
                                 <th scope="col">Last Name</th>
+                                <th scope="col">Username</th>
                                 <th scope="col">Email</th>
                                 <th scope="col">Mobile</th>
                                 <th scope="col" class="text-center">Action</th>
@@ -149,12 +164,13 @@
                                 <td>{{ $admin->created_at->format('m/d/Y, h:i:s A')??'AN' }}</td> <!-- Date de création formatée -->
                                 <td>{{ $admin->firstname }}</td> <!-- Nom de la catégorie -->
                                 <td> {{ $admin->lastname }}</td>
+                                <td> {{ $admin->username }}</td>
                                 <td> {{ $admin->email}}</td>
                                 <td> {{ $admin->mobile}}</td>
                                 <!-- Description de la catégorie -->
                                 <td class="text-center">
 
-                                
+
                                     <button type="button"
                                         data-mdb-button-init data-mdb-ripple-init
                                         class="btn btn-outline-primary btn-sm"
@@ -319,6 +335,7 @@
 </div>
 <!-- Modal -->
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     function setCategoryId(categoryId) {
         document.getElementById('categoryId').value = categoryId;
@@ -398,5 +415,86 @@
             document.getElementById("error-list")?.style.display = "none";
         }, 3000); // 5000 ms = 5 secondes
     };
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('#form1').on('keyup', function() {
+            let searchQuery = $(this).val();
+
+            // Effectuer une requête AJAX
+            $.ajax({
+                url: "{{ route('search.admin') }}",
+                type: "GET",
+                data: {
+                    search: searchQuery
+                },
+                success: function(response) {
+                    // Vider le tableau
+                    $('tbody').empty();
+
+                    if (response.admins.length > 0) {
+                        response.admins.forEach(admin => {
+
+                            const admins = admin;
+                            console.log('admins:::', admins)
+
+                            $('tbody').append(`
+                            <tr>
+                                <td>${new Date(admin.created_at).toLocaleDateString()}</td>
+                                <td>${admin.firstname}</td>
+                                <td>${admin.lastname}</td>
+                                <td>${admin.username}</td>
+                                <td>${admin.email}</td>
+                                <td>${admin.mobile}</td>
+                                <td class="text-center">
+                                    <button type="button"
+                                        data-mdb-button-init 
+                                        data-mdb-ripple-init
+                                        class="btn btn-outline-primary btn-sm edit-role"
+                                        data-mdb-modal-init 
+                                        data-mdb-target="#staticBackdrop2"
+                                        data-admin='${JSON.stringify(admin)}'
+                                        onclick="populateEditModal(this)"
+                                    >
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        `);
+                        });
+
+                        // Réattacher l'événement de clic après avoir ajouté les nouveaux boutons
+                        attachEditModalEvent();
+                    } else {
+                        $('tbody').append('<tr><td colspan="4" class="text-center">No results found</td></tr>');
+                    }
+                },
+                error: function(xhr) {
+                    console.error(xhr.responseText);
+                }
+            });
+        });
+
+        // Fonction pour attacher l'événement de clic sur les boutons d'édition
+        // function attachEditModalEvent() {
+        //     document.querySelectorAll('[data-mdb-target="#staticBackdrop2"]').forEach(button => {
+        //         button.addEventListener('click', function() {
+        //             // Récupérer les données du bouton
+        //             const id = this.getAttribute('data-id');
+        //             const name = this.getAttribute('data-name');
+        //             const description = this.getAttribute('data-description');
+
+        //             // Remplir les champs du formulaire
+        //             document.getElementById('editCategoryId').value = id;
+        //             document.getElementById('editCategoryName').value = name;
+        //             document.getElementById('editCategoryDescription').value = description;
+        //         });
+        //     });
+        // }
+
+        // // Appeler initialement pour attacher les événements sur les boutons existants
+        // attachEditModalEvent();
+    });
 </script>
 @endsection

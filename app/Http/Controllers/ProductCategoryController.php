@@ -169,4 +169,36 @@ class ProductCategoryController extends Controller
             return redirect()->route('content.page', ['page' => 'manage-categories'])->with('error', 'An unexpected error occurred.' . $e->getMessage());
         }
     }
+
+    public function searchproductcategory(Request $request)
+{
+    try {
+        $searchTerm = $request->input('search');
+
+        // Initialize the query
+        $query = productcategories::orderBy('id', 'desc');
+        
+        // Add search condition if a term is provided
+        if ($searchTerm) {
+            $query->where('categories_name', 'like', '%' . $searchTerm . '%');
+        }
+
+        // Execute the query
+        $categories = $query->get();
+
+        // Return JSON response
+        return response()->json([
+            'success' => true,
+            'categories' => $categories
+        ], 200);
+    } catch (\Throwable $t) {
+        // Handle errors
+        return response()->json([
+            'success' => false,
+            'message' => 'An error occurred while searching for categories.',
+            'error' => $t->getMessage()
+        ], 500);
+    }
+}
+
 }

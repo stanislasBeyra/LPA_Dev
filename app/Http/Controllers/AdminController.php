@@ -32,7 +32,7 @@ class AdminController extends Controller
 
 
         // Passer cette donnée à la vue
-        return view('index', compact('totalEmployees','totalVendor','totalpendingorder', 'totalvalidateorder', 'totalrefuseorder'));
+        return view('index', compact('totalEmployees', 'totalVendor', 'totalpendingorder', 'totalvalidateorder', 'totalrefuseorder'));
     }
 
     public function addAdmin(Request $request)
@@ -45,7 +45,7 @@ class AdminController extends Controller
                 'email' => 'required|email|max:255|unique:users,email',
                 'mobile' => 'required|string|max:20|unique:users,mobile',
                 'username' => 'required|string|max:100|unique:users,username',
-               'role' => 'required|integer|exists:roles,id', // 1 for admin
+                'role' => 'required|integer|exists:roles,id', // 1 for admin
             ], [
                 // Custom error messages
                 'firstname.required' => 'First name is required.',
@@ -62,7 +62,7 @@ class AdminController extends Controller
             ]);
 
             // Create a new admin user
-             User::create([
+            User::create([
                 'firstname' => $validated['firstname'],
                 'lastname' => $validated['lastname'],
                 'email' => $validated['email'],
@@ -88,8 +88,8 @@ class AdminController extends Controller
             // Find the admin in the database
             $admin = User::findOrFail($request->AdminId);
 
-            if(!$admin){
-                return back()->with('error','Admin Not Found');
+            if (!$admin) {
+                return back()->with('error', 'Admin Not Found');
             }
 
             // Validate the input data
@@ -99,7 +99,7 @@ class AdminController extends Controller
                 'email' => 'sometimes|required|email|max:255|unique:users,email,' . $admin->id,
                 'mobile' => 'sometimes|required|string|max:20|unique:users,mobile,' . $admin->id,
                 'username' => 'sometimes|required|string|max:100|unique:users,username,' . $admin->id,
-                'role'=>'sometimes|'
+                'role' => 'sometimes|'
             ], [
                 // Custom error messages
                 'firstname.required' => 'The first name is required.',
@@ -121,7 +121,7 @@ class AdminController extends Controller
                 'email' => $validated['email'] ?? $admin->email,
                 'mobile' => $validated['mobile'] ?? $admin->mobile,
                 'username' => $validated['username'] ?? $admin->username,
-                'role'=>$validated['role']??$admin->role
+                'role' => $validated['role'] ?? $admin->role
             ]);
 
             // Return with success message
@@ -142,8 +142,8 @@ class AdminController extends Controller
     {
         try {
             $admin = User::findOrFail($request->AdminId);
-            if(!$admin){
-                return back()->with('error','Admin Not Found');
+            if (!$admin) {
+                return back()->with('error', 'Admin Not Found');
             }
             $admin->delete();
             return back()->with('success', 'The admin has been successfully deleted.');
@@ -152,6 +152,43 @@ class AdminController extends Controller
         } catch (\Exception $e) {
             Log::error('Error occurred while deleting the admin: ' . $e->getMessage());
             return back()->with('error', 'An error occurred while deleting the admin. Please try again.');
+        }
+    }
+
+    public function searchAdmin(Request $request)
+    {
+        try {
+            $searchTerm = $request->input('search');
+
+            if (!$searchTerm) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Veuillez fournir un terme de recherche.'
+                ], 400);
+            }
+
+            // Remplacez 'role' par la colonne correcte pour identifier les administrateurs
+            $admins = User::whereIN('role', [1, 5])
+                ->orderby('id', 'desc')
+                ->where(function ($query) use ($searchTerm) {
+                    $query->where('firstname', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('lastname', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('username', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('mobile', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('email', 'like', '%' . $searchTerm . '%');
+                })
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'admins' => $admins
+            ], 200);
+        } catch (\Throwable $t) {
+            Log::info('Une erreur s\'est produite : ' . $t->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Une erreur s\'est produite : ' . $t->getMessage()
+            ], 500);
         }
     }
 }

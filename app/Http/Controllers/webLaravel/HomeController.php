@@ -179,6 +179,9 @@ class HomeController extends Controller
         return $roles;
     }
 
+    
+
+
     public function getmanageadminrole()
     {
         // Récupérer tous les rôles sauf ceux ayant les ID 1 et 3
@@ -218,11 +221,11 @@ class HomeController extends Controller
         $totalvalidateorder = Order::where('status', 4)->count();
 
         return [
-            "totalEmployees"=>$totalEmployees,
-            'totalVendor'=>$totalVendor,
-            'totalpendingorder'=>$totalpendingorder,
-            'totalrefuseorder'=>$totalrefuseorder,
-            'totalvalidateorder'=>$totalvalidateorder,
+            "totalEmployees" => $totalEmployees,
+            'totalVendor' => $totalVendor,
+            'totalpendingorder' => $totalpendingorder,
+            'totalrefuseorder' => $totalrefuseorder,
+            'totalvalidateorder' => $totalvalidateorder,
         ];
     }
 
@@ -253,9 +256,9 @@ class HomeController extends Controller
         $roles = $this->getAllRoles();
 
         // adminliste
-        $admins = User::whereIn('role', [1,5])->orderBy('id', 'desc')->get();
+        $admins = User::whereIn('role', [1, 5])->orderBy('id', 'desc')->get();
 
-        $manageadminsroles=$this->getmanageadminrole();
+        $manageadminsroles = $this->getmanageadminrole();
 
         //banner
         $banners = $this->getBannerforAdmin();

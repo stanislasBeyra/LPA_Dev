@@ -62,27 +62,27 @@ class VendorController extends Controller
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('vendors', 'vendorname')->ignore($vendor->id??null),
+                Rule::unique('vendors', 'vendorname')->ignore($vendor->id ?? null),
             ],
             'contactpersonname' => 'required|string|max:255',
             'businessregno' => [
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('vendors', 'businessregno')->ignore($vendor->id??null),
+                Rule::unique('vendors', 'businessregno')->ignore($vendor->id ?? null),
             ],
             'taxidnumber' => [
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('vendors', 'taxidnumber')->ignore($vendor->id??null),
+                Rule::unique('vendors', 'taxidnumber')->ignore($vendor->id ?? null),
             ],
             'businesscategory' => 'required|string|max:255',
             'businessaddress' => 'required|string',
             'businessemail' => [
                 'nullable',
                 'email',
-                Rule::unique('vendors', 'businessemail')->ignore($vendor->id??null),
+                Rule::unique('vendors', 'businessemail')->ignore($vendor->id ?? null),
             ],
             'bank_name_1' => 'nullable|string|max:255',
             'bankaccount1' => 'nullable|string|max:255',
@@ -162,112 +162,6 @@ class VendorController extends Controller
         }
     }
 
-
-//     public function VendorinfoUpdate(Request $request)
-// {
-//     try {
-//         // Retrieve the User by ID
-//         $user = User::findOrFail($request->user_id);
-
-//         // Validate the input data
-//         $validated = $request->validate([
-//             // User table section
-//             'firstname' => 'required|string|max:255',
-//             'lastname' => 'required|string|max:255',
-//             'role' => 'required|integer',
-//             'email' => 'nullable|email|max:255|unique:users,email,' . $request->user_id,
-//             'mobile' => 'nullable|string|max:20|unique:users,mobile,' . $request->user_id,
-//             'vendorname' => 'nullable|string|max:255|unique:vendors,vendorname,' . $request->user_id,
-//             'contactpersonname' => 'required|string|max:255',
-//             'businessregno' => 'nullable|string|max:255|unique:vendors,businessregno,' . $request->user_id,
-//             'taxidnumber' => 'nullable|string|max:255|unique:vendors,taxidnumber,' . $request->user_id,
-
-//             'businesscategory' => 'required|string|max:255',
-//             'businessaddress' => 'required|string',
-//             'businessemail' => 'nullable|string|max:20|unique:vendors,businessemail,' . $request->user_id,
-
-//             'bank_name_1' => 'nullable|string|max:255',
-//             'bankaccount1' => 'nullable|string|max:255',
-//             'bankname2' => 'nullable|string|max:255',
-//             'bankaccount2' => 'nullable|string|max:255',
-//             'accountholdername' => 'nullable|string|max:255',
-//         ], [
-//             // Custom messages for the user section
-//             'firstname.required' => 'The first name is required.',
-//             'lastname.required' => 'The last name is required.',
-//             'role.required' => 'The role is required.',
-//             'email.required' => 'The email address is required.',
-//             'email.email' => 'The email address must be valid.',
-//             'email.unique' => 'This email address is already in use.',
-//             'mobile.required' => 'The mobile number is required.',
-//             'mobile.max' => 'The mobile number must not exceed 15 characters.',
-//             'mobile.unique' => 'This mobile number is already in use.',
-
-//             // Custom messages for the vendor section
-//             'vendorname.required' => 'The vendor name is required.',
-//             'contactpersonname.required' => 'The contact person name is required.',
-//             'businessregno.required' => 'The business registration number is required.',
-//             'taxidnumber.required' => 'The tax identification number is required.',
-//             'businesscategory.required' => 'The business category is required.',
-//             'businessaddress.required' => 'The business address is required.',
-//             'businessemail.email' => 'The business email must be valid.',
-//             'businessemail.unique' => 'This business email is already in use.',
-//         ]);
-
-//         // Update user data
-//         $user->update([
-//             'firstname' => $validated['firstname'],
-//             'lastname' => $validated['lastname'],
-//             'role' => $validated['role'],
-//             'email' => $validated['email'],
-//             'mobile' => $validated['mobile'],
-//         ]);
-
-//         // Find Vendor by user_id or create a new one
-//         $vendor = Vendor::where('user_id', $user->id)->first();
-
-//         if ($vendor) {
-//             // Update the existing vendor
-//             $vendor->update([
-//                 'vendorname' => $validated['vendorname'],
-//                 'contactpersonname' => $validated['contactpersonname'],
-//                 'businessregno' => $validated['businessregno'],
-//                 'taxidnumber' => $validated['taxidnumber'],
-//                 'businesscategory' => $validated['businesscategory'],
-//                 'businessaddress' => $validated['businessaddress'],
-//                 'businessemail' => $validated['businessemail'],
-//                 'bank_name_1' => $validated['bank_name_1'],
-//                 'bankaccount1' => $validated['bankaccount1'],
-//                 'bankname2' => $validated['bankname2'],
-//                 'bankaccount2' => $validated['bankaccount2'],
-//                 'accountholdername' => $validated['accountholdername'],
-//             ]);
-//             return back()->with('success', 'Vendor information updated successfully.');
-//         } else {
-//             // Create a new vendor
-//             Vendor::create([
-//                 'user_id' => $user->id,
-//                 'vendorname' => $validated['vendorname'],
-//                 'contactpersonname' => $validated['contactpersonname'],
-//                 'businessregno' => $validated['businessregno'],
-//                 'taxidnumber' => $validated['taxidnumber'],
-//                 'businesscategory' => $validated['businesscategory'],
-//                 'businessaddress' => $validated['businessaddress'],
-//                 'businessemail' => $validated['businessemail'],
-//                 'bank_name_1' => $validated['bank_name_1'],
-//                 'bankaccount1' => $validated['bankaccount1'],
-//                 'bankname2' => $validated['bankname2'],
-//                 'bankaccount2' => $validated['bankaccount2'],
-//                 'accountholdername' => $validated['accountholdername'],
-//             ]);
-//             return back()->with('success', 'Vendor created successfully.');
-//         }
-//     } catch (\Throwable $e) {
-//         // Log the error and return a failure message
-//         Log::error('Error updating vendor info: ' . $e->getMessage());
-//         return back()->with('error', 'An error occurred while updating the vendor information. Please try again later.' . $e->getMessage());
-//     }
-// }
 
 
 
@@ -443,6 +337,44 @@ class VendorController extends Controller
             return back()->with('success', 'Vendor successfully deleted');
         } catch (\Exception $e) {
             return back()->with('error', 'An error occurred');
+        }
+    }
+
+    public function searchvendors(Request $request)
+    {
+        try {
+            $searchTerm = $request->input('search');
+
+            if (!$searchTerm) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Veuillez fournir un terme de recherche.'
+                ], 400);
+            }
+
+            // Remplacez 'role' par la colonne correcte pour identifier les administrateurs
+            $admins = User::with(['vendor', 'role'])
+                ->where('role', 3)
+                ->orderby('id', 'desc')
+                ->where(function ($query) use ($searchTerm) {
+                    $query->where('firstname', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('lastname', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('username', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('mobile', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('email', 'like', '%' . $searchTerm . '%');
+                })
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'vendors' => $admins
+            ], 200);
+        } catch (\Throwable $t) {
+            Log::info('Une erreur s\'est produite : ' . $t->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Une erreur s\'est produite : ' . $t->getMessage()
+            ], 500);
         }
     }
 }

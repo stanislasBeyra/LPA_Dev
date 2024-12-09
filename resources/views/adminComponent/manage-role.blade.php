@@ -91,9 +91,20 @@
     <section class="mb-4">
         <div class="card animate__animated animate__zoomIn">
             <div class="card-header text-center py-3">
-                <h5 class="mb-0 text-center">
-                    <strong>Roles</strong>
-                </h5>
+                <div class="d-flex justify-content-between align-items-center">
+                   
+                    <h5 class="mb-0 text-center">
+                        <strong>Roles</strong>
+                    </h5>
+
+                    <div class="input-group " style="width: 30%;">
+                        <div class="form-outline" data-mdb-input-init>
+                            <input type="search" id="form1" class="form-control" placeholder="Search Roles" />
+                            <label class="form-label" for="form1">Search</label>
+                        </div>
+                    </div>
+                </div>
+
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -121,8 +132,7 @@
                                         data-mdb-modal-init data-mdb-target="#staticBackdrop1"
                                         data-id="{{ $role->id }}"
                                         data-name="{{ $role->role_name }}"
-                                        data-description="{{ $role->description }}"
-                                        onclick="populateEditModal(this)">
+                                        data-description="{{ $role->description }}">
                                         <i class="fas fa-edit"></i>
                                     </button>
                                     <!-- <button type="button" class="btn btn-danger btn-sm"
@@ -212,6 +222,11 @@
 </div>
 <!-- Modal -->
 
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+
 <script>
     function setCategoryId(categoryId) {
         document.getElementById('categoryId').value = categoryId;
@@ -267,6 +282,8 @@
             document.getElementById('editCategoryDescription').value = description;
         });
     });
+
+    
 </script>
 
 
@@ -281,5 +298,140 @@
             document.getElementById("error-list")?.style.display = "none";
         }, 3000); // 5000 ms = 5 secondes
     };
+</script>
+
+<script>
+
+$(document).ready(function() {
+    $('#form1').on('keyup', function() {
+        let searchQuery = $(this).val();
+
+        // Effectuer une requête AJAX
+        $.ajax({
+            url: "{{ route('search.role') }}",
+            type: "GET",
+            data: {
+                search: searchQuery
+            },
+            success: function(response) {
+                // Vider le tableau
+                $('tbody').empty();
+
+                if (response.roles.length > 0) {
+                    response.roles.forEach(role => {
+                        let description = role.description ? 
+                            (role.description.length > 20 ? 
+                                role.description.substring(0, 10) + '...' + role.description.slice(-10) : 
+                                role.description) : 
+                            'N/A';
+
+                        $('tbody').append(`
+                            <tr>
+                                <td>${new Date(role.created_at).toLocaleDateString()}</td>
+                                <td>${role.role_name}</td>
+                                <td>${description}</td>
+                                <td class="text-center">
+                                    <button type="button"
+                                        data-mdb-button-init 
+                                        data-mdb-ripple-init
+                                        class="btn btn-outline-primary btn-sm edit-role"
+                                        data-mdb-modal-init 
+                                        data-mdb-target="#staticBackdrop1"
+                                        data-id="${role.id}"
+                                        data-name="${role.role_name}"
+                                        data-description="${role.description}"
+                                    >
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        `);
+                    });
+
+                    // Réattacher l'événement de clic après avoir ajouté les nouveaux boutons
+                    attachEditModalEvent();
+                } else {
+                    $('tbody').append('<tr><td colspan="4" class="text-center">No results found</td></tr>');
+                }
+            },
+            error: function(xhr) {
+                console.error(xhr.responseText);
+            }
+        });
+    });
+
+    // Fonction pour attacher l'événement de clic sur les boutons d'édition
+    function attachEditModalEvent() {
+        document.querySelectorAll('[data-mdb-target="#staticBackdrop1"]').forEach(button => {
+            button.addEventListener('click', function() {
+                // Récupérer les données du bouton
+                const id = this.getAttribute('data-id');
+                const name = this.getAttribute('data-name');
+                const description = this.getAttribute('data-description');
+
+                // Remplir les champs du formulaire
+                document.getElementById('editCategoryId').value = id;
+                document.getElementById('editCategoryName').value = name;
+                document.getElementById('editCategoryDescription').value = description;
+            });
+        });
+    }
+
+    // Appeler initialement pour attacher les événements sur les boutons existants
+    attachEditModalEvent();
+});
+
+    // $(document).ready(function() {
+    //     $('#form1').on('keyup', function() {
+    //         let searchQuery = $(this).val();
+
+    //         // Effectuer une requête AJAX
+    //         $.ajax({
+    //             url: "{{ route('search.role') }}",
+    //             type: "GET",
+    //             data: {
+    //                 search: searchQuery
+    //             },
+    //             success: function(response) {
+    //                 console.log(response); 
+    //                 // Cacher le tableau par défaut
+    //                 $('tbody').empty();
+
+    //                 if (response.roles.length > 0) {
+    //                     response.roles.forEach(role => {
+    //                         console.log(role);
+    //                         $('tbody').append(`
+    //                             <tr>
+    //                                 <td>${new Date(role.created_at).toLocaleDateString()}</td>
+    //                                 <td>${role.role_name}</td>
+    //                                 <td>${role.description ? role.description.substring(0, 10) + '...' : 'N/A'}</td>
+                                    
+    //                                 <td class="text-center">
+    //                                     <button type="button"
+    //                                      data-mdb-button-init data-mdb-ripple-init
+    //                                      class="btn btn-outline-primary btn-sm"
+    //                                      data-mdb-modal-init data-mdb-target="#staticBackdrop1"
+    //                                     data-id="{{ $role->id }}"
+    //                                     data-name="{{ $role->role_name }}"
+    //                                     data-description="{{ $role->description }}"
+    //                                     onclick="populateEditModal(this)"
+    //                                     >
+                                        
+    //                                         <i class="fas fa-edit"></i>
+    //                                     </button>
+    //                                 </td>
+    //                             </tr>
+    //                         `);
+    //                     });
+    //                 } else {
+    //                     $('tbody').append('<tr><td colspan="4" class="text-center">No results found</td></tr>');
+    //                 }
+    //             },
+    //             error: function(xhr) {
+    //                 console.error(xhr.responseText);
+    //             }
+    //         });
+    //     });
+    // });
 </script>
 @endsection

@@ -34,7 +34,7 @@
       </button>
    </div>
 
-   <!-- Modal -->
+   <!-- Modal  for add vendors-->
    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-lg">
          <div class="modal-content">
@@ -58,7 +58,7 @@
                         </div>
                      </div>
                      <div class="col-md-6">
-                        <div  data-mdb-input-init class="form-outline">
+                        <div data-mdb-input-init class="form-outline">
                            <input type="text" name="lastname" id="lastname" class="form-control" />
                            <label class="form-label" for="lastname">Last Name</label>
                         </div>
@@ -141,7 +141,7 @@
                   <!-- Section 3: Address Details -->
                   <h5 class="mb-4">Address Details</h5>
                   <div class="row mb-4">
-                     <div  class="col-md-12">
+                     <div class="col-md-12">
                         <div data-mdb-input-init class="form-outline ">
                            <textarea name="businessaddress" id="businessAddress" class="form-control" rows="3"></textarea>
                            <label class="form-label" for="businessAddress">Business Address</label>
@@ -232,9 +232,20 @@
    <section class="mb-4">
       <div class="card animate__animated animate__zoomIn">
          <div class="card-header text-center py-3">
-            <h5 class="mb-0 text-center">
-               <strong>Vendors and Users</strong>
-            </h5>
+
+            <div class="d-flex justify-content-between align-items-center">
+
+               <h5 class="mb-0 text-center">
+                  <strong>Vendors List</strong>
+               </h5>
+
+               <div class="input-group " style="width: 30%;">
+                  <div class="form-outline" data-mdb-input-init>
+                     <input type="search" id="form1" class="form-control" placeholder="Search Roles" />
+                     <label class="form-label" for="form1">Search</label>
+                  </div>
+               </div>
+            </div>
          </div>
          <div class="card-body">
             <div class="table-responsive">
@@ -247,6 +258,8 @@
                         <th scope="col">Username</th>
                         <th scope="col">Phone number</th>
                         <th scope="col">Email</th>
+                        <th scope="col">Status</th>
+
                         @if(auth()->user()->role != 5)
                         <th scope="col">Action</th>
                         @endif
@@ -260,10 +273,9 @@
                         <!-- Affichage de l'index de la ligne -->
                         <th scope="row">{{ $key + 1 }}</th>
                         <td>{{ $user->created_at->format('m/d/Y, h:i:s A') }}</td>
-                        <td>{{ $user->firstname }} {{ $user->lastname }}</td>
+                        <td>{{ $user->firstname??'NA' }} {{ $user->lastname??'NA' }}</td>
                         <td>{{ $user->username }}</td>
                         <td>{{$user->mobile}}</td>
-                        <th scope="col">Status</th>
                         <td>{{ $user->email }}</td>
                         <td>
 
@@ -497,7 +509,7 @@
 
          <form id="deleteForm" action="{{ route('delete.Vendor') }}" method="POST">
             @csrf
-            <input type="hidden" id="userid" name="userid">
+            <input type="text" id="userid" name="userid">
             <div class="modal-body text-center">
                <i class="fas fa-trash-alt mb-3 text-danger" style="font-size: 3rem;"></i>
                <p>Are you sure you want to delete this category? This action cannot be undone.</p>
@@ -517,9 +529,12 @@
    </div>
 </div>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 <script>
    function setVendors(userid) {
       document.getElementById('userid').value = userid;
+      console.log('userid::::::teste', userid);
    };
 
    const submitButton = document.getElementById('submitButton');
@@ -585,5 +600,103 @@
          new mdb.Input(formOutline).init();
       });
    }
+</script>
+
+
+<script>
+   $(document).ready(function() {
+      $('#form1').on('keyup', function() {
+         let searchQuery = $(this).val();
+         let keyIncremented = 0;
+
+         // Effectuer une requête AJAX
+         $.ajax({
+            url: "{{ route('search.vendor') }}",
+            type: "GET",
+            data: {
+               search: searchQuery
+            },
+            success: function(response) {
+               // Vider le tableau
+               $('tbody').empty();
+
+               if (response.vendors.length > 0) {
+                  response.vendors.forEach((vendor, index) => {
+                     keyIncremented++;
+
+                     let formattedDate = new Date(vendor.created_at).toLocaleString('en-US', {
+                        month: '2-digit',
+                        day: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: true
+                     });
+                     let vendorJson = JSON.stringify(vendor).replace(/"/g, '&quot;');
+
+                     let statusClass = vendor.status == 1 ? 'bg-success' : 'bg-danger';
+                     let statusText = vendor.status == 1 ? 'Active' : 'Inactive';
+
+                     // Formater l'URL correctement avec Blade
+                     let vendorDetailUrl = `/vendors-detail/${vendor.id}`;
+
+
+
+
+
+                     $('tbody').append(`
+                            <tr>
+                            <td>${keyIncremented}</td>
+                                <td>${formattedDate}</td>
+                                <td>${vendor.firstname??''} ${vendor.lastname??''}</td>
+                                <td>${vendor.username}</td>
+                                <td>${vendor.mobile}</td>
+                                <td>${vendor.email}</td>
+                                <td>
+                                <p style="cursor: pointer;" data-mdb-toggle="modal"
+                                   data-mdb-target="#staticBackdrop5"
+                                   class="badge ${statusClass}">
+                                   ${statusText}
+                                </p>
+                                </td>
+                                <td class="text-center">
+                                <a href="${vendorDetailUrl}" class="btn btn-info btn-sm">
+                     <i class="fas fa-eye"></i>
+                  </a>
+                                    <button type="button"
+                                        data-mdb-button-init 
+                                        data-mdb-ripple-init
+                                        class="btn btn-outline-primary btn-sm edit-role"
+                                        data-mdb-modal-init 
+                                        data-mdb-target="#staticBackdrop1"
+                                       data-user="${vendorJson}"
+                                        onclick="handleButtonClick(this)"
+                                    >
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+
+                                     <button type="button" class="btn btn-danger btn-sm"
+                              data-mdb-modal-init data-mdb-target="#exampleModal1"
+                              onclick="setVendors(${vendor.id})">
+                              <i class="fas fa-trash-alt"></i>
+                           </button>
+                                </td>
+                            </tr>
+                        `);
+                  });
+
+               } else {
+                  $('tbody').append('<tr><td colspan="4" class="text-center">No results found</td></tr>');
+               }
+            },
+            error: function(xhr) {
+               console.error(xhr.responseText);
+            }
+         });
+      });
+
+
+   });
 </script>
 @endsection

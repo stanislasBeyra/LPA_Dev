@@ -37,16 +37,20 @@ Route::middleware('auth:web')->group(function () {
     Route::post('/add/admins',[AdminController::class,'addAdmin'])->name('add.admins');
     Route::post('/delete/admin',[AdminController::class,'deleteAdmin'])->name('delete.admin');
     Route::post('/updateAdmin',[AdminController::class,'updateAdmin'])->name('update.admins');
+
+    Route::get('/admin/search', [AdminController::class, 'searchAdmin'])->name('search.admin');
     //roles info
 
     Route::post('/add/roles', [RoleController::class, 'addroles'])->name('roles.add');
     Route::post('/roles/update', [RoleController::class, 'updateRole'])->name('roles.update');
     Route::post('/roles/delete', [RoleController::class, 'deleteRoles'])->name('roles.delete');
+    Route::get('/searchRole',[RoleController::class,'searchRole'])->name('search.role');
 
     // update User Auth avatar
     Route::post('/profile/update-avatar', [VendorController::class, 'updatevendorlogo'])->name('profile.updateAvatar');
     Route::post('/profile/update-password', [VendorController::class, 'UpdateVendorPassword'])->name('profile.updatePassword');
     Route::post('/admin/vendor/update-avatar', [VendorController::class, 'AdminChangeVendorAvatar'])->name('admin.vendor.update-avatar');
+    Route::get('/search/users/vendors',[VendorController::class,'searchvendors'])->name('search.vendor');
 
     // agencies 
     Route::post('/createAgencies', [AgenceController::class, 'createAgencies'])->name('create.agencies');
@@ -56,6 +60,7 @@ Route::middleware('auth:web')->group(function () {
     // delete categorie
     Route::post('deletecategorie', [ProductCategoryController::class, 'deleteCategories'])->name('delete.categorie');
     Route::post('updateCategories', [ProductCategoryController::class, 'updateCategories'])->name('update.Categorie');
+    Route::get('/search/product/category', [ProductCategoryController::class, 'searchproductcategory'])->name('search.category');
 
     // vendor
     Route::post('deleteVendors', [VendorController::class, 'deleteVendors'])->name('delete.Vendor');

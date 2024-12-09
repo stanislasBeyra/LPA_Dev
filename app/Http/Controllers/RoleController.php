@@ -154,5 +154,33 @@ public function deleteRoles(Request $request)
     }
 }
 
+public function searchRole(Request $request)
+    {
+       try{
+        $searchTerm = $request->input('search');
+
+        // Construire la requête initiale
+        $query = roles::where('id', '!=', 2)
+            ->orderBy('id', 'desc');
+ 
+        // Appliquer le filtre de recherche si un terme est fourni
+        if ($searchTerm) {
+            $query->where(function ($query) use ($searchTerm) {
+                $query->where('role_name', 'like', '%' . $searchTerm . '%');
+            });
+        }
+
+        // Exécuter la requête et récupérer les résultats
+        $roles = $query->get();
+
+        return response()->json(['roles'=>$roles],200);
+       }catch(\Throwable $t){
+        return response()->json([
+            'success'=>false,
+            'message' => 'An error occurred: ' . $t->getMessage(),
+        ],500);
+       }
+    }
+
 
 }
