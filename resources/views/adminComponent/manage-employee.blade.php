@@ -33,11 +33,7 @@
 
     <div class="d-flex justify-content-between mb-3">
         <div class="d-flex">
-            @if(session('error'))
-            <div class="alert alert-danger mb-0 me-3" id="error-message">
-                {{ session('error') }}
-            </div>
-            @endif
+            
 
             @if(session('success'))
             <div class="alert alert-success mb-0 me-3" id="success-message">
@@ -354,7 +350,7 @@
                                     <select name="agence_id" id="agence_id" class="form-select" required>
                                         <option value="">Choose Name of Agency/Ministry</option>
                                         @foreach ($agences as $agence )
-                                        <option value="{{ $agence->id }}">{{ $agence->agent_name }}</option>
+                                        <option value="{{ $agence->id }}" {{ isset($agence) && $agence->id == $employee->agence->id ? 'selected' : '' }}>{{ $agence->agent_name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
