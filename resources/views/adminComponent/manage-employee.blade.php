@@ -354,7 +354,7 @@
                                     <select name="agence_id" id="agence_id" class="form-select" required>
                                         <option value="">Choose Name of Agency/Ministry</option>
                                         @foreach ($agences as $agence)
-                                        <option value="{{ $agence->id ?? '' }}" {{ isset($agence) && $agence->id == $employee->agence->id ? 'selected' : '' }}>
+                                        <option value="{{ $agence->id ?? '1' }}" {{ isset($agence) && $agence->id == $employee->agence->id ? 'selected' : '' }}>
                                             {{ $agence->agent_name ?? 'No Agence' }}
                                         </option>
 
