@@ -509,7 +509,7 @@
 
          <form id="deleteForm" action="{{ route('delete.Vendor') }}" method="POST">
             @csrf
-            <input type="text" id="userid" name="userid">
+            <input type="hidden" id="userid" name="userid">
             <div class="modal-body text-center">
                <i class="fas fa-trash-alt mb-3 text-danger" style="font-size: 3rem;"></i>
                <p>Are you sure you want to delete this category? This action cannot be undone.</p>
