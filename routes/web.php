@@ -57,6 +57,7 @@ Route::middleware('auth:web')->group(function () {
     Route::post('/deleteagence', [AgenceController::class, 'deleteAgencies'])->name('agences.delete');
     // Route pour modifier une agence
     Route::post('/edit', [AgenceController::class, 'editAgencies'])->name('agences.edit');
+    Route::get('/search/agences',[AgenceController::class,'searchAgences'])->name('search.agences');
     // delete categorie
     Route::post('deletecategorie', [ProductCategoryController::class, 'deleteCategories'])->name('delete.categorie');
     Route::post('updateCategories', [ProductCategoryController::class, 'updateCategories'])->name('update.Categorie');
@@ -77,6 +78,7 @@ Route::middleware('auth:web')->group(function () {
     Route::post('/vendor/product/store', [ProductController::class, 'storevendorproduct'])->name('vendor.product.store');
     Route::post('NewvendorvalidateOrder', [OrderController::class, 'NewvendorvalidateOrder'])->name('validated.order');
     Route::post('NewAdminVendorValidateOrder', [OrderController::class, 'NewAdminVendorValidateOrder'])->name('AdminVendor.ValidateOrder');
+    Route::get('/search/order',[OrderController::class,'searchOrder'])->name('search.order');
 
     //employee
     Route::post('employee/register', [EmployeeController::class, 'RegisterEmplyees'])->name('employee.register');

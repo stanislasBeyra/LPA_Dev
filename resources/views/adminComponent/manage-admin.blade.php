@@ -223,7 +223,7 @@
                     </button>
                 </div>
 
-            </form>
+            </form> 
         </div>
     </div>
 </div>
@@ -476,25 +476,6 @@
             });
         });
 
-        // Fonction pour attacher l'événement de clic sur les boutons d'édition
-        // function attachEditModalEvent() {
-        //     document.querySelectorAll('[data-mdb-target="#staticBackdrop2"]').forEach(button => {
-        //         button.addEventListener('click', function() {
-        //             // Récupérer les données du bouton
-        //             const id = this.getAttribute('data-id');
-        //             const name = this.getAttribute('data-name');
-        //             const description = this.getAttribute('data-description');
-
-        //             // Remplir les champs du formulaire
-        //             document.getElementById('editCategoryId').value = id;
-        //             document.getElementById('editCategoryName').value = name;
-        //             document.getElementById('editCategoryDescription').value = description;
-        //         });
-        //     });
-        // }
-
-        // // Appeler initialement pour attacher les événements sur les boutons existants
-        // attachEditModalEvent();
     });
 </script>
 @endsection

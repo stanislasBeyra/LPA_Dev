@@ -166,7 +166,7 @@ class AdminController extends Controller
                     'message' => 'Veuillez fournir un terme de recherche.'
                 ], 400);
             }
-
+ 
             // Remplacez 'role' par la colonne correcte pour identifier les administrateurs
             $admins = User::whereIN('role', [1, 5])
                 ->orderby('id', 'desc')

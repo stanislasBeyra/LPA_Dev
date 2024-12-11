@@ -86,9 +86,17 @@
     <section class="mb-4">
         <div class="card animate__animated animate__zoomIn">
             <div class="card-header text-center py-3">
-                <h5 class="mb-0 text-center">
-                    <strong>Search Agencies</strong>
-                </h5>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 text-center">
+                        <strong>Search Agencies</strong>
+                    </h5>
+                    <div class="input-group " style="width: 30%;">
+                        <div class="form-outline" data-mdb-input-init>
+                            <input type="search" id="form1" class="form-control" placeholder="Search Agences" />
+                            <label class="form-label" for="form1">Search</label>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -118,8 +126,7 @@
                                         data-id="{{ $agence->id }}"
                                         data-name="{{ $agence->agent_name }}"
                                         data-description="{{ $agence->description }}"
-                                        data-code="{{ $agence->agency_code }}"
-                                        onclick="populateEditModal(this)">
+                                        data-code="{{ $agence->agency_code }}">
                                         <i class="fas fa-edit"></i>
                                     </button>
                                     <!-- <button class="btn btn-sm btn-outline-primary"> <i class="fas fa-edit"></i> Edit</button> -->
@@ -196,7 +203,7 @@
                 <input type="hidden" id="agenceId" name="agenceId">
                 <div class="modal-body text-center">
                     <i class="fas fa-trash-alt mb-3 text-danger" style="font-size: 3rem;"></i>
-                    <p>Are you sure you want to delete this category? This action cannot be undone.</p>
+                    <p>Are you sure you want to delete this Agence? This action cannot be undone.</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
@@ -212,6 +219,9 @@
         </div>
     </div>
 </div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 <script>
     function setAgneciesID(agenceId) {
         document.getElementById('agenceId').value = agenceId;
@@ -235,5 +245,107 @@
             document.getElementById('editAgenceDescription').value = description;
         });
     });
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('#form1').on('keyup', function() {
+            let searchQuery = $(this).val();
+            let keyIncremented = 0;
+
+            console.log("Search query:", searchQuery);
+
+            // Effectuer une requête AJAX
+            $.ajax({
+                url: "{{ route('search.agences') }}",
+                type: "GET",
+                data: {
+                    search: searchQuery
+                },
+                success: function(response) {
+                    // Vider le tableau
+                    $('tbody').empty();
+
+                    if (response.agences && response.agences.length > 0) {
+                        response.agences.forEach(agence => {
+                            keyIncremented++;
+
+                            let formattedDate = new Date(agence.created_at).toLocaleString('en-US', {
+                                month: '2-digit',
+                                day: '2-digit',
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit',
+                                hour12: true
+                            });
+
+                            $('tbody').append(`
+                            <tr>
+                                <td>${keyIncremented}</td>
+                                <td>${formattedDate}</td>
+                                <td>${agence.agent_name}</td>
+                                <td>${agence.description}</td>
+                                <td>${agence.agency_code}</td>
+                                <td class="text-center">
+                                     <button type="button"
+                                        data-mdb-button-init 
+                                        data-mdb-ripple-init
+                                        class="btn btn-outline-primary btn-sm edit-role"
+                                        data-mdb-modal-init 
+                                        data-mdb-target="#staticBackdrop1"
+                                        data-id="${agence.id}"
+                                        data-name="${agence.agent_name}"
+                                        data-description="${agence.description}"
+                                        data-agence-code="${agence.agency_code}"
+                                    >
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-sm"
+                                        data-mdb-modal-init
+                                        data-mdb-target="#exampleModal1"
+                                        onclick="setAgneciesID('{{ $agence->id }}')">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        `);
+                        });
+
+                        // Réattacher l'événement de clic aux nouveaux boutons
+                        attachEditModalEvent();
+                    } else {
+                        $('tbody').append('<tr><td colspan="6" class="text-center">No results found</td></tr>');
+                    }
+                },
+                error: function(xhr) {
+                    console.error("Error:", xhr.responseText);
+                }
+            });
+        });
+
+        // Fonction pour attacher les événements des modals
+        function attachEditModalEvent() {
+            document.querySelectorAll('[data-mdb-target="#staticBackdrop1"]').forEach(button => {
+                button.addEventListener('click', function() {
+                    // Récupérer les données du bouton
+                    const id = this.getAttribute('data-id');
+                    const name = this.getAttribute('data-name');
+                    const description = this.getAttribute('data-description');
+                    const code = this.getAttribute('data-agence-code');
+
+                    console.log('description:::::::::', description);
+
+                    // Remplir les champs du formulaire
+                    document.getElementById('editAgenceId').value = id;
+                    document.getElementById('editAgenceName').value = name;
+                    document.getElementById('AgencyCode').value = code;
+                    document.getElementById('editAgenceDescription').value = description;
+                });
+            });
+        }
+      //  attachEditModalEvent();
+    });
+
 </script>
 @endsection

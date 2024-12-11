@@ -17,6 +17,26 @@ class OrderController extends Controller
 {
     //
 
+    public static function generateOrderCode($length = 10)
+    {
+        // Lettres possibles pour le début
+        $letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        // Chiffres possibles pour le reste
+        $numbers = '0123456789';
+        
+        // Sélectionner trois lettres aléatoires
+        $randomLetters = substr(str_shuffle($letters), 0, 3);
+        
+        // Gérer le reste de la chaîne (chiffres)
+        $restOfCode = '';
+        for ($i = 0; $i < $length - 3; $i++) {
+            $restOfCode .= $numbers[rand(0, strlen($numbers) - 1)];
+        }
+        
+        // Concaténer les lettres avec les chiffres
+        return $randomLetters . $restOfCode;
+    }
+
     public function payement($orderid, $total_amount, $period, $month_1 = null, $month_2 = null, $month_3 = null, $month_4 = null, $month_5 = null, $month_6 = null)
     {
         // Validation des données
@@ -171,6 +191,7 @@ class OrderController extends Controller
             $order = new Order();
             $order->user_id = $user->id;
             $order->total = $totalAmount;
+            $order->ordercode=$this->generateOrderCode();
             $order->status = 1; // Commande en attente
             $order->save();
 
@@ -487,28 +508,7 @@ class OrderController extends Controller
         }
     }
 
-    // public function  getorders()
-    // {
-    //     try {
-    //         $vendor = Auth::user();
-    //         if (!$vendor) {
-    //             return back()->with('error', 'Unauthorized access');
-    //         }
-
-    //         $orders = Order::with('orderItems.product')  // Charge les produits associés
-    //             ->whereHas('orderItems', function ($query) use ($vendor) {
-    //                 $query->where('vendor_id', $vendor->id);
-    //             })
-    //              ->orderby('id', 'desc')
-    //             ->get();
-
-
-    //             return $orders;
-    //     } catch (\Exception $e) {
-    //         Log::info('An occured error' . $e->getMessage());
-    //         return back()->with('error', 'An occured error');
-    //     }
-    // }
+    
 
     public function getOrders()
     {
@@ -646,15 +646,14 @@ class OrderController extends Controller
             }
 
             $order = Order::find($request->orderid);
-            
+
 
             if (!$order) {
                 return back()->with('error', 'Order not found.');
             }
 
-            if($order->status==3){
-                return back()->with('error','The order has already been validated');
-
+            if ($order->status == 3) {
+                return back()->with('error', 'The order has already been validated');
             }
 
             $allOrderItems = order_items::where('order_id', $order->id)->get();
@@ -806,4 +805,119 @@ class OrderController extends Controller
             return back()->with('error', 'An occured error');
         }
     }
+
+    public function searchOrder(Request $request)
+{
+    try {
+        // Récupérer le terme de recherche
+        $searchTerm = $request->input('search');
+
+        // Construire la requête avec un filtre dynamique
+        $orders = Order::with(['orderItems.product', 'employee'])
+            ->when($searchTerm, function ($query, $searchTerm) {
+                $query->where(function ($query) use ($searchTerm) {
+                    $query->whereHas('orderItems.product', function ($q) use ($searchTerm) {
+                        $q->where('product_name', 'like', '%' . $searchTerm . '%');
+                    })
+                    ->orWhereHas('employee', function ($q) use ($searchTerm) {
+                        $q->where('mobile', 'like', '%' . $searchTerm . '%')
+                            ->orWhere('mobile2', 'like', '%' . $searchTerm . '%');
+                    })
+                    ->orWhere('ordercode', 'like', '%' . $searchTerm . '%');
+                });
+            })
+            ->orderBy('id', 'desc')
+            ->get();
+
+        // Formatter les données
+        $formattedOrders = $orders->map(function ($order) {
+            return [
+                "orderId" => $order->id,
+                'orderTotal' => $order->total,
+                'orderStatus' => $order->status,
+                'orderCreated' => $order->created_at,
+                'employeefirstname' => $order->employee->firstname ?? null,
+                'employeelastname' => $order->employee->lastname ?? null,
+                'employeeusername' => $order->employee->username ?? null,
+                'employeemiddlename' => $order->employee->middle_name ?? null,
+                'employeeemail' => $order->employee->email ?? null,
+                'employeemobile' => $order->employee->mobile ?? null,
+                'employeemobile2' => $order->employee->mobile2 ?? null,
+                'orderItems' => $order->orderItems->map(function ($item) {
+                    return [
+                        'orderItemsId' => $item->id,
+                        'orderItemsStatus' => $item->status,
+                        'quantity' => $item->quantity,
+                        'productname' => $item->product->product_name ?? null,
+                        'productprice' => $item->product->price ?? null,
+                        'product_images1' => $item->product->product_images1 ?? null,
+                        'product_images2' => $item->product->product_images2 ?? null,
+                        'product_images3' => $item->product->product_images3 ?? null,
+                    ];
+                }),
+            ];
+        });
+
+        // Retourner les résultats formatés
+        return response()->json([
+            'success' => true,
+            'message' => 'Orders retrieved successfully',
+            'orders' => $formattedOrders
+        ], 200);
+    } catch (\Exception $e) {
+        // Log de l'erreur
+        Log::error('An error occurred: ' . $e->getMessage());
+
+        // Retourner une réponse JSON en cas d'erreur
+        return response()->json([
+            'success' => false,
+            'message' => 'An error occurred',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
+
+    // public function searchOrder(Request $request)
+    // {
+    //     try {
+    //         // Récupérer le terme de recherche
+    //         $searchTerm = $request->input('search');
+
+    //         // Construire la requête avec un filtre dynamique
+    //         $orders = Order::with(['orderItems.product', 'employee'])
+    //             ->when($searchTerm, function ($query, $searchTerm) {
+    //                 $query->where(function ($query) use ($searchTerm) {
+    //                     // Rechercher dans le nom du produit
+    //                     $query->whereHas('orderItems.product', function ($q) use ($searchTerm) {
+    //                         $q->where('product_name', 'like', '%' . $searchTerm . '%');
+    //                     })
+    //                         // Rechercher dans le mobile de l'employé
+    //                         ->orWhereHas('employee', function ($q) use ($searchTerm) {
+    //                             $q->where('mobile', 'like', '%' . $searchTerm . '%');
+    //                             $q->where('mobile2', 'like', '%' . $searchTerm . '%');
+    //                         });
+    //                 });
+    //             })
+    //             ->orderBy('id', 'desc')
+    //             ->get();
+
+    //         // Retourner les résultats
+    //         return response()->json([
+    //             'success' => true,
+    //             'message' => 'Orders retrieved successfully',
+    //             'orders' => $orders
+    //         ], 200);
+    //     } catch (\Exception $e) {
+    //         // Log de l'erreur
+    //         Log::error('An error occurred: ' . $e->getMessage());
+
+    //         // Retourner une réponse JSON en cas d'erreur
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'An error occurred',
+    //             'error' => $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
 }
