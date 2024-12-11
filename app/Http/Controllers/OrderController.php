@@ -19,23 +19,23 @@ class OrderController extends Controller
 
     public static function generateOrderCode($length = 10)
     {
-        // Lettres possibles pour le début
         $letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        // Chiffres possibles pour le reste
         $numbers = '0123456789';
-        
-        // Sélectionner trois lettres aléatoires
-        $randomLetters = substr(str_shuffle($letters), 0, 3);
-        
-        // Gérer le reste de la chaîne (chiffres)
-        $restOfCode = '';
-        for ($i = 0; $i < $length - 3; $i++) {
-            $restOfCode .= $numbers[rand(0, strlen($numbers) - 1)];
-        }
-        
-        // Concaténer les lettres avec les chiffres
-        return $randomLetters . $restOfCode;
+    
+        do {
+            $randomLetters = substr(str_shuffle($letters), 0, 3);
+            
+            $restOfCode = '';
+            for ($i = 0; $i < $length - 3; $i++) {
+                $restOfCode .= $numbers[rand(0, strlen($numbers) - 1)];
+            }
+    
+            $orderCode = $randomLetters . $restOfCode;
+                $existingOrder = Order::where('ordercode', $orderCode)->exists();
+        } while ($existingOrder);
+            return $orderCode;
     }
+    
 
     public function payement($orderid, $total_amount, $period, $month_1 = null, $month_2 = null, $month_3 = null, $month_4 = null, $month_5 = null, $month_6 = null)
     {
