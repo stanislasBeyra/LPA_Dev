@@ -54,7 +54,8 @@
                         <thead>
                             <tr>
                                 <th scope="col">#ID</th>
-                                <th scope="col">Creation date</th>
+                                <th scope="col">Creation Date</th>
+                                <th scope="col">Order Code</th>
                                 <th scope="col">Username</th>
                                 <th scope="col">Email</th>
                                 <th scope="col">Total</th>
@@ -67,6 +68,7 @@
                             <tr>
                                 <td>{{ $key+1}}</td>
                                 <td>{{$order['ordercreated']->format('m/d/Y, h:i:s A')}}</td>
+                                <td>{{$order['ordercode']}}</td>
                                 <td>{{$order['employeeusername']}}</td>
                                 <td>{{$order['employeeusername']}}</td>
                                 <td class="text-start">${{ number_format($order['orderTotal'], 2, '.', ',') }}</td>

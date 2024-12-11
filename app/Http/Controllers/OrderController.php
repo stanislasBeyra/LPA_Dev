@@ -464,6 +464,7 @@ class OrderController extends Controller
                 // Récupérer les données de chaque commande
                 $orderData = [
                     'order_id' => $order->id,
+                    'ordercode'=>$order->ordercode,
                     'order_user_id' => $order->user_id,
                     'order_total' => $order->total,
                     'order_status' => $order->status,
@@ -776,6 +777,7 @@ class OrderController extends Controller
                 return [
                     "orderId" => $order->id,
                     'orderTotal' => $order->total,
+                    'ordercode'=>$order->ordercode,
                     'orderStatus' => $order->status,
                     'ordercreated' => $order->created_at,
                     'employeefirstname' => $order->employee->firstname ?? null,
@@ -835,6 +837,7 @@ class OrderController extends Controller
             return [
                 "orderId" => $order->id,
                 'orderTotal' => $order->total,
+                'ordercode'=>$order->ordercode,
                 'orderStatus' => $order->status,
                 'orderCreated' => $order->created_at,
                 'employeefirstname' => $order->employee->firstname ?? null,
