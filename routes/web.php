@@ -25,6 +25,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/addOrderCodeToOrder',[OrderController::class,'addOrderCodeToOrder']);
+
 // Route pour la page d'accueil, protégée par le middleware 'auth:web'
 Route::middleware('auth:web')->group(function () {
     // Route::get('/', function () {

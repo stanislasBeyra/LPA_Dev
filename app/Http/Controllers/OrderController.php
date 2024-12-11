@@ -759,6 +759,29 @@ class OrderController extends Controller
         }
     }
 
+    public function addOrderCodeToOrder()
+{
+    try {
+        // Récupère tous les ordres ayant un code de commande défini
+        $orders = Order::whereNotNull('ordercode')->get();
+
+        foreach ($orders as $order) {
+          
+                // Génère un nouveau code de commande et l'attribue à l'ordre
+                $order->ordercode = $this->generateOrderCode();
+                $order->save(); // Sauvegarde la commande en base de données
+           
+        }
+
+        // Si aucune exception n'est levée pour toutes les commandes, retourne une réponse de succès générale
+        return response()->json(['success' => true, 'message' => 'All order codes updated successfully.']);
+
+    } catch (\Exception $e) {
+        // Gestion des erreurs génériques lors de la récupération des commandes
+        return response()->json(['success' => false, 'message' => 'Failed to update order codes.'], 500);
+    }
+}
+
     public function admingetvendororder()
     {
         try {
