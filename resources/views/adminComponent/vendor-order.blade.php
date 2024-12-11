@@ -250,6 +250,13 @@
             editButton.style.display = 'inline-block';
         }
 
+        function formatToLocaleString(price) {
+                return price.toLocaleString('en-US', {
+                    style: 'decimal',
+                    minimumFractionDigits: 2
+                });
+            }
+
         orderData.orderItems.forEach(item => {
             const totalPrice = (item.productprice || 0) * item.quantity;
 
@@ -260,18 +267,21 @@
             const productName = item.productname || 'N/A';
 
             // Gestion du prix du produit (si nul, afficher 0.00)
-            const productPrice = item.productprice ? item.productprice.toFixed(2) : '0.00';
+            const productPrice = item.productprice ? item.productprice: '0.00';
 
             const statusText = getStatusText(item.orderItemsStatus);
             const badgeClass = getStatusBadgeClass(item.orderItemsStatus);
+
+            
 
             const row = `
             <tr>
                 <td><img src="${imageUrl}" alt="${productName}" class="img-fluid" style="max-width: 50px;"></td>
                 <td>${productName}</td>
                 <td>${item.quantity}</td>
-                <td class="text-start">$${productPrice}</td>
-                <td class="text-start">$${totalPrice.toFixed(2)}</td>
+               <td class="text-start">$${formatToLocaleString(productPrice)}</td>
+                <td class="text-start">$${formatToLocaleString(totalPrice)}</td>
+
                 <td><span class="badge ${badgeClass}">${statusText}</span></td>
             </tr>
         `;
@@ -281,9 +291,9 @@
         // Calcul du sous-total, même si certains produits ont un prix nul
         const subtotal = orderData.orderItems.reduce((total, item) => total + (item.productprice || 0) * item.quantity, 0);
 
-        const formattedSubtotal = subtotal.toLocaleString('fr-FR', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
+        const formattedSubtotal = subtotal.toLocaleString('en-US', {
+            style: 'decimal',
+            minimumFractionDigits: 2
         });
 
         document.querySelector('#exampleModal .modal-body table tfoot th').textContent = `Sub Total:`;
@@ -355,7 +365,10 @@
                             const employeeEmail = order.employeeemail || 'N/A';
                             const orderTotal = order.orderTotal || 'N/A';
 
-                            const formatbalance=orderTotal.toLocaleString('en-US', { style: 'decimal', minimumFractionDigits: 2 })
+                            const formatbalance = orderTotal.toLocaleString('en-US', {
+                                style: 'decimal',
+                                minimumFractionDigits: 2
+                            })
 
                             $('tbody').append(`
                             <tr>
