@@ -376,6 +376,7 @@
                                         data-mdb-modal-init
                                         data-mdb-target="#exampleModal"
                                         data-items-products="${JSON.stringify(order).replace(/"/g, '&quot;')}"
+                                         data-image-url="{{ asset('app/public/') }}"
                                         onclick="handleOrderDetailbutton(this)">
                                         <i class="fas fa-eye"></i>
                                     </button>
