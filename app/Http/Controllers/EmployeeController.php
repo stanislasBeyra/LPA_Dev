@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\SendUserCredentialsMail;
 use Exception;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class EmployeeController extends Controller
 {
@@ -20,16 +21,30 @@ class EmployeeController extends Controller
 
             //  dd($request->status);
             // Validation des données
+            // $validatedData = $request->validate([
+            //     'national_id' => 'required',
+            //     'firstname' => 'required|string|max:255',
+            //     'lastname' => 'required|string|max:255',
+            //     'middlename'=> 'required|string|max:255',
+            //     'username' => 'required|string|max:255|unique:employees', // Correction pour utiliser 'employees'
+            //     'email' => 'required|string|email|max:255|unique:employees', // Correction pour utiliser 'employees'
+            //     'mobile' => 'required|string|max:255',
+            //     'mobile2' => 'required|string|max:255',
+            //     'agence_id' => 'required',
+            // ]);
+            // dd($validatedData);
+
             $validatedData = $request->validate([
-                'national_id' => 'required',
+                'national_id' => 'required|string|max:20|unique:employees',
                 'firstname' => 'required|string|max:255',
                 'lastname' => 'required|string|max:255',
-                'username' => 'required|string|max:255|unique:employees', // Correction pour utiliser 'employees'
-                'email' => 'required|string|email|max:255|unique:employees', // Correction pour utiliser 'employees'
-                'mobile' => 'required|string|max:255',
-                'agence_id' => 'required',
+                'middlename' => 'nullable|string|max:255', // middlename facultatif
+                'username' => 'required|string|max:255|unique:employees',
+                'email' => 'required|string|email|max:255|unique:employees',
+                'mobile' => 'required|string|unique:employees',
+                'mobile2' => 'nullable|string|unique:employees',
+                'agence_id' => 'required|exists:agences,id',
             ]);
-            //  dd($validatedData);
 
             $status = $request->status == 'on' ? 1 : 0;
 
@@ -42,8 +57,10 @@ class EmployeeController extends Controller
                 'firstname' => $validatedData['firstname'],
                 'lastname' => $validatedData['lastname'],
                 'username' => $validatedData['username'],
+                'middle_name' => $validatedData['middlename'],
                 'email' => $validatedData['email'],
                 'mobile' => $validatedData['mobile'],
+                'mobile2' => $validatedData['mobile2'],
                 'status' => $status,
                 'agencescode' => $validatedData['agence_id'],
                 'password' => Hash::make('12345678'),
@@ -52,6 +69,9 @@ class EmployeeController extends Controller
 
 
             return back()->with('success', 'Employer enregistrer avec succces');
+        } catch (ValidationException $e) {
+            // Gestion des erreurs de validation
+            return redirect()->back()->withErrors($e->validator)->withInput();
         } catch (Exception $e) {
             Log::error('An error occurred: ' . $e->getMessage());
             return back()->with('error', 'An error occurred: ' . $e->getMessage());
@@ -239,6 +259,7 @@ class EmployeeController extends Controller
                             ->orWhere('middle_name', 'like', '%' . $searchTerm . '%')
                             ->orWhere('mobile2', 'like', '%' . $searchTerm . '%')
                             ->orWhere('mobile', 'like', '%' . $searchTerm . '%')
+                            ->orWhere('national_id','like', '%' . $searchTerm . '%')
                             ->orWhere('agencescode', 'like', '%' . $searchTerm . '%')
                             ->orWhere('email', 'like', '%' . $searchTerm . '%');
                     })

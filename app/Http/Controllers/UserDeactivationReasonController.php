@@ -30,7 +30,7 @@ class UserDeactivationReasonController extends Controller
             return back()->with('success', $statusMessage);
         } catch (\Exception $e) {
             Log::error('Error while deactivating user: ' . $e->getMessage());
-            return back()->with('error', 'An error occurred while updating the user.');
+            return back()->with('error', 'An error occurred while updating the user.'.$e->getMessage());
         }
     }
 }

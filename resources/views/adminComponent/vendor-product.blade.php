@@ -7,9 +7,20 @@
     <section class="mb-4">
         <div class="card animate__animated animate__zoomIn">
             <div class="card-header text-center py-3">
-                <h5 class="mb-0 text-center">
-                    <strong>Vendor products Table</strong>
-                </h5>
+
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 text-center">
+                        <strong>Vendor products Table</strong>
+                    </h5>
+
+                    <!-- <div class="input-group " style="width: 30%;">
+                        <div class="form-outline" data-mdb-input-init>
+                            <input type="search" id="form1" class="form-control" placeholder="Search Vendos" />
+                            <label class="form-label" for="form1">Search</label>
+                        </div>
+                    </div> -->
+                </div>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -81,6 +92,7 @@
 </div>
 
 <!-- Modal Detail -->
+
 
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog custom-modal"> <!-- Adjusted width to 70% -->
@@ -244,9 +256,11 @@
         </div>
     </div>
 </div>
-<script>
 
-const deleteButton = document.getElementById('deleteButton'); // Bouton de suppression
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+    const deleteButton = document.getElementById('deleteButton'); // Bouton de suppression
     const spinnerdelete = document.getElementById('deleteSpinner'); // Spinner pour le bouton
     const buttonTextdelete = document.getElementById('deleteButtonText'); // Texte du bouton
 
@@ -256,7 +270,7 @@ const deleteButton = document.getElementById('deleteButton'); // Bouton de suppr
         buttonTextdelete.style.display = 'none'; // Masque le texte du bouton
         spinnerdelete.style.display = 'inline-block'; // Affiche le spinner
     });
-    
+
     function handledeleteButtonClick(button) {
         const productData = JSON.parse(button.getAttribute('data-produt-delete'));
         console.log('product', productData);
@@ -317,6 +331,189 @@ const deleteButton = document.getElementById('deleteButton'); // Bouton de suppr
             statusElement.classList.add('badge', 'bg-danger');
         }
     }
+</script>
+
+<script>
+
+$(document).ready(function() {
+        $('#form1').on('keyup', function() {
+            let searchQuery = $(this).val();
+            let keyIncremented = 0;
+
+            // Effectuer une requête AJAX
+            $.ajax({
+                url: "{{ route('searvendor.product') }}",
+                type: "GET",
+                data: {
+                    search: searchQuery
+                },
+                success: function(response) {
+                    // Vider le tableau
+                    $('tbody').empty();
+                    console.log(response);
+                    if (response.Products.length > 0) {
+                        response.Products.forEach((Product, index) => {
+                            keyIncremented++;
+
+                            let formattedDate = new Date(Product.created_at).toLocaleString('en-US', {
+                                month: '2-digit',
+                                day: '2-digit',
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit',
+                                hour12: true
+                            });
+                            let ProductJson = JSON.stringify(Product).replace(/"/g, '&quot;');
+                            const productprice=Product.productprice;
+                            
+
+                            const formatbalance = productprice.toLocaleString('en-US', {
+                                style: 'decimal',
+                                minimumFractionDigits: 2
+                            })
+
+                            let statusClass, statusText;
+                            switch (Product.productstatus) {
+                                case 0:
+                                    statusClass = 'bg-danger';
+                                    statusText = 'Inactive';
+                                    break;
+                            
+                                case 1:
+                                    statusClass = 'bg-success';
+                                    statusText = 'active';
+                                    break;
+                                default:
+                                    statusClass = 'bg-warning';
+                                    statusText = `Unknown status`;
+                                    break;
+                            }
+
+
+                            $('tbody').append(`
+                            <tr>
+                            <td>${keyIncremented}</td>
+                                <td>${formattedDate}</td>
+                                <td> <img src="{{ asset('app/public/${Product.product_images1}') }}"  height="60" width="60" class="shadow  rounded-3" alt="" /></td>
+                                <td>${Product.product_name}</td>
+                                <td>${Product.category_name??''}</td>
+                                <td text-start>$${formatbalance}</td>
+                                <td>${Product.productstock}</td>
+                                <td>
+                                <span class="badge ${statusClass}">
+                                       ${statusText}
+                                    </span>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-info btn-sm"
+                                        data-mdb-ripple-init
+                                        data-mdb-modal-init
+                                        data-mdb-target="#exampleModal"
+                                        data-produt='${JSON.stringify(Product).replace(/"/g, '&quot;')}'
+                                        onclick="handleButtonClick(this)">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-sm"
+                                        data-mdb-modal-init
+                                        data-mdb-target="#exampleModal1"
+                                        data-produt-delete='${JSON.stringify(Product).replace(/"/g, '&quot;')}'
+                                        onclick="handledeleteButtonClick(this)">
+
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </td>
+                                
+                                
+                            </tr>
+                        `);
+                        });
+
+                    } else {
+                        $('tbody').append('<tr><td colspan="4" class="text-center">No results found</td></tr>');
+                    }
+                },
+                error: function(xhr) {
+                    console.error(xhr.responseText);
+                }
+            });
+        });
+
+    });
+
+    // $(document).ready(function() {
+    //     $('#form1').on('keyup', function() {
+    //         let searchQuery = $(this).val();
+    //         let keyIncremented = 0;
+
+    //         // Effectuer une requête AJAX
+    //         $.ajax({
+    //             url: "{{ route('searvendor.product') }}",
+    //             type: "GET",
+    //             dataType: 'json', // Explicitly set expected data type
+    //             data: {
+    //                 search: searchQuery
+    //             },
+    //             success: function(response) {
+    //                 // Vider le tableau
+    //                 console.log('Full Response:', response);
+    //                 $('#tbody').empty();
+
+    //                 let products = response.Products || [];
+    //                 if (products.length > 0) {
+    //                     products.forEach((product, index) => {
+    //                         keyIncremented++;
+    //                         // Safe date formatting
+    //                         const creationDate = new Date(product.created_at).toLocaleDateString();
+    //                         const statusLabel = product.productstatus === 1 ? 'Available' : 'Out of Stock';
+
+    //                         $('tbody').append(`
+    //                         <tr>
+    //                                 <td>${keyIncremented}</td>
+    //                                 <td>${creationDate}</td>
+                                    
+    //                                 <td>${product.product_name}</td>
+    //                                 <td>${product.category_name}</td>
+    //                                 <td>$${product.productprice}</td>
+    //                                 <td>${product.productstock}</td>
+    //                                 <td>${statusLabel}</td>
+    //                                 <td>
+    //                                     <button class="btn btn-primary btn-sm">Edit</button>
+    //                                     <button class="btn btn-danger btn-sm">Delete</button>
+    //                                 </td>
+    //                             </tr>
+                            
+    //                     `);
+    //                     });
+    //                 } else {
+    //                     $('tbody').append(`
+    //                     <tr>
+    //                         <td colspan="7" class="text-center text-muted">
+    //                             No orders found. Try a different search.
+    //                         </td>
+    //                     </tr>
+    //                 `);
+    //                 }
+    //             },
+    //             error: function(xhr, status, error) {
+    //                 console.error('AJAX Error:', {
+    //                     status: status,
+    //                     error: error,
+    //                     responseText: xhr.responseText
+    //                 });
+
+    //                 $('tbody').append(`
+    //                 <tr>
+    //                     <td colspan="7" class="text-center text-danger">
+    //                         Error loading orders. 
+    //                         ${xhr.status ? `(Error ${xhr.status})` : 'Please try again.'}
+    //                     </td>
+    //                 </tr>
+    //             `);
+    //             }
+    //         });
+    //     });
+    // });
 </script>
 
 

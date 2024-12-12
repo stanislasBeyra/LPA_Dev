@@ -356,6 +356,70 @@ class ProductController extends Controller
         }
     }
 
+    public function searchvendorproduct(Request $request)
+    {
+        try {
+            $searchTerm = $request->input('search');
+
+            // if (!$searchTerm) {
+            //     return response()->json([
+            //         'success' => false,
+            //         'message' => 'Please provide a search term.'
+            //     ], 400);
+            // }
+
+            $vendorproduct = Product::with(['category', 'vendor'])
+                ->where('product_name', 'LIKE', '%' . $searchTerm . '%') // Search in the product name
+                ->orWhereHas('category', function ($query) use ($searchTerm) { // Search in the category name
+                    $query->where('categories_name', 'LIKE', '%' . $searchTerm . '%');
+                })
+                ->orWhereHas('vendor', function ($query) use ($searchTerm) { // Search in the vendor's name
+                    $query->where('lastname', 'LIKE', '%' . $searchTerm . '%')
+                        ->orwhere('lastname', 'LIKE', '%' . $searchTerm . '%')
+                        ->orwhere('username', 'LIKE', '%' . $searchTerm . '%')
+                        ->orwhere('mobile', 'LIKE', '%' . $searchTerm . '%'); // Search in the 'lastname' field of the vendor
+                })
+                ->orderBy('id', 'desc')
+                ->get();
+
+                $vendorProducts = $vendorproduct->map(function ($product) {
+                    return [
+                        'id' => $product->id,
+                        'created_at' => $product->created_at,
+                        'product_name' => $product->product_name,
+                        'product_description' => $product->product_description,
+                        'productstock' => $product->stock,
+                        'productstatus' => $product->status,
+                        'productprice' => $product->price,
+                        'product_images1' => $product->product_images1 ?? null,
+                        'product_images2' => $product->product_images2 ?? null,
+                        'product_images3' => $product->product_images3 ?? null,
+                        'category_name' => $product->category->categories_name,
+                        'category_description' => $product->category->categories_description,
+                        'vendor_name' => $product->vendor->firstname . ' ' . $product->vendor->lastname,
+                        'vendor_username' => $product->vendor->username,
+                        'vendor_email' => $product->vendor->email,
+                        'vendor_mobile' => $product->vendor->mobile,
+    
+    
+                    ];
+                });
+
+            return response()->json([
+                'success' => true,
+                'Products' => $vendorProducts
+            ], 200);
+        } catch (\Exception $e) {
+            // Error handling
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
     public function getNewallvendorProducts()
     {
         try {

@@ -100,16 +100,18 @@
                                     <label class="form-label" for="lastname">Last Name</label>
                                 </div>
                             </div>
+
                             <div class="col-md-6">
-                                <div class="form-outline">
-                                    <input type="phone" id="mobile" name="mobile" class="form-control" />
-                                    <label class="form-label" for="mobile">Phone Number</label>
+                                <div class="form-outline mb-3">
+                                    <input type="text" id="middlename" name="middlename" class="form-control" />
+                                    <label class="form-label" for="lastname">Middle Name</label>
                                 </div>
                             </div>
                         </div>
 
 
                         <div class="row mb-4">
+
 
                             <div class="col-md-6">
                                 <div class="form-outline mb-3">
@@ -119,15 +121,52 @@
                             </div>
 
                             <div class="col-md-6">
+                                <div class="form-group input-group col-md-6">
+                                    <label class="visually-hidden" for="inlineFormSelectPref">Preference</label>
+                                    <select id="country" data-mdb-select-init class="select" onchange="updatePhoneNumberPlaceholder()">
+                                        <option value="lr">(+231)</option>
+                                        <!-- <option value="sl">(+232)</option>
+                                        <option value="ci">(+225)</option> -->
+                                    </select>
+                                    <div class="form-outline">
+                                        <input type="phone" id="mobile" name="mobile" class="form-control" />
+                                        <label class="form-label" for="mobile">Phone Number</label>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <div class="row mb-4">
+
+                            <div class="col-md-6">
+
+                                <div class="form-group input-group col-md-6">
+                                    <label class="visually-hidden" for="inlineFormSelectPref">Preference</label>
+                                    <select id="countrycode" data-mdb-select-init class="select" onchange="updatePhoneNumberPlaceholder()">
+                                        <option value="lr">(+231)</option>
+                                        <!-- <option value="sl">(+232)</option>
+                                        <option value="ci">(+225)</option> -->
+                                    </select>
+                                    <div class="form-outline">
+                                        <input type="phone" id="mobile2" name="mobile2" class="form-control" />
+                                        <label class="form-label" for="mobile2">Phone Number Two</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
                                 <div class="form-outline">
                                     <input type="email" id="email" name="email" class="form-control" />
                                     <label class="form-label" for="email">Email</label>
                                 </div>
                             </div>
+
+
                         </div>
 
                         <div class="row mb-4">
-
 
 
                             <div class="col-md-6">
@@ -208,6 +247,7 @@
                                 <th scope="col">Last Name</th>
                                 <th scope="col">Middle Name</th>
                                 <th scope="col">Email</th>
+                                <th scope="col">Mobile</th>
                                 <th scope="col">Salary</th>
                                 <th scope="col">Agence/Ministry</th>
                                 <th scope="col">Status</th>
@@ -227,7 +267,8 @@
                                 <td>{{ $employee->lastname }}</td>
                                 <td>{{ $employee->middle_name??" " }}</td>
                                 <td>{{ $employee->email }}</td>
-                                <td>{{ $employee->net_salary }}</td>
+                                <td>{{ $employee->mobile }}</td>
+                                <td>$ {{ $employee->net_salary }}</td>
                                 <td>{{ $employee->agence->agent_name ?? 'No agence selected' }}</td>
                                 <td>
 
@@ -445,8 +486,49 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
+<script>
+    function updatePhoneNumberPlaceholder() {
+        var countryCode = $('#country').val(); // Sélection du premier pays
+        var countryCode2 = $('#countrycode').val(); // Sélection du deuxième pays
+
+        var placeholderText = '';
+
+        // Priorité à countryCode, sinon utilise countryCode2
+        var selectedCountryCode = countryCode || countryCode2;
+
+        console.log('Pays sélectionné :', selectedCountryCode);
+
+        // Définition des codes téléphoniques par pays
+        var countryCodes = {
+            'sl': '+232', // Sierra Leone
+            'ci': '+225', // Côte d'Ivoire
+            'lr': '+231' // Liberia
+        };
+
+        // Récupérer le code téléphonique en fonction du pays
+        placeholderText = countryCodes[selectedCountryCode] || '+231'; // Par défaut +231
+
+        // Mise à jour des champs de téléphone
+        $('#mobile').val(placeholderText);
+        $('#mobile2').val(placeholderText);
+    }
+    // Attacher l'événement de mise à jour lors du changement de pays
+    $(document).ready(function() {
+        // Ajouter les écouteurs d'événements sur les sélecteurs de pays
+        $('#country, #countrycode').on('change', updatePhoneNumberPlaceholder);
+
+        // Initialiser le placeholder avec la première option par défaut
+        updatePhoneNumberPlaceholder();
+    });
+
+</script>
 
 <script>
+    
+
+    
+
+
     document.getElementById('deactivateForm').addEventListener('submit', function(e) {
         var reason = document.getElementById('motif').value.trim(); // Récupère la valeur du champ "reason"
         var errorMessage = document.getElementById('reasonError'); // Sélectionne le message d'erreur

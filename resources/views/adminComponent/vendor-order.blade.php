@@ -1,6 +1,17 @@
 @extends('components.appconfig') <!-- Extending the appconfig layout -->
 
 @section('content')
+<style>
+    .input-group .form-control {
+        width: calc(50% - 10px);
+        /* Donne un peu d'espace pour l'effet collé */
+    }
+
+    .input-group-append {
+        margin-left: -5px;
+        /* Assure que le bouton est collé au champ de saisie */
+    }
+</style>
 <div class="container-fluid pt-4">
 
     <div class="d-flex justify-content-center align-items-center mb-3">
@@ -30,6 +41,11 @@
         </div>
     </div>
 
+
+
+
+
+
     <!-- Section avec tableau -->
     <section class="mb-4">
         <div class="card animate__animated animate__zoomIn">
@@ -57,6 +73,7 @@
                                 <th scope="col">Creation Date</th>
                                 <th scope="col">Order Code</th>
                                 <th scope="col">Username</th>
+                                <th scope="col">Phone number</th>
                                 <th scope="col">Email</th>
                                 <th scope="col">Total</th>
                                 <th scope="col">Status</th>
@@ -70,7 +87,14 @@
                                 <td>{{$order['ordercreated']->format('m/d/Y, h:i:s A')}}</td>
                                 <td>{{$order['ordercode']}}</td>
                                 <td>{{$order['employeeusername']}}</td>
-                                <td>{{$order['employeeusername']}}</td>
+                                <td>
+                                    {{$order['employeemobile']}}
+                                    @if(!empty($order['employeemobile2']))
+                                    && {{$order['employeemobile2']}}
+                                    @endif
+                                </td>
+
+                                <td>{{$order['employeeemail']}}</td>
                                 <td class="text-start">${{ number_format($order['orderTotal'], 2, '.', ',') }}</td>
                                 <td>
                                     @if ($order['orderStatus'] == 1)
@@ -204,6 +228,37 @@
     //     spinneredit.style.display = 'inline-block'; // Affiche le spinner
     // });
 
+    function updatePhoneNumberPlaceholder() {
+        var countryCode = $('#country').val();
+
+        var placeholderText = '';
+        switch (countryCode) {
+            case 'us':
+            case 'ca':
+                placeholderText = '+1';
+                break;
+            case 'fr':
+                placeholderText = '+33';
+                break;
+            case 'de':
+                placeholderText = '+49';
+                break;
+            case 'lr': // Liberia
+                placeholderText = '+231';
+                break;
+            default:
+                placeholderText = '+225';
+        }
+
+        $('#phone').val(placeholderText);
+    }
+
+    // Initialiser le placeholder avec la première option par défaut
+    $(document).ready(function() {
+        updatePhoneNumberPlaceholder();
+    });
+
+
 
 
 
@@ -253,11 +308,11 @@
         }
 
         function formatToLocaleString(price) {
-                return price.toLocaleString('en-US', {
-                    style: 'decimal',
-                    minimumFractionDigits: 2
-                });
-            }
+            return price.toLocaleString('en-US', {
+                style: 'decimal',
+                minimumFractionDigits: 2
+            });
+        }
 
         orderData.orderItems.forEach(item => {
             const totalPrice = (item.productprice || 0) * item.quantity;
@@ -269,12 +324,12 @@
             const productName = item.productname || 'N/A';
 
             // Gestion du prix du produit (si nul, afficher 0.00)
-            const productPrice = item.productprice ? item.productprice: '0.00';
+            const productPrice = item.productprice ? item.productprice : '0.00';
 
             const statusText = getStatusText(item.orderItemsStatus);
             const badgeClass = getStatusBadgeClass(item.orderItemsStatus);
 
-            
+
 
             const row = `
             <tr>
@@ -376,7 +431,11 @@
                             <tr>
                                 <td>${keyIncremented}</td>
                                 <td>${formattedDate}</td>
+                                <td>${order.ordercode}</td>
                                 <td>${employee}</td>
+                                <td>
+                                 ${order.employeemobile} ${order.employeemobile2 ? '&& ' + order.employeemobile2 : ''}
+                                </td>
                                 <td>${employeeEmail}</td>
                                 <td class="text-start">$${formatbalance}</td>
                                 <td>
@@ -386,7 +445,7 @@
                                 </td>
                                 <td>
                                    <button type="button"
-                                        class="btn btn-primary btn-sm"
+                                        class="btn btn-info btn-sm"
                                         data-mdb-ripple-init
                                         data-mdb-modal-init
                                         data-mdb-target="#exampleModal"
