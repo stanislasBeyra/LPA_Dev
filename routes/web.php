@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\MyEvent;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AgenceController;
 use App\Http\Controllers\AuthController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserDeactivationReasonController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\webLaravel\HomeController;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -24,7 +26,41 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+// tester pusher
+// Route::post('/send-event', function (Request $request) {
+//     $message = $request->input('message');
+    
+//     event(new MyEvent($message));
+    
+//     return response()->json(['status' => 'Événement diffusé']);
+// });
 
+// Route::post('/send-event', function (Request $request) {
+//     $message = $request->input('message');
+    
+//     event(new MyEvent($message));
+    
+//     return response()->json(['status' => 'Événement diffusé']);
+// })->name('send.event');
+
+// In routes/web.php
+// Route::middleware(['web'])->group(function () {
+//     Route::post('/send-event', function (Request $request) {
+//         $message = $request->input('message');
+        
+//         event(new MyEvent($message));
+        
+//         return response()->json(['status' => 'Événement diffusé']);
+//     })->name('send.event');
+// });
+
+Route::get('/pusher', function () {
+    return view('testePusher'); // Retourne la vue Blade 'myview'
+});
+
+Route::get('/send-event', [HomeController::class, 'sendEvent'])->name('send.event');
+
+//fin du teste du pusher
 Route::get('/addOrderCodeToOrder',[OrderController::class,'addOrderCodeToOrder']);
 
 // Route pour la page d'accueil, protégée par le middleware 'auth:web'

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\webLaravel;
 
+use App\Events\MyEvent;
 use App\Http\Controllers\Controller;
 use App\Models\agence;
 use App\Models\productcategories;
@@ -16,6 +17,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Models\Banner;
 use App\Models\employee;
 use App\Models\order;
+use Carbon\Carbon;
 
 class HomeController extends Controller
 {
@@ -146,7 +148,7 @@ class HomeController extends Controller
             ->where('role', 3)
             ->orderBy('id', 'desc')
             ->get();
-    
+
         return $users;
     }
 
@@ -175,7 +177,7 @@ class HomeController extends Controller
         return $roles;
     }
 
-    
+
 
 
     public function getmanageadminrole()
@@ -315,4 +317,64 @@ class HomeController extends Controller
                 return abort(404);
         }
     }
+
+//     public function sendEvent(Request $request)
+// {
+//     // Validation des données
+//     $validatedData = $request->validate([
+//         'message' => 'required|string|max:255',
+//     ]);
+
+//     // Définition du nom d'utilisateur prédéfini
+//     $username = 'VotreUsernamePrédéfini';
+
+//     // Créer un tableau avec les données
+//     $data = [
+//         'username' => $username,
+//         'message' => $validatedData['message'],
+//         'date' => now(),
+//     ];
+
+//     // Envoyer l'événement avec le message et le nom d'utilisateur prédéfini
+//     event(new MyEvent($data));
+
+//     // Réponse JSON avec le statut de succès
+//     return response()->json(['status' => 'Événement diffusé']);
+// }
+
+
+    public function sendEvent(Request $request)
+    {
+        // Validation des données
+        $validatedData = $request->validate([
+            'message' => 'required|string|max:2055',
+        ]);
+
+        // Définition du nom d'utilisateur prédéfini
+        $username = 'lpa';
+
+        $data = [
+                'username' => $username,
+                'message' => $validatedData['message'],
+                'date' => Carbon::now()->format('d M h:i'),
+                // 'date'=>Carbon::now()
+        ];
+        event(new MyEvent($data));
+        return response()->json(['status' => 'Événement diffusé']);
+    }
+
+
+    // public function sendEvent(Request $request)
+    // {
+    //     // event(new MyEvent('Ceci est un message test.'));
+
+    //     $message = $request->input('message');
+
+
+
+    //     event(new MyEvent($message));
+
+    //     return response()->json(['status' => 'Événement diffusé']);
+    //     return response()->json(['status' => 'Evenement diffuse']);
+    // }
 }
