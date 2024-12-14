@@ -251,9 +251,9 @@
                                 <th scope="col">Salary</th>
                                 <th scope="col">Agence/Ministry</th>
                                 <th scope="col">Status</th>
-                                @if(auth()->user()->role != 5)
+                               
                                 <th scope="col">Action</th>
-                                @endif
+                                
 
                             </tr>
                         </thead>
@@ -282,8 +282,13 @@
 
                                 </td>
 
-                                @if(auth()->user()->role != 5)
+                               
                                 <td>
+                                    <a href="{{ url('/employees-detail/' . $employee->id) }}"
+                                        class="btn btn-info btn-sm">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    @if(auth()->user()->role != 5)
                                     <button data-mdb-button-init data-mdb-ripple-init
                                         class="btn btn-outline-primary btn-sm"
                                         data-mdb-modal-init data-mdb-target="#staticBackdrop1"
@@ -297,8 +302,9 @@
                                         onclick="setEmployees('{{ $employee->id }}')">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
+                                    @endif
                                 </td>
-                                @endif
+                               
 
                             </tr>
                             @empty
@@ -520,15 +526,9 @@
         // Initialiser le placeholder avec la première option par défaut
         updatePhoneNumberPlaceholder();
     });
-
 </script>
 
 <script>
-    
-
-    
-
-
     document.getElementById('deactivateForm').addEventListener('submit', function(e) {
         var reason = document.getElementById('motif').value.trim(); // Récupère la valeur du champ "reason"
         var errorMessage = document.getElementById('reasonError'); // Sélectionne le message d'erreur

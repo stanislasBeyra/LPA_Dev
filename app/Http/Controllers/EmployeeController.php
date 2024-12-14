@@ -236,6 +236,74 @@ class EmployeeController extends Controller
         }
     }
 
+    public function getEmployeeDetaill($id){
+        try {
+            $employees = Employee::with(['role', 'agences'])
+                ->where('id', $id)
+                ->orderby('id', 'desc')
+                ->get();
+    
+            
+            return view('adminComponent.employees-detail',compact('employees'));
+        } catch (\Throwable $t) {
+            // Log the error
+            Log::error('An error occurred while fetching employee details: ' . $t->getMessage());
+            return back()->with('error', 'An error occurred while deleting the employee.');
+    
+            
+        }
+    }
+
+    public function UpdateEmployeeInfo(Request $request)
+    {
+        try {
+            // Validation des données pour tous les champs
+            $validated = $request->validate([
+                'username' => 'nullable|string|max:255',
+                'reset_password' => 'nullable|',
+                'reset_username' => 'nullable|',
+                'reset_all' => 'nullable|',
+                // autres validations selon besoin...
+            ]);
+    
+           // dd($request->all());
+            $message = null;
+    
+            // Récupération de l'employé actuel
+            $employee = employee::find($request->employeeid);
+    
+            // Mettre à jour les informations de l'employé
+            if (isset($validated['reset_password']) && $validated['reset_password'] === 'true') {
+                $employee->password = hash::make('12345678');
+                $employee->save();
+                $message = 'Employee password has been updated.';
+            }
+    
+            if (isset($validated['reset_username']) && $validated['reset_username'] === 'true') {
+                $employee->username = $validated['username'];
+                $message = 'Employee username has been updated.';
+            }
+    
+            if (isset($validated['reset_all']) && $validated['reset_all'] === 'true') {
+                $employee->username = $validated['username'] ?? $employee->username;
+                $employee->password = hash::make('12345678');
+                $message = 'Employee username and password have been updated.';
+            }
+    
+            $employee->save();
+            return back()->with('success', $message);
+    
+        } catch (\Exception $e) {
+            // Gestion des exceptions
+            return back()->with('error', 'An error occurred while updating employee information. ' . $e->getMessage());
+        }
+    }
+    
+
+    
+
+    
+
     public function SearchEmployee(Request $request)
     {
         try {

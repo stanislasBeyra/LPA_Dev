@@ -63,7 +63,58 @@
                     </div>
                 </div>
             </div>
-            <!-- Modal -->
+            <!-- Modal  update usename password -->
+
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-warning justify-content-center">
+                            <h5 class="modal-title text-white" id="exampleModalLabel">Update Username or Password</h5>
+                        </div>
+                        <form action="{{ route('update.vendor.info') }}" method="post">
+                            @csrf
+                            <div class="modal-body">
+                                <div class="row justify-content-center">
+                                    <div class="form-outline" style=" display:none;">
+                                        <input type="hidden" name="vendorsid" value="{{$user->id}}" class="form-control" />
+                                        <label class="form-label" for="usernameInput"></label>
+                                    </div>
+                                    <div class="row mt-3 mb-4" id="usernameField" style="display: none;">
+                                        <div class="form-outline" @if(auth()->user()->role == 5) style="display: none;" @endif>
+                                            <input type="text" id="username" name="username" value="{{$user->username??''}}" class="form-control" />
+                                            <label class="form-label" for="usernameInput">Username</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="reset_password" value="true" id="resetPassword" />
+                                            <label class="form-check-label" for="resetPassword">Reset password</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto" @if(auth()->user()->role == 5) style="display: none;" @endif>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="reset_username" value="true" id="resetUsername" />
+                                            <label class="form-check-label" for="resetUsername">Reset username</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <div class="form-check" @if(auth()->user()->role == 5) style="display: none;" @endif>
+                                            <input class="form-check-input" type="checkbox" name="reset_all" value="true" id="resetAll" />
+                                            <label class="form-check-label" for="resetAll">Reset All</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal" id="closeButton">Close</button>
+                                <button type="submit" class="btn btn-warning" id="resetPasswordButton" style="display: none;">Reset Password</button>
+                                <button type="submit" class="btn btn-warning" id="resetUsernameButton" style="display: none;">Reset Username</button>
+                                <button type="submit" class="btn btn-warning" id="resetAllButton" style="display: none;">Reset All</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
 
             <!-- Modal -->
 
@@ -101,8 +152,8 @@
                                         onchange="previewAvatar(event)">
 
                                     <div id="save-avatar-section" style="display: none;" class="mt-2">
-                                        <button type="submit" class="btn shadow btn-outline-success btn-sm">
-                                        save
+                                        <button type="submit" class="btn shadow btn-outline-success btn-sm" @if(auth()->user()->role == 5) style="display: none;" @endif>
+                                            save
                                         </button>
                                         <button type="button" class="btn btn-outline-danger shadow btn-sm ml-2" onclick="cancelAvatarChange()">Cancel</i></button>
                                     </div>
@@ -113,7 +164,12 @@
                             <p class="text-muted mb-1">Vendor</p>
                             <p class="text-muted mb-4">Full Name: Jane Doe</p>
                             <div class="d-flex justify-content-center mb-2">
-                                <button type="button" class="btn btn-warning btn-sm" data-mdb-modal-init data-mdb-target="#exampleModal1">Reset Password</button>
+                                <button type="button" class="btn btn-warning"
+                                    data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#exampleModal"
+                                    @if(auth()->user()->role == 5) style="display: none;" @endif>
+                                    Update
+                                </button>
+                                <!-- <button type="button" class="btn btn-warning btn-sm" data-mdb-modal-init data-mdb-target="#exampleModal1">Reset Password</button> -->
                             </div>
                         </div>
                     </div>
@@ -545,6 +601,102 @@
 
 @endforeach
 </div>
+<script>
+    // Récupération des éléments
+    const resetPasswordCheckbox = document.getElementById('resetPassword');
+    const resetUsernameCheckbox = document.getElementById('resetUsername');
+    const resetAllCheckbox = document.getElementById('resetAll');
+    const usernameField = document.getElementById('usernameField');
+    const closeButton = document.getElementById('closeButton');
+
+    // recuperation des boutton a afficher
+    const resetPasswordButton = document.getElementById('resetPasswordButton');
+    const resetUsernameButton = document.getElementById('resetUsernameButton');
+    const resetAllButton = document.getElementById('resetAllButton');
+
+    // Fonction pour désactiver les autres cases
+    function toggleCheckboxes(activeCheckbox) {
+        const checkboxes = [resetPasswordCheckbox, resetUsernameCheckbox, resetAllCheckbox];
+        checkboxes.forEach((checkbox) => {
+            if (checkbox !== activeCheckbox) {
+                checkbox.disabled = activeCheckbox.checked;
+            }
+        });
+    }
+
+    // Fonction pour afficher ou masquer le champ Username
+    function toggleUsernameField() {
+        if (resetUsernameCheckbox.checked || resetAllCheckbox.checked) {
+            usernameField.style.display = 'block';
+        } else {
+            usernameField.style.display = 'none';
+        }
+    }
+
+    // Ajout des écouteurs d'événements
+    resetPasswordCheckbox.addEventListener('change', () => toggleCheckboxes(resetPasswordCheckbox));
+    resetUsernameCheckbox.addEventListener('change', () => {
+        toggleCheckboxes(resetUsernameCheckbox);
+        toggleUsernameField();
+    });
+    resetAllCheckbox.addEventListener('change', () => {
+        toggleCheckboxes(resetAllCheckbox);
+        toggleUsernameField();
+    });
+
+    // renitialisation
+
+
+    // Récupération des éléments
+
+
+
+    // Fonction pour réinitialiser les champs et les cases cochées
+    function resetForm() {
+        // Réinitialiser les cases à cocher
+        resetPasswordCheckbox.checked = false;
+        resetUsernameCheckbox.checked = false;
+        resetAllCheckbox.checked = false;
+
+        // Réactiver toutes les cases à cocher
+        resetPasswordCheckbox.disabled = false;
+        resetUsernameCheckbox.disabled = false;
+        resetAllCheckbox.disabled = false;
+
+        // Masquer le champ Username
+        usernameField.style.display = 'none';
+        updateButtonsVisibility();
+    }
+
+    // Ajout d'un écouteur d'événement au bouton "Close"
+    closeButton.addEventListener('click', resetForm);
+
+
+    //affichage des boutton
+
+    function updateButtonsVisibility() {
+        // Masquer tous les boutons par défaut
+        resetPasswordButton.style.display = 'none';
+        resetUsernameButton.style.display = 'none';
+        resetAllButton.style.display = 'none';
+
+        // Afficher le bouton correspondant à la case cochée
+        if (resetPasswordCheckbox.checked) {
+            resetPasswordButton.style.display = 'block';
+        }
+        if (resetUsernameCheckbox.checked) {
+            resetUsernameButton.style.display = 'block';
+        }
+        if (resetAllCheckbox.checked) {
+            resetAllButton.style.display = 'block';
+        }
+    }
+
+    // Ajouter des écouteurs d'événement pour chaque case à cocher
+    resetPasswordCheckbox.addEventListener('change', updateButtonsVisibility);
+    resetUsernameCheckbox.addEventListener('change', updateButtonsVisibility);
+    resetAllCheckbox.addEventListener('change', updateButtonsVisibility);
+</script>
 <script>
     function previewAvatar(event) {
         const input = event.target;

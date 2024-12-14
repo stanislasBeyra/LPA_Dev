@@ -12,6 +12,7 @@
         /* Assure que le bouton est collé au champ de saisie */
     }
 </style>
+
 <div class="container-fluid pt-4">
 
     <div class="d-flex justify-content-center align-items-center mb-3">

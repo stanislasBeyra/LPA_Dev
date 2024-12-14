@@ -15,25 +15,55 @@ class AdminController extends Controller
 {
     //
 
+
     public function index()
     {
         // Récupérer le total des employés
-        $totalEmployees = employee::count();  // Compte tous les employés
+        $totalEmployees = Employee::count();  // Compte tous les employés
 
         $totalVendor = User::where('role', 3)->count();
 
-        $totalpendingorder = order::where('status', 1)->count();
+        // Récupérer le total des commandes avec le statut 1
+        $totalpendingorder = Order::where('status', 1)->count();
+        $totalPendingAmount = Order::where('status', 1)->sum('total');
 
-        // Récupérer le total des commandes avec le statut 2
+
+        // Récupérer le total des commandes avec le statut 3 Approuver
         $totalrefuseorder = Order::where('status', 3)->count();
+        $totalRefuseAmount = Order::where('status', 3)->sum('total');
 
-        // Récupérer le total des commandes avec le statut 3
+        // Récupérer le total des commandes avec le statut 4 Refuser
         $totalvalidateorder = Order::where('status', 4)->count();
+        $totalValidateAmount = Order::where('status', 4)->sum('total');
+
+        $totalOrdersToday = Order::whereDate('created_at', today())->count(); // Nombre de commandes d'aujourd'hui
+        $totalAmountToday = Order::whereDate('created_at', today())->sum('total'); // Somme des montants des commandes d'aujourd'hui
+
 
 
         // Passer cette donnée à la vue
-        return view('index', compact('totalEmployees', 'totalVendor', 'totalpendingorder', 'totalvalidateorder', 'totalrefuseorder'));
+        return view('index', compact('totalEmployees', 'totalVendor', 'totalpendingorder', 'totalvalidateorder', 'totalrefuseorder', 'totalPendingAmount', 'totalRefuseAmount', 'totalValidateAmount','totalOrdersToday','totalAmountToday'));
     }
+
+    // public function index()
+    // {
+    //     // Récupérer le total des employés
+    //     $totalEmployees = employee::count();  // Compte tous les employés
+
+    //     $totalVendor = User::where('role', 3)->count();
+
+    //     $totalpendingorder = order::where('status', 1)->count();
+
+    //     // Récupérer le total des commandes avec le statut 2
+    //     $totalrefuseorder = Order::where('status', 3)->count();
+
+    //     // Récupérer le total des commandes avec le statut 3
+    //     $totalvalidateorder = Order::where('status', 4)->count();
+
+
+    //     // Passer cette donnée à la vue
+    //     return view('index', compact('totalEmployees', 'totalVendor', 'totalpendingorder', 'totalvalidateorder', 'totalrefuseorder'));
+    // }
 
     public function addAdmin(Request $request)
     {
@@ -99,7 +129,8 @@ class AdminController extends Controller
                 'email' => 'sometimes|required|email|max:255|unique:users,email,' . $admin->id,
                 'mobile' => 'sometimes|required|string|max:20|unique:users,mobile,' . $admin->id,
                 'username' => 'sometimes|required|string|max:100|unique:users,username,' . $admin->id,
-                'role' => 'sometimes|'
+                'role' => 'sometimes|',
+                'passwordreset'=>'nullable'
             ], [
                 // Custom error messages
                 'firstname.required' => 'The first name is required.',
@@ -111,9 +142,19 @@ class AdminController extends Controller
                 'mobile.unique' => 'This mobile number is already in use.',
                 'username.required' => 'The username is required.',
                 'username.unique' => 'This username is already taken.',
-                'password.min' => 'The password must be at least 8 characters.',
             ]);
 
+            // dd($validated);
+
+             if ($validated['passwordreset'] === 'true') {
+                $admin->update([
+                    'password' => Hash::make('12345678'),
+                ]);
+            
+                return back()->with('success', 'The admin\'s Password reset successful.');
+            }
+            
+            
             // Update the admin fields
             $admin->update([
                 'firstname' => $validated['firstname'] ?? $admin->firstname,

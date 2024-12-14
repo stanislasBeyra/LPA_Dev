@@ -309,6 +309,8 @@ class HomeController extends Controller
                 return view('transfert.historiquemobilemonney', ['transactions' => $transactions]);
             case 'manage-banner':
                 return view('adminComponent.manage-banner', compact('banners'));
+            case "employee-detail":
+                return view('adminComponent.employees-detail');
             default:
                 return abort(404);
         }

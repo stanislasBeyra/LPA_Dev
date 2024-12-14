@@ -53,6 +53,7 @@ Route::middleware('auth:web')->group(function () {
     Route::post('/profile/update-password', [VendorController::class, 'UpdateVendorPassword'])->name('profile.updatePassword');
     Route::post('/admin/vendor/update-avatar', [VendorController::class, 'AdminChangeVendorAvatar'])->name('admin.vendor.update-avatar');
     Route::get('/search/users/vendors',[VendorController::class,'searchvendors'])->name('search.vendor');
+    Route::post('UpdatevendorInfo',[VendorController::class,'UpdatevendorInfo'])->name('update.vendor.info');
 
     // agencies 
     Route::post('/createAgencies', [AgenceController::class, 'createAgencies'])->name('create.agencies');
@@ -87,6 +88,10 @@ Route::middleware('auth:web')->group(function () {
     Route::post('/employee/update', [EmployeeController::class, 'updateEmployesInfo'])->name('employee.update');
     Route::post('/deleteEmployee',[EmployeeController::class,'deleteEmployee'])->name('delete.employee');
     Route::get('/Search/employee',[EmployeeController::class,'SearchEmployee'])->name('Search.employee');
+    // Route::get('/employees-detail/${id}',[EmployeeController::class,'getEmployeeDetaill'])->name('employee.detail');
+    Route::get('/employees-detail/{id}', [EmployeeController::class, 'getEmployeeDetaill'])->name('employees.detail');
+    Route::post('/UpdateEmployeeInfo',[EmployeeController::class,'UpdateEmployeeInfo'])->name('update.employee.info');
+
     
     Route::post('/deactivateemployee',[UserDeactivationReasonController::class,'deactivateEmployee'])->name('deactivate.employee');
     Route::get('getallvendorcoonectproduct', [ProductController::class, 'getallvendorcoonectproduct']);

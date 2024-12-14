@@ -258,10 +258,8 @@
                         <th scope="col">Phone number</th>
                         <th scope="col">Email</th>
                         <th scope="col">Status</th>
-
-                        @if(auth()->user()->role != 5)
                         <th scope="col">Action</th>
-                        @endif
+                       
 
                      </tr>
                   </thead>
@@ -286,13 +284,13 @@
 
                         </td>
 
-                        @if(auth()->user()->role != 5)
+                       
                         <td>
                            <a href="{{ url('/vendors-detail/' . $user->id) }}"
                               class="btn btn-info btn-sm">
                               <i class="fas fa-eye"></i>
                            </a>
-
+                           @if(auth()->user()->role != 5)
                            <button data-mdb-button-init data-mdb-ripple-init
                               class="btn btn-outline-primary btn-sm"
                               data-mdb-modal-init data-mdb-target="#staticBackdrop1"
@@ -306,8 +304,9 @@
                               onclick="setVendors('{{ $user->id }}')">
                               <i class="fas fa-trash-alt"></i>
                            </button>
+                            @endif
                         </td>
-                        @endif
+                       
 
 
                      </tr>
@@ -476,6 +475,13 @@
                         <input type="text" name="accountholdername" id="editAccountHolder" class="form-control" required />
                         <label class="form-label" for="editAccountHolder">Account Holder Name</label>
                      </div>
+                  </div>
+               </div>
+
+               <div data-mdb-input-init class="form-outline mb-4">
+                  <div class="form-check">
+                     <input class="form-check-input" type="checkbox" name="passwordreset" value="true" id="flexCheckChecked" />
+                     <label class="form-check-label" for="flexCheckChecked">Reset Password</label>
                   </div>
                </div>
 

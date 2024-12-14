@@ -89,6 +89,7 @@ class VendorController extends Controller
             'bankname2' => 'nullable|string|max:255',
             'bankaccount2' => 'nullable|string|max:255',
             'accountholdername' => 'nullable|string|max:255',
+            // 'passwordreset'=>'nullable'
         ], [
             // Custom messages for the user section
             'firstname.required' => 'The first name is required.',
@@ -110,7 +111,17 @@ class VendorController extends Controller
             'businessaddress.required' => 'The business address is required.',
             'businessemail.email' => 'The business email must be valid.',
             'businessemail.unique' => 'This business email is already in use.',
+            
         ]);
+
+       // dd($validated);
+        // if ($validated['passwordreset'] === 'true') {
+        //     $user->update([
+        //         'password' => Hash::make('12345678'),
+        //     ]);
+        
+        //     return back()->with('success', 'The vendor Password reset successful.');
+        // }
 
         // Update user data
         $user->update([
@@ -159,6 +170,52 @@ class VendorController extends Controller
                 'accountholdername' => $validated['accountholdername'],
             ]);
             return back()->with('success', 'Vendor updated successfully.');
+        }
+    }
+
+
+    public function UpdatevendorInfo(Request $request)
+    {
+        try {
+            // Validation des données pour tous les champs
+            $validated = $request->validate([
+                'username' => 'nullable|string|max:255',
+                'reset_password' => 'nullable|',
+                'reset_username' => 'nullable|',
+                'reset_all' => 'nullable|',
+                // autres validations selon besoin...
+            ]);
+    
+          //  dd($request->all());
+            $message = null;
+    
+            // Récupération de l'employé actuel
+            $vendors = User::find($request->vendorsid);
+    
+            // Mettre à jour les informations de l'employé
+            if (isset($validated['reset_password']) && $validated['reset_password'] === 'true') {
+                $vendors->password = hash::make('12345678');
+                $vendors->save();
+                $message = 'Vendor password has been updated.';
+            }
+    
+            if (isset($validated['reset_username']) && $validated['reset_username'] === 'true') {
+                $vendors->username = $validated['username'];
+                $message = 'Vendor username has been updated.';
+            }
+    
+            if (isset($validated['reset_all']) && $validated['reset_all'] === 'true') {
+                $vendors->username = $validated['username'] ?? $vendors->username;
+                $vendors->password = hash::make('12345678');
+                $message = 'Vendor username and password have been updated.';
+            }
+    
+            $vendors->save();
+            return back()->with('success', $message);
+    
+        } catch (\Exception $e) {
+            // Gestion des exceptions
+            return back()->with('error', 'An error occurred while updating employee information. ' . $e->getMessage());
         }
     }
 

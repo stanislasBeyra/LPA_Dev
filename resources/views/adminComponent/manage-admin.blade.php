@@ -180,11 +180,17 @@
                                         <i class="fas fa-edit"></i>
                                     </button>
 
+                                    <!-- <button type="button" class="btn btn-warning btn-sm"
+                                        data-mdb-modal-init data-mdb-target="#exampleModal2">
+                                        <i class="fas fa-rotate-left"></i>
+                                    </button> -->
+
                                     <button type="button" class="btn btn-danger btn-sm"
                                         data-mdb-modal-init data-mdb-target="#exampleModal1"
                                         onclick="setCategoryId('{{ $admin->id }}')">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
+
                                 </td>
                             </tr>
                             @endforeach
@@ -195,6 +201,48 @@
         </div>
     </section>
 
+</div>
+
+<!-- a utilise plutart -->
+<div class="modal top fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true" data-mdb-backdrop="true" data-mdb-keyboard="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header bg-warning d-flex justify-content-center w-100">
+                <h5 class="modal-title text-white text-center" id="deleteConfirmationModalLabel">Reset Information</h5>
+            </div>
+
+            <form id="deleteForm" action="" method="POST">
+                @csrf
+                <input type="hidden" id="categoryId" name="AdminId">
+                <div class="modal-body text-center">
+                    <i class="fas fa-trash-alt mb-3 text-warning" style="font-size: 3rem;"></i>
+                    <p>can you reset user password or username</p>
+
+                    <!-- Default checkbox -->
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
+                        <label class="form-check-label" for="flexCheckDefault">reset Username</label>
+                    </div>
+
+                    <!-- Checked checkbox -->
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked />
+                        <label class="form-check-label" for="flexCheckChecked">Reset Password</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-warning" id="deleteButton">
+                        <span id="deleteButtonText">Reset</span>
+                        <div id="deleteSpinner" class="spinner-border text-light" style="display: none; width: 1.5rem; height: 1.5rem;" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
 </div>
 
 <!-- modal de supression -->
@@ -223,7 +271,7 @@
                     </button>
                 </div>
 
-            </form> 
+            </form>
         </div>
     </div>
 </div>
@@ -268,6 +316,15 @@
                         <input type="email" name="email" id="AdressEmail" class="form-control" />
                         <label class="form-label" for="AdressEmail">Email address</label>
                     </div>
+
+                    <div data-mdb-input-init class="form-outline mb-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="passwordreset" value="true" id="flexCheckChecked" />
+                            <label class="form-check-label" for="flexCheckChecked">Reset Password</label>
+                        </div>
+                    </div>
+
+
 
                     <div class="form-outline mb-4">
                         <select name="role" id="editUserRoles" class="form-select @error('role') is-invalid @enderror" required>
