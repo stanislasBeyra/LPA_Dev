@@ -148,7 +148,7 @@ class EmployeeappController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'The OTP code is not valid or has expired.'
-            ]);
+            ],401);
         }
 
         // Récupérer l'utilisateur associé à l'OTP
@@ -157,7 +157,7 @@ class EmployeeappController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'User not found.'
-            ]);
+            ],404);
         }
 
         // Invalider tous les tokens précédents de l'utilisateur
