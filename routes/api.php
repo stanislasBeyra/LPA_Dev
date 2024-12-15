@@ -31,6 +31,7 @@ Route::get('/get/allrole',[RoleController::class,'getallrole']);
 //Route::post('/register', [AuthController::class,'registeuser']);
 Route::post('/login',[AuthController::class,'login']);
 Route::post('/Clientlogin',[EmployeeappController::class,'Clientlogin']);
+Route::post('/otp/verification',[EmployeeappController::class,'OtpVerification']);
 Route::delete('/delectuser/{id}',[AuthController::class,'delectuser']);
 Route::get('/send-test-email', [EmailController::class, 'sendTestEmail']);
 //Employee register
