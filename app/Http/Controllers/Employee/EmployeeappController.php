@@ -3,36 +3,69 @@
 namespace App\Http\Controllers\Employee;
 
 use App\Http\Controllers\Controller;
+use App\Mail\SendEmployeeOtpMail;
 use App\Models\employee;
+use App\Models\OtpCode;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class EmployeeappController extends Controller
 {
-    //
+    
+    public function generateOtpCode()
+{
+    do {
+        // Génère un OTP aléatoire de 6 chiffres
+        $otpRandom = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
+        $exists = OtpCode::where('otp_code', $otpRandom)->exists();
+    } while ($exists);
+
+    return $otpRandom;
+}
+
+private function OtpCodeCreate($user, $otpCode)
+{
+    $otpRecord = OtpCode::create([
+        'user_id' => $user->id,
+        'otp_code' => $otpCode,
+        'expires_at' => now()->addMinutes(5),
+        'is_used' => false,
+    ]);
+
+    return;
+}
+
+   
 
     // public function Clientlogin(Request $request)
     // {
     //     try {
     //         // Validation des données d'entrée
     //         $request->validate([
-    //             'email' => 'required|email',
+    //             'username' => 'required|',
     //             'password' => 'required',
     //         ]);
-    //         $user = employee::where('email', $request->email)->first();
+    //         $user = employee::where('username', $request->username)->first();
     //         if (!$user) {
     //             return response()->json([
     //                 'success' => false,
-    //                 'message' => 'Adresse email incorrecte',
+    //                 'message' => 'Incorrect username',
     //             ], 401);
+    //         }
+    //         if($user->status==0){
+    //             return response()->json([
+    //                 'success'=>false,
+    //                 'message'=>'Your account is inactive'
+    //             ],403);
     //         }
     //         if (!Hash::check($request->password, $user->password)) {
     //             return response()->json([
     //                 'success' => false,
-    //                 'message' => 'Les informations d\'identification sont incorrectes',
+    //                 'message' => 'The credentials are incorrect',
     //             ], 401);
     //         }
     //         $user->tokens()->delete();
@@ -41,7 +74,7 @@ class EmployeeappController extends Controller
 
     //         return response()->json([
     //             'success' => true,
-    //             'message' => 'Connexion réussie',
+    //             'message' => 'Login successful',
     //             'token' => $token
     //         ], 200);
     //     } catch (\Exception $e) {
@@ -68,11 +101,11 @@ class EmployeeappController extends Controller
                     'message' => 'Incorrect username',
                 ], 401);
             }
-            if($user->status==0){
+            if ($user->status == 0) {
                 return response()->json([
-                    'success'=>false,
-                    'message'=>'Your account is inactive'
-                ],403);
+                    'success' => false,
+                    'message' => 'Your account is inactive'
+                ], 403);
             }
             if (!Hash::check($request->password, $user->password)) {
                 return response()->json([
@@ -80,14 +113,16 @@ class EmployeeappController extends Controller
                     'message' => 'The credentials are incorrect',
                 ], 401);
             }
-            $user->tokens()->delete();
-
-            $token = $user->createToken('auth_token')->plainTextToken;
+            
+            $otpCode=$this->generateOtpCode();
+            $this->OtpCodeCreate($user,$otpCode);
+            
+            $mail =   Mail::to($user->email)->send(new SendEmployeeOtpMail($user, $otpCode));
 
             return response()->json([
                 'success' => true,
-                'message' => 'Login successful',
-                'token' => $token
+                'message' => 'Otp code send successful. verify your email',
+                'userinfo'=>$user
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
