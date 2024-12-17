@@ -118,6 +118,7 @@ Route::middleware('auth:web')->group(function () {
     Route::post('NewvendorvalidateOrder', [OrderController::class, 'NewvendorvalidateOrder'])->name('validated.order');
     Route::post('NewAdminVendorValidateOrder', [OrderController::class, 'NewAdminVendorValidateOrder'])->name('AdminVendor.ValidateOrder');
     Route::get('/search/order',[OrderController::class,'searchOrder'])->name('search.order');
+    Route::get('/orders/search', [OrderController::class, 'SearchgetOrders'])->name('vendororders.search');
 
     //employee
     Route::post('employee/register', [EmployeeController::class, 'RegisterEmplyees'])->name('employee.register');

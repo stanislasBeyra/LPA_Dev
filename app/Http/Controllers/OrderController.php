@@ -21,21 +21,21 @@ class OrderController extends Controller
     {
         $letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $numbers = '0123456789';
-    
+
         do {
             $randomLetters = substr(str_shuffle($letters), 0, 3);
-            
+
             $restOfCode = '';
             for ($i = 0; $i < $length - 3; $i++) {
                 $restOfCode .= $numbers[rand(0, strlen($numbers) - 1)];
             }
-    
+
             $orderCode = $randomLetters . $restOfCode;
-                $existingOrder = Order::where('ordercode', $orderCode)->exists();
+            $existingOrder = Order::where('ordercode', $orderCode)->exists();
         } while ($existingOrder);
-            return $orderCode;
+        return $orderCode;
     }
-    
+
 
     public function payement($orderid, $total_amount, $period, $month_1 = null, $month_2 = null, $month_3 = null, $month_4 = null, $month_5 = null, $month_6 = null)
     {
@@ -191,7 +191,7 @@ class OrderController extends Controller
             $order = new Order();
             $order->user_id = $user->id;
             $order->total = $totalAmount;
-            $order->ordercode=$this->generateOrderCode();
+            $order->ordercode = $this->generateOrderCode();
             $order->status = 1; // Commande en attente
             $order->save();
 
@@ -289,7 +289,7 @@ class OrderController extends Controller
             $order = new Order();
             $order->user_id = $user->id;
             $order->total = $totalAmount;
-            $order->ordercode=$this->generateOrderCode();
+            $order->ordercode = $this->generateOrderCode();
             $order->status = 1; // Commande en attente
             $order->save();
 
@@ -464,7 +464,7 @@ class OrderController extends Controller
                 // Récupérer les données de chaque commande
                 $orderData = [
                     'order_id' => $order->id,
-                    'ordercode'=>$order->ordercode,
+                    'ordercode' => $order->ordercode,
                     'order_user_id' => $order->user_id,
                     'order_total' => $order->total,
                     'order_status' => $order->status,
@@ -510,7 +510,7 @@ class OrderController extends Controller
         }
     }
 
-    
+
 
     public function getOrders()
     {
@@ -542,7 +542,7 @@ class OrderController extends Controller
                 return [
                     "orderId" => $order->id,
                     'orderTotal' => $order->total,
-                    'ordercode'=>$order->ordercode,
+                    'ordercode' => $order->ordercode,
                     'orderStatus' => $order->status,
                     'ordercreated' => $order->created_at,
                     'employeefirstname' => $order->employee->firstname ?? null,
@@ -552,7 +552,7 @@ class OrderController extends Controller
                     'employeeemail' => $order->employee->email ?? null,
                     'employeemobile' => $order->employee->mobile ?? null,
                     'employeemobile2' => $order->employee->mobile2 ?? null,
-                    'agence'=>$order->employee->agence->agent_name??null,
+                    'agence' => $order->employee->agence->agent_name ?? null,
                     'orderItems' => $order->orderItems->map(function ($item) {
                         return [
                             'orderItemsId' => $item->id,
@@ -574,6 +574,9 @@ class OrderController extends Controller
             return back()->with('error', 'An error occurred' . $e->getMessage());
         }
     }
+
+
+
 
 
     public function NewvendorvalidateOrder(Request $request)
@@ -686,139 +689,71 @@ class OrderController extends Controller
     // }
 
 
-//     public function NewAdminVendorValidateOrder(Request $request)
-// {
-//     try {
-//         // Récupérer le vendeur authentifié
-//         $vendor = Auth::user();
 
-//         if (!$vendor) {
-//             return back()->with('error', 'Unauthorized access');
-//         }
+    public function NewAdminVendorValidateOrder(Request $request)
+    {
+        try {
+            // Récupérer le vendeur authentifié
+            $vendor = Auth::user();
 
-//         // Récupérer la commande par son ID
-//         $order = Order::find($request->orderid);
+            if (!$vendor) {
+                return back()->with('error', 'Unauthorized access');
+            }
 
-//         if (!$order) {
-//             return back()->with('error', 'Order not found.');
-//         }
+            // Récupérer la commande par son ID
+            $order = Order::find($request->orderid);
 
-//         if ($order->status == 3) {
-//             return back()->with('error', 'The order has already been validated');
-//         }
+            if (!$order) {
+                return back()->with('error', 'Order not found.');
+            }
 
-//         // Récupérer tous les order_items de la commande
-//         $allOrderItems = order_items::where('order_id', $order->id)->get();
+            // if ($order->status == 3) {
+            //     return back()->with('error', 'The order has already been validated');
+            // }
 
-//         // Mettre à jour le statut des items sauf ceux avec statut 1
-//         $itemsWithStatusOne = $allOrderItems->filter(function ($item) {
-//             return $item->status == 1;
-//         });
+            // Récupérer tous les order_items de la commande
+            $allOrderItems = order_items::where('order_id', $order->id)->get();
 
+            if ($allOrderItems->isEmpty()) {
+                return back()->with('error', 'No items found for this order.');
+            }
 
-//         $allItemsAreValidated = $allOrderItems->every(function ($item) {
-//             return $item->status == 3;
-//         });
+            $itemsWithStatusOne = $allOrderItems->filter(function ($item) {
+                return $item->status == 1;
+            });
 
-//         // Vérifier si tous les items restants sont valides
-//         $itemsToValidate = $allOrderItems->reject(function ($item) {
-//             return $item->status == 1;
-//         });
+            // Mettre à jour les items avec status = 2 à status = 3
+            $itemsWithStatusTwo = $allOrderItems->filter(function ($item) {
+                return $item->status == 2;
+            });
 
-//         if ($allItemsAreValidated) {
-//             $order->status = 3;
-//             $order->save();
+            foreach ($itemsWithStatusTwo as $item) {
+                $item->status = 3;
+                $item->save();
+            }
 
-//             return back()->with('success', 'All items are validated.');
-//         }
+            // Vérifier s'il reste des items avec status = 2
+            $remainingItemsWithStatusTwo = $allOrderItems->filter(function ($item) {
+                return $item->status == 2;
+            });
 
-//         // Vérifier et mettre à jour les items avec un statut de 2
-//         $updatedItems = 0; // Compteur pour les items mis à jour
-//         foreach ($allOrderItems as $item) {
-//             if ($item->status == 2) {
-//                 $item->status = 3;
-//                 $item->save();
-//                 $updatedItems++;
-//             }
-//         }
+            // Mettre à jour la commande si tous les items sont validés (plus de status = 2)
+            if ($remainingItemsWithStatusTwo->isEmpty()) {
+                $order->status = 3;
+                $order->save();
+            }
 
-//         // Vérification du résultat
-//         if ($updatedItems > 0) {
-//             return back()->with('success', "Successfully updated $updatedItems item(s) to status 3.");
-//         }
+            // Préparer les messages en fonction des résultats
+            if ($itemsWithStatusOne->isNotEmpty()) {
+                return back()->with('success', 'Some items with status 1 cannot be validated, but others were successfully processed.');
+            }
 
-//         return back()->with('info', 'No items with status 2 were found.');
-//     } catch (\Exception $e) {
-//         Log::error('An error occurred: ' . $e->getMessage());
-//         return back()->with('error', 'An error occurred: ' . $e->getMessage());
-//     }
-// }
-
-
-public function NewAdminVendorValidateOrder(Request $request)
-{
-    try {
-        // Récupérer le vendeur authentifié
-        $vendor = Auth::user();
-
-        if (!$vendor) {
-            return back()->with('error', 'Unauthorized access');
+            return back()->with('success', 'Order items successfully validated, and order status updated if applicable.');
+        } catch (\Exception $e) {
+            Log::error('An error occurred: ' . $e->getMessage());
+            return back()->with('error', 'An error occurred: ' . $e->getMessage());
         }
-
-        // Récupérer la commande par son ID
-        $order = Order::find($request->orderid);
-
-        if (!$order) {
-            return back()->with('error', 'Order not found.');
-        }
-
-        // if ($order->status == 3) {
-        //     return back()->with('error', 'The order has already been validated');
-        // }
-
-        // Récupérer tous les order_items de la commande
-        $allOrderItems = order_items::where('order_id', $order->id)->get();
-
-        if ($allOrderItems->isEmpty()) {
-            return back()->with('error', 'No items found for this order.');
-        }
-
-        $itemsWithStatusOne = $allOrderItems->filter(function ($item) {
-            return $item->status == 1;
-        });
-
-        // Mettre à jour les items avec status = 2 à status = 3
-        $itemsWithStatusTwo = $allOrderItems->filter(function ($item) {
-            return $item->status == 2;
-        });
-
-        foreach ($itemsWithStatusTwo as $item) {
-            $item->status = 3;
-            $item->save();
-        }
-
-        // Vérifier s'il reste des items avec status = 2
-        $remainingItemsWithStatusTwo = $allOrderItems->filter(function ($item) {
-            return $item->status == 2;
-        });
-
-        // Mettre à jour la commande si tous les items sont validés (plus de status = 2)
-        if ($remainingItemsWithStatusTwo->isEmpty()) {
-            $order->status = 3;
-            $order->save();
-        }
-
-        // Préparer les messages en fonction des résultats
-        if ($itemsWithStatusOne->isNotEmpty()) {
-            return back()->with('success', 'Some items with status 1 cannot be validated, but others were successfully processed.');
-        }
-
-        return back()->with('success', 'Order items successfully validated, and order status updated if applicable.');
-    } catch (\Exception $e) {
-        Log::error('An error occurred: ' . $e->getMessage());
-        return back()->with('error', 'An error occurred: ' . $e->getMessage());
     }
-}
 
 
 
@@ -898,27 +833,26 @@ public function NewAdminVendorValidateOrder(Request $request)
     }
 
     public function addOrderCodeToOrder()
-{
-    try {
-        // Récupère tous les ordres ayant un code de commande défini
-        $orders = Order::whereNotNull('ordercode')->get();
+    {
+        try {
+            // Récupère tous les ordres ayant un code de commande défini
+            $orders = Order::whereNotNull('ordercode')->get();
 
-        foreach ($orders as $order) {
-          
+            foreach ($orders as $order) {
+
                 // Génère un nouveau code de commande et l'attribue à l'ordre
                 $order->ordercode = $this->generateOrderCode();
                 $order->save(); // Sauvegarde la commande en base de données
-           
+
+            }
+
+            // Si aucune exception n'est levée pour toutes les commandes, retourne une réponse de succès générale
+            return response()->json(['success' => true, 'message' => 'All order codes updated successfully.']);
+        } catch (\Exception $e) {
+            // Gestion des erreurs génériques lors de la récupération des commandes
+            return response()->json(['success' => false, 'message' => 'Failed to update order codes.'], 500);
         }
-
-        // Si aucune exception n'est levée pour toutes les commandes, retourne une réponse de succès générale
-        return response()->json(['success' => true, 'message' => 'All order codes updated successfully.']);
-
-    } catch (\Exception $e) {
-        // Gestion des erreurs génériques lors de la récupération des commandes
-        return response()->json(['success' => false, 'message' => 'Failed to update order codes.'], 500);
     }
-}
 
     public function admingetvendororder()
     {
@@ -935,10 +869,10 @@ public function NewAdminVendorValidateOrder(Request $request)
                 ->get();
 
             $formattedOrders = $orders->map(function ($order) {
-                return [ 
+                return [
                     "orderId" => $order->id,
                     'orderTotal' => $order->total,
-                    'ordercode'=>$order->ordercode,
+                    'ordercode' => $order->ordercode,
                     'orderStatus' => $order->status,
                     'ordercreated' => $order->created_at,
                     'employeefirstname' => $order->employee->firstname ?? null,
@@ -948,7 +882,7 @@ public function NewAdminVendorValidateOrder(Request $request)
                     'employeeemail' => $order->employee->email ?? null,
                     'employeemobile' => $order->employee->mobile ?? null,
                     'employeemobile2' => $order->employee->mobile2 ?? null,
-                    'agence'=>$order->employee->agence->agent_name??null,
+                    'agence' => $order->employee->agence->agent_name ?? null,
                     'orderItems' => $order->orderItems->map(function ($item) {
                         return [
                             'orderItemsId' => $item->id,
@@ -972,13 +906,102 @@ public function NewAdminVendorValidateOrder(Request $request)
     }
 
     public function searchOrder(Request $request)
+    {
+        try {
+            // Récupérer le terme de recherche
+            $searchTerm = $request->input('search');
+
+            // Construire la requête avec un filtre dynamique
+            $orders = Order::with(['orderItems.product', 'employee.agence'])
+                ->when($searchTerm, function ($query, $searchTerm) {
+                    $query->where(function ($query) use ($searchTerm) {
+                        $query->whereHas('orderItems.product', function ($q) use ($searchTerm) {
+                            $q->where('product_name', 'like', '%' . $searchTerm . '%');
+                        })
+                            ->orWhereHas('employee', function ($q) use ($searchTerm) {
+                                $q->where('mobile', 'like', '%' . $searchTerm . '%')
+                                    ->orWhere('mobile2', 'like', '%' . $searchTerm . '%');
+                            })
+                            ->orWhere('ordercode', 'like', '%' . $searchTerm . '%');
+                    });
+                })
+                ->orderBy('id', 'desc')
+                ->get();
+
+            // Formatter les données
+            $formattedOrders = $orders->map(function ($order) {
+                return [
+                    "orderId" => $order->id,
+                    'orderTotal' => $order->total,
+                    'ordercode' => $order->ordercode,
+                    'orderStatus' => $order->status,
+                    'orderCreated' => $order->created_at,
+                    'employeefirstname' => $order->employee->firstname ?? null,
+                    'employeelastname' => $order->employee->lastname ?? null,
+                    'employeeusername' => $order->employee->username ?? null,
+                    'employeemiddlename' => $order->employee->middle_name ?? null,
+                    'employeeemail' => $order->employee->email ?? null,
+                    'employeemobile' => $order->employee->mobile ?? null,
+                    'employeemobile2' => $order->employee->mobile2 ?? null,
+                    'agence' => $order->employee->agence->agent_name ?? null,
+                    'orderItems' => $order->orderItems->map(function ($item) {
+                        return [
+                            'orderItemsId' => $item->id,
+                            'orderItemsStatus' => $item->status,
+                            'quantity' => $item->quantity,
+                            'productname' => $item->product->product_name ?? null,
+                            'productprice' => $item->product->price ?? null,
+                            'product_images1' => $item->product->product_images1 ?? null,
+                            'product_images2' => $item->product->product_images2 ?? null,
+                            'product_images3' => $item->product->product_images3 ?? null,
+                        ];
+                    }),
+                ];
+            });
+
+            // Retourner les résultats formatés
+            return response()->json([
+                'success' => true,
+                'message' => 'Orders retrieved successfully',
+                'orders' => $formattedOrders
+            ], 200);
+        } catch (\Exception $e) {
+            // Log de l'erreur
+            Log::error('An error occurred: ' . $e->getMessage());
+
+            // Retourner une réponse JSON en cas d'erreur
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function SearchgetOrders(Request $request)
 {
     try {
-        // Récupérer le terme de recherche
+        // Récupérer l'utilisateur connecté (vendeur)
+        $vendor = Auth::user();
+        if (!$vendor) {
+            return back()->with('error', 'Unauthorized access');
+        }
+
+        // Récupérer le terme de recherche depuis la requête
         $searchTerm = $request->input('search');
 
-        // Construire la requête avec un filtre dynamique
-        $orders = Order::with(['orderItems.product', 'employee.agence'])
+        // Récupérer les IDs des commandes associées au vendeur
+        $orderIds = order_items::where('vendor_id', $vendor->id)->pluck('order_id');
+
+        // Construire la requête pour récupérer les commandes
+        $query = Order::with([
+            'orderItems' => function ($query) use ($vendor) {
+                $query->where('vendor_id', $vendor->id);
+            },
+            'orderItems.product',
+            'employee.agence'
+        ])
+            ->whereIn('id', $orderIds)
             ->when($searchTerm, function ($query, $searchTerm) {
                 $query->where(function ($query) use ($searchTerm) {
                     $query->whereHas('orderItems.product', function ($q) use ($searchTerm) {
@@ -986,22 +1009,23 @@ public function NewAdminVendorValidateOrder(Request $request)
                     })
                     ->orWhereHas('employee', function ($q) use ($searchTerm) {
                         $q->where('mobile', 'like', '%' . $searchTerm . '%')
-                            ->orWhere('mobile2', 'like', '%' . $searchTerm . '%');
+                          ->orWhere('mobile2', 'like', '%' . $searchTerm . '%');
                     })
                     ->orWhere('ordercode', 'like', '%' . $searchTerm . '%');
                 });
-            })
-            ->orderBy('id', 'desc')
-            ->get();
+            });
 
-        // Formatter les données
+        // Récupérer et trier les commandes
+        $orders = $query->orderBy('id', 'desc')->get();
+
+        // Formater les commandes
         $formattedOrders = $orders->map(function ($order) {
             return [
                 "orderId" => $order->id,
                 'orderTotal' => $order->total,
-                'ordercode'=>$order->ordercode,
+                'ordercode' => $order->ordercode,
                 'orderStatus' => $order->status,
-                'orderCreated' => $order->created_at,
+                'ordercreated' => $order->created_at,
                 'employeefirstname' => $order->employee->firstname ?? null,
                 'employeelastname' => $order->employee->lastname ?? null,
                 'employeeusername' => $order->employee->username ?? null,
@@ -1009,7 +1033,7 @@ public function NewAdminVendorValidateOrder(Request $request)
                 'employeeemail' => $order->employee->email ?? null,
                 'employeemobile' => $order->employee->mobile ?? null,
                 'employeemobile2' => $order->employee->mobile2 ?? null,
-                'agence'=>$order->employee->agence->agent_name??null,
+                'agence' => $order->employee->agence->agent_name ?? null,
                 'orderItems' => $order->orderItems->map(function ($item) {
                     return [
                         'orderItemsId' => $item->id,
@@ -1025,66 +1049,11 @@ public function NewAdminVendorValidateOrder(Request $request)
             ];
         });
 
-        // Retourner les résultats formatés
-        return response()->json([
-            'success' => true,
-            'message' => 'Orders retrieved successfully',
-            'orders' => $formattedOrders
-        ], 200);
+        return response()->json(['orders'=>$formattedOrders]);
     } catch (\Exception $e) {
-        // Log de l'erreur
         Log::error('An error occurred: ' . $e->getMessage());
-
-        // Retourner une réponse JSON en cas d'erreur
-        return response()->json([
-            'success' => false,
-            'message' => 'An error occurred',
-            'error' => $e->getMessage()
-        ], 500);
+        return back()->with('error', 'An error occurred while processing your request. Please try again.');
     }
 }
 
-
-    // public function searchOrder(Request $request)
-    // {
-    //     try {
-    //         // Récupérer le terme de recherche
-    //         $searchTerm = $request->input('search');
-
-    //         // Construire la requête avec un filtre dynamique
-    //         $orders = Order::with(['orderItems.product', 'employee'])
-    //             ->when($searchTerm, function ($query, $searchTerm) {
-    //                 $query->where(function ($query) use ($searchTerm) {
-    //                     // Rechercher dans le nom du produit
-    //                     $query->whereHas('orderItems.product', function ($q) use ($searchTerm) {
-    //                         $q->where('product_name', 'like', '%' . $searchTerm . '%');
-    //                     })
-    //                         // Rechercher dans le mobile de l'employé
-    //                         ->orWhereHas('employee', function ($q) use ($searchTerm) {
-    //                             $q->where('mobile', 'like', '%' . $searchTerm . '%');
-    //                             $q->where('mobile2', 'like', '%' . $searchTerm . '%');
-    //                         });
-    //                 });
-    //             })
-    //             ->orderBy('id', 'desc')
-    //             ->get();
-
-    //         // Retourner les résultats
-    //         return response()->json([
-    //             'success' => true,
-    //             'message' => 'Orders retrieved successfully',
-    //             'orders' => $orders
-    //         ], 200);
-    //     } catch (\Exception $e) {
-    //         // Log de l'erreur
-    //         Log::error('An error occurred: ' . $e->getMessage());
-
-    //         // Retourner une réponse JSON en cas d'erreur
-    //         return response()->json([
-    //             'success' => false,
-    //             'message' => 'An error occurred',
-    //             'error' => $e->getMessage()
-    //         ], 500);
-    //     }
-    // }
 }

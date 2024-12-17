@@ -78,7 +78,7 @@
                                 <th scope="col">Email</th>
                                 <th scope="col">Agency/Ministry</th>
                                 <th scope="col">Total</th>
-                                <!-- <th scope="col">Status</th> -->
+                                <th scope="col">Status</th>
                                 <th scope="col">Actions</th> 
                                 <!-- Nouvelle colonne pour les actions
                                   {"id":9,"agent_name":"Ministry of Agriculture","description":"Ministry of Agriculture","agency_code":"003","deleted_at":null,"created_at":"2024-11-14T16:06:44.000000Z","updated_at":"2024-11-15T03:36:28.000000Z"}
@@ -102,7 +102,7 @@
                                 <td>{{$order['employeeemail']}}</td>
                                 <td>{{$order['agence']}}</td>
                                 <td class="text-start">${{ number_format($order['orderTotal'], 2, '.', ',') }}</td>
-                                <!-- <td>
+                                <td>
                                     @if ($order['orderStatus'] == 1)
                                     <span class="badge bg-warning">pending</span>
                                     @elseif ($order['orderStatus'] == 2)
@@ -112,7 +112,7 @@
                                     @else
                                     <span class="badge bg-danger">Cancelled</span>
                                     @endif
-                                </td> -->
+                                </td>
                                 <td>
                                     <!-- Boutons Action -->
                                     <button type="button"
@@ -445,7 +445,11 @@
                                 <td>${employeeEmail}</td>
                                 <td>${order.agence}</td>
                                 <td class="text-start">$${formatbalance}</td>
-                                
+                                <td>
+                                    <span class="badge ${statusClass}">
+                                       ${statusText}
+                                    </span>
+                                </td>
                                 <td>
                                    <button type="button"
                                         class="btn btn-info btn-sm"

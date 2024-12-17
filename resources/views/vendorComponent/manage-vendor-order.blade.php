@@ -34,9 +34,18 @@
     <section class="mb-4">
         <div class="card">
             <div class="card-header text-center py-3">
-                <h5 class="mb-0 text-center">
-                    <strong>Vendor Orders Table</strong>
-                </h5>
+            <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 text-center">
+                        <strong>Vendor Orders Table</strong>
+                    </h5>
+
+                    <div class="input-group " style="width: 30%;">
+                        <div class="form-outline" data-mdb-input-init>
+                            <input type="search" id="form1" class="form-control" placeholder="Search Vendos" />
+                            <label class="form-label" for="form1">Search</label>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -55,7 +64,7 @@
                                 <th scope="col">Actions</th> <!-- Nouvelle colonne pour les actions -->
                             </tr>
                         </thead> 
-                        <tbody>
+                        <tbody id="firsttbody">
                             @foreach ($orders as $key=> $order)
                             <tr>
                                 <td>{{ $key+1}}</td>
@@ -189,6 +198,7 @@
 </div>
 
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 
 <script>
@@ -270,6 +280,134 @@
         document.querySelector('#exampleModal .modal-body table tfoot th').textContent = `Sub Total:`;
         document.querySelector('#exampleModal .modal-body table tfoot th + th').textContent = `${formattedSubtotal} FCFA`;
     }
+</script>
+
+
+<script>
+    $(document).ready(function() {
+        $('#form1').on('keyup', function() {
+            let searchQuery = $(this).val();
+            let keyIncremented = 0;
+
+            // Effectuer une requête AJAX
+            $.ajax({
+                url: "{{ route('vendororders.search') }}",
+                type: "GET",
+                dataType: 'json', // Explicitly set expected data type
+                data: {
+                    search: searchQuery
+                },
+                success: function(response) {
+                    // Vider le tableau
+                    console.log('Full Response:', response);
+                    $('#firsttbody').empty();
+
+                    let orders = response.orders || []; // Utilise "orders" s'il est présent, sinon un tableau vide
+                    if (orders.length > 0) {
+                        orders.forEach((order, index) => {
+                            keyIncremented++;
+
+                            // Safe date formatting
+                            let formattedDate = order.orderCreated ?
+                                new Date(order.orderCreated).toLocaleString('en-US', {
+                                    month: '2-digit',
+                                    day: '2-digit',
+                                    year: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    second: '2-digit',
+                                    hour12: true
+                                }) :
+                                'N/A';
+
+                            // Status handling
+                            let statusClass, statusText;
+                            switch (order.orderStatus) {
+                                case "1":
+                                    statusClass = 'bg-warning';
+                                    statusText = 'Pending';
+                                    break;
+                                case "2":
+                                    statusClass = 'bg-primary';
+                                    statusText = 'Processing';
+                                    break;
+                                case "3":
+                                    statusClass = 'bg-success';
+                                    statusText = 'Validated';
+                                    break;
+                                default:
+                                    statusClass = 'bg-warning';
+                                    statusText = `Unknown status: ${order.orderStatus}`;
+                                    break;
+                            }
+
+                            // Safely access order properties
+                            const employee = order.employeefirstname+' '+ order.employeelastname|| 'N/A';
+                            const employeeEmail = order.employeeemail || 'N/A';
+                            const orderTotal = order.orderTotal || 'N/A';
+
+                            const formatbalance = orderTotal.toLocaleString('en-US', {
+                                style: 'decimal',
+                                minimumFractionDigits: 2
+                            })
+ 
+                            $('tbody').append(`
+                            <tr>
+                                <td>${keyIncremented}</td>
+                                <td>${formattedDate}</td>
+                                <td>${order.ordercode}</td>
+                                <td>${employee}</td>
+                                <td>
+                                 ${order.employeemobile} ${order.employeemobile2 ? '&& ' + order.employeemobile2 : ''}
+                                </td>
+                                <td>${employeeEmail}</td>
+                                <td>${order.agence}</td>
+                                <td class="text-start">$${formatbalance}</td>
+    
+                                <td>
+                                   <button type="button"
+                                        class="btn btn-info btn-sm"
+                                        data-mdb-ripple-init
+                                        data-mdb-modal-init
+                                        data-mdb-target="#exampleModal"
+                                        data-items-products="${JSON.stringify(order).replace(/"/g, '&quot;')}"
+                                         data-image-url="{{ asset('app/public/') }}"
+                                        onclick="handleOrderDetailbutton(this)">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        `);
+                        });
+                    } else {
+                        $('tbody').append(`
+                        <tr>
+                            <td colspan="7" class="text-center text-muted">
+                                No orders found. Try a different search.
+                            </td>
+                        </tr>
+                    `);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error:', {
+                        status: status,
+                        error: error,
+                        responseText: xhr.responseText
+                    });
+
+                    $('tbody').append(`
+                    <tr>
+                        <td colspan="7" class="text-center text-danger">
+                            Error loading orders. 
+                            ${xhr.status ? `(Error ${xhr.status})` : 'Please try again.'}
+                        </td>
+                    </tr>
+                `);
+                }
+            });
+        });
+    });
 </script>
 
 
