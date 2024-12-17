@@ -73,21 +73,25 @@
                                 <th scope="col">#ID</th>
                                 <th scope="col">Creation Date</th>
                                 <th scope="col">Order Code</th>
-                                <th scope="col">Username</th>
-                                <th scope="col">Phone number</th>
+                                <th scope="col">Name of Employee</th>
+                                <th scope="col">Telephone number</th>
                                 <th scope="col">Email</th>
+                                <th scope="col">Agency/Ministry</th>
                                 <th scope="col">Total</th>
-                                <th scope="col">Status</th>
-                                <th scope="col">Actions</th> <!-- Nouvelle colonne pour les actions -->
+                                <!-- <th scope="col">Status</th> -->
+                                <th scope="col">Actions</th> 
+                                <!-- Nouvelle colonne pour les actions
+                                  {"id":9,"agent_name":"Ministry of Agriculture","description":"Ministry of Agriculture","agency_code":"003","deleted_at":null,"created_at":"2024-11-14T16:06:44.000000Z","updated_at":"2024-11-15T03:36:28.000000Z"}
+                                   -->
                             </tr>
                         </thead>
                         <tbody id="firsttbody">
                             @foreach ($vendororders as $key=> $order)
                             <tr>
-                                <td>{{ $key+1}}</td>
+                                <td>{{ (int)$key+1}}</td>
                                 <td>{{$order['ordercreated']->format('m/d/Y, h:i:s A')}}</td>
                                 <td>{{$order['ordercode']}}</td>
-                                <td>{{$order['employeeusername']}}</td>
+                                <td>{{$order['employeefirstname']}} {{$order['employeelastname']}}</td>
                                 <td>
                                     {{$order['employeemobile']}}
                                     @if(!empty($order['employeemobile2']))
@@ -96,8 +100,9 @@
                                 </td>
 
                                 <td>{{$order['employeeemail']}}</td>
+                                <td>{{$order['agence']}}</td>
                                 <td class="text-start">${{ number_format($order['orderTotal'], 2, '.', ',') }}</td>
-                                <td>
+                                <!-- <td>
                                     @if ($order['orderStatus'] == 1)
                                     <span class="badge bg-warning">pending</span>
                                     @elseif ($order['orderStatus'] == 2)
@@ -107,7 +112,7 @@
                                     @else
                                     <span class="badge bg-danger">Cancelled</span>
                                     @endif
-                                </td>
+                                </td> -->
                                 <td>
                                     <!-- Boutons Action -->
                                     <button type="button"
@@ -419,7 +424,7 @@
                             }
 
                             // Safely access order properties
-                            const employee = order.employeefirstname || 'N/A';
+                            const employee = order.employeefirstname+' '+ order.employeelastname|| 'N/A';
                             const employeeEmail = order.employeeemail || 'N/A';
                             const orderTotal = order.orderTotal || 'N/A';
 
@@ -427,7 +432,7 @@
                                 style: 'decimal',
                                 minimumFractionDigits: 2
                             })
-
+ 
                             $('tbody').append(`
                             <tr>
                                 <td>${keyIncremented}</td>
@@ -438,12 +443,9 @@
                                  ${order.employeemobile} ${order.employeemobile2 ? '&& ' + order.employeemobile2 : ''}
                                 </td>
                                 <td>${employeeEmail}</td>
+                                <td>${order.agence}</td>
                                 <td class="text-start">$${formatbalance}</td>
-                                <td>
-                                    <span class="badge ${statusClass}">
-                                       ${statusText}
-                                    </span>
-                                </td>
+                                
                                 <td>
                                    <button type="button"
                                         class="btn btn-info btn-sm"
@@ -490,137 +492,6 @@
     });
 </script>
 
-<!-- <script>
-    $(document).ready(function() {
-        $('#form1').on('keyup', function() {
-            let searchQuery = $(this).val();
-            let keyIncremented = 0;
-
-            // Effectuer une requête AJAX
-            $.ajax({
-                url: "{{ route('search.order') }}",
-                type: "GET",
-                dataType: 'json', // Explicitly set expected data type
-                data: {
-                    search: searchQuery
-                },
-                success: function(response) {
-                    // Vider le tableau
-                    console.log('Full Response:', response);
-                    $('#firsttbody').empty();
-
-                    // Adjusted to handle different possible response structures
-                    let orders = [];
-                    if (Array.isArray(response)) {
-                        orders = response;
-                    } else if (response.data && Array.isArray(response.data)) {
-                        orders = response.data;
-                    } else if (response.orders && Array.isArray(response.orders)) {
-                        orders = response.orders;
-                    }
-
-                    if (orders.length > 0) {
-                        orders.forEach((order, index) => {
-                            keyIncremented++;
-
-                            // Safe date formatting
-                            let formattedDate = order.created_at ?
-                                new Date(order.created_at).toLocaleString('en-US', {
-                                    month: '2-digit',
-                                    day: '2-digit',
-                                    year: 'numeric',
-                                    hour: '2-digit',
-                                    minute: '2-digit',
-                                    second: '2-digit',
-                                    hour12: true
-                                }) :
-                                'N/A';
-
-                            // Status handling
-
-                            let statusClass, statusText;
-                            if (order.status === "1") {
-                                statusClass = 'bg-warning';
-                                statusText = 'Pending';
-                            } else if (order.status === "2") {
-                                statusClass = 'bg-primary';
-                                statusText = 'Processing';
-                            } else if (order.status === "3") {
-                                statusClass = 'bg-success';
-                                statusText = 'Validated';
-                            } else {
-                                statusClass = 'bg-warning';
-                                statusText = `Unknown status: ${order.status}`;
-                            }
-
-
-                            // Safer property access
-                            const employee = order.employee || order.user || {};
-                            const orderItem = (order.order_items && order.order_items[0]) || {};
-                            const product = orderItem.product || {};
-                            let orders = JSON.stringify(order).replace(/"/g, '&quot;');
-
-                            // Debugging: log each order to understand its structure
-                            console.log('Current Order:', order);
-
-                            $('tbody').append(`
-                            <tr>
-                                <td>${keyIncremented}</td>
-                                <td>${formattedDate}</td>
-                                <td>${employee.username || 'N/A'}</td>
-                               <td>${employee.email || 'N/A'}</td>
-                                <td>$${order.total || 'N/A'}</td>
-                                <td>
-                                    <span class="badge ${statusClass}">
-                                       ${statusText}
-                                    </span>
-                                </td>
-                                <td>
-                                   <button type="button"
-                                        class="btn btn-primary btn-sm"
-                                        data-mdb-ripple-init
-                                        data-mdb-modal-init
-                                        data-mdb-target="#exampleModal"
-                                        data-items-products="${orders}"
-                                        onclick="handleOrderDetailbutton(this)">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </td>
-                               
-
-                            </tr>
-                        `);
-                        });
-                    } else {
-                        $('tbody').append(`
-                        <tr>
-                            <td colspan="7" class="text-center text-muted">
-                                No orders found. Try a different search.
-                            </td>
-                        </tr>
-                    `);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error('AJAX Error:', {
-                        status: status,
-                        error: error,
-                        responseText: xhr.responseText
-                    });
-
-                    $('tbody').append(`
-                    <tr>
-                        <td colspan="7" class="text-center text-danger">
-                            Error loading orders. 
-                            ${xhr.status ? `(Error ${xhr.status})` : 'Please try again.'}
-                        </td>
-                    </tr>
-                `);
-                }
-            });
-        });
-    });
-</script> -->
 
 
 

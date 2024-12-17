@@ -44,6 +44,7 @@ Route::get('urltese', function () {
 
 });
 Route::get('/get/employee',[EmployeeController::class,'getallEmploye']);
+
 Route::get('/get/VendorList',[AuthController::class,'getVendorList']);
 
 Route::post('/products/vendor/', [EmployeeappController::class, 'getProductsByVendorId']);

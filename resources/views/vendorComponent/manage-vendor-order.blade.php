@@ -45,22 +45,33 @@
                             <tr>
                                 <th scope="col">#ID</th>
                                 <th scope="col">Creation date</th>
-                                <th scope="col">Username</th>
+                                <th scope="col">Order Code</th>
+                                <th scope="col">Name of Employee</th>
+                                <th scope="col">Telephone Number</th>
                                 <th scope="col">Email</th>
-                                <th scope="col">Total</th>
-                                <th scope="col">Status</th>
+                                <th scope="col">Agency/Ministry</th>
+                                <!-- <th scope="col">Total</th> -->
+                                <!-- <th scope="col">Status</th> -->
                                 <th scope="col">Actions</th> <!-- Nouvelle colonne pour les actions -->
                             </tr>
-                        </thead>
+                        </thead> 
                         <tbody>
                             @foreach ($orders as $key=> $order)
                             <tr>
                                 <td>{{ $key+1}}</td>
                                 <td>{{$order['ordercreated']->format('m/d/Y, h:i:s A')}}</td>
-                                <td>{{$order['employeeusername']}}</td>
-                                <td>{{$order['employeeusername']}}</td>
-                                <td>{{ number_format($order['orderTotal'], 2, '.', ',') }} FCFA</td>
+                                <td>{{$order['ordercode']}}</td>
+                                <td>{{$order['employeefirstname']}} {{$order['employeelastname']}}</td>
                                 <td>
+                                    {{$order['employeemobile']}}
+                                    @if(!empty($order['employeemobile2']))
+                                    && {{$order['employeemobile2']}}
+                                    @endif
+                                </td>
+                                <td>{{$order['employeeemail']}}</td>
+                                <td>{{$order['agence']}}</td>
+                                <!-- <td>{{ number_format($order['orderTotal'], 2, '.', ',') }} FCFA</td> -->
+                                <!-- <td>
                                     @if ($order['orderStatus'] == 1)
                                     <span class="badge bg-warning">pending</span>
                                     @elseif ($order['orderStatus'] == 2)
@@ -70,7 +81,7 @@
                                     @else
                                     <span class="badge bg-danger">Cancelled</span>
                                     @endif
-                                </td>
+                                </td> -->
                                 <td>
                                     <!-- Boutons Action -->
                                     <button type="button"
