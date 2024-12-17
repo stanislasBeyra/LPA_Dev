@@ -308,8 +308,8 @@
                             keyIncremented++;
 
                             // Safe date formatting
-                            let formattedDate = order.orderCreated ?
-                                new Date(order.orderCreated).toLocaleString('en-US', {
+                            let formattedDate = order.ordercreated ?
+                                new Date(order.ordercreated).toLocaleString('en-US', {
                                     month: '2-digit',
                                     day: '2-digit',
                                     year: 'numeric',
@@ -362,8 +362,6 @@
                                 </td>
                                 <td>${employeeEmail}</td>
                                 <td>${order.agence}</td>
-                                <td class="text-start">$${formatbalance}</td>
-    
                                 <td>
                                    <button type="button"
                                         class="btn btn-info btn-sm"
