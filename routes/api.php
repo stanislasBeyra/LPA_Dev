@@ -15,7 +15,7 @@ use App\Http\Controllers\SalaryController;
 use App\Http\Controllers\webLaravel\HomeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\Upload;
 
 //create role
 
@@ -67,9 +67,9 @@ Route::get('getCutomerPaiement',[SalaryController::class,'getCutomerPaiement']);
 
 Route::middleware('auth:sanctum')->group(function () {
     // agences  info
-   
+
     //get Employyee Info
-   
+
     //securite des route privé
     //-----0 usser info session
     Route::get('/user/info', [AuthController::class,'getUserConnectInfo']);
@@ -149,3 +149,7 @@ Route::get('testeapi',[apitesteController::class,'testeapi']);
 Route::post('paytou/user',[apitesteController::class,'getUser']);
 Route::post('/payfrais/dossier',[apitesteController::class,'fraisdossier']);
 Route::get('getHistoriqueCommission',[apitesteController::class,'getHistoriqueCommission']);
+
+Route::get('uploads/{bucket}/{filename}', [Upload::class, 'download']);
+
+// Route::post('uploads',[ProductController::class, 'testuploading']);

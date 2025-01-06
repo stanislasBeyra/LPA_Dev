@@ -6,6 +6,8 @@ use App\Models\Banner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Intervention\Image\Facades\Image;
+use App\Http\Controllers\Upload;
+
 
 
 
@@ -24,18 +26,18 @@ class BannerController extends Controller
             $imagePath = null;
 
             // Chemin du répertoire de stockage des bannières
-            $directory = public_path('app/public/banners');
+            // $directory = public_path('app/public/banners');
 
-            if (!file_exists($directory)) {
-                mkdir($directory, 0755, true);
-            }
+            // if (!file_exists($directory)) {
+            //     mkdir($directory, 0755, true);
+            // }
 
             if ($request->hasFile('banner_image')) {
                 $image = $request->file('banner_image');
-                $imageName = 'Banber' . time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
-                $image->move($directory, $imageName);
-                $imagePath = 'banners/' . $imageName;
-            }
+                // $imageName = 'Banber' . time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+                // $image->move($directory, $imageName);
+                $imagePath = Upload::store($image, 'banners');
+                        }
             Banner::create([
                 'image_url' => $imagePath,
             ]);
@@ -216,7 +218,7 @@ class BannerController extends Controller
                 ], 404);
             }
 
-            // Mettre à jour le statut du banner 
+            // Mettre à jour le statut du banner
             $newStatus = $request->is_active == 'on' ? 1 : 0;
             $banner->update([
                 'is_active' => $newStatus

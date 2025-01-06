@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\EmailController;
 use App\Models\vendor;
 use Illuminate\Validation\Rule;
+use App\Http\Controllers\Upload;
+
 
 class AuthController extends Controller
 {
@@ -318,32 +320,32 @@ class AuthController extends Controller
                 // Récupérer tous les fichiers
                 $files = $request->file('businesscertificate');
 
-                // Spécifier le répertoire de destination
-                $directory = public_path('app/businesscertificate');
+                // // Spécifier le répertoire de destination
+                // $directory = public_path('app/businesscertificate');
 
-                // Créer le répertoire si nécessaire
-                if (!file_exists($directory)) {
-                    mkdir($directory, 0755, true);
-                }
+                // // Créer le répertoire si nécessaire
+                // if (!file_exists($directory)) {
+                //     mkdir($directory, 0755, true);
+                // }
 
                 // Parcourir tous les fichiers
                 foreach ($files as $file) {
                     // Récupérer l'extension du fichier
-                    $extension = $file->getClientOriginalExtension();
+                    // $extension = $file->getClientOriginalExtension();
                     // Générer un nouveau nom pour chaque fichier
-                    $businessCertificatePath = 'businesscertificate/' . time() . '_' . uniqid() . '.' . $extension;
+                    // $businessCertificatePath = 'businesscertificate/' . time() . '_' . uniqid() . '.' . $extension;
 
                     // Déplacer le fichier vers le répertoire de destination
-                    $file->move($directory, $businessCertificatePath);
+                    // $file->move($directory, $businessCertificatePath);
 
                     // Ajouter le chemin du fichier au tableau
-                    $businessCertificatePaths[] = $businessCertificatePath;
+                    $businessCertificatePaths[] = Upload::store($file, 'documents');
                 }
             }
 
-            $businessCertificatePathsJson = json_encode($businessCertificatePaths);
+            // $businessCertificatePathsJson = json_encode($businessCertificatePaths);
 
-            $businessCertificatePathsJson = str_replace('\/', '/', $businessCertificatePathsJson);
+            // $businessCertificatePathsJson = str_replace('\/', '/', $businessCertificatePathsJson);
 
 
             $taxCertificatePaths = []; // Tableau pour stocker les chemins des fichiers
@@ -353,28 +355,28 @@ class AuthController extends Controller
                 $files = $request->file('taxcertificate');
 
                 // Spécifier le répertoire de destination
-                $directory = public_path('app/taxcertificate');
+                // $directory = public_path('app/taxcertificate');
 
                 // Créer le répertoire si nécessaire
-                if (!file_exists($directory)) {
-                    mkdir($directory, 0755, true);
-                }
+                // if (!file_exists($directory)) {
+                //     mkdir($directory, 0755, true);
+                // }
 
                 // Parcourir tous les fichiers
                 foreach ($files as $file) {
                     // Générer un nouveau nom pour chaque fichier
-                    $extension = $file->getClientOriginalExtension(); // Récupérer l'extension du fichier
-                    $taxCertificatePath = 'taxcertificate/' . time() . '_' . uniqid() . '.' . $extension;
+                    // $extension = $file->getClientOriginalExtension(); // Récupérer l'extension du fichier
+                    // $taxCertificatePath = 'taxcertificate/' . time() . '_' . uniqid() . '.' . $extension;
 
                     // Déplacer le fichier vers le répertoire de destination
-                    $file->move($directory, $taxCertificatePath);
+                    // $file->move($directory, $taxCertificatePath);
 
                     // Ajouter le chemin du fichier au tableau
-                    $taxCertificatePaths[] = $taxCertificatePath;
+                    $taxCertificatePaths[] = Upload::store($file, 'documents');
                 }
             }
-            $taxCertificatePathsJson = json_encode($taxCertificatePaths);
-            $taxCertificatePathsJson = str_replace('\/', '/', $taxCertificatePathsJson);
+            // $taxCertificatePathsJson = json_encode($taxCertificatePaths);
+            // $taxCertificatePathsJson = str_replace('\/', '/', $taxCertificatePathsJson);
 
 
 
@@ -388,30 +390,30 @@ class AuthController extends Controller
                 $files = $request->file('passportorID');
 
                 // Spécifier le répertoire de destination
-                $directory = public_path('app/passportorID');
+                // $directory = public_path('app/passportorID');
 
                 // Créer le répertoire si nécessaire
-                if (!file_exists($directory)) {
-                    mkdir($directory, 0755, true);
-                }
+                // if (!file_exists($directory)) {
+                //     mkdir($directory, 0755, true);
+                // }
 
                 // Parcourir tous les fichiers
                 foreach ($files as $file) {
                     // Générer un nouveau nom pour chaque fichier
-                    $extension = $file->getClientOriginalExtension(); // Récupérer l'extension du fichier
-                    $passportOrIDPath = 'passportorID/' . time() . '_' . uniqid() . '.' . $extension;
+                    // $extension = $file->getClientOriginalExtension(); // Récupérer l'extension du fichier
+                    // $passportOrIDPath = 'passportorID/' . time() . '_' . uniqid() . '.' . $extension;
 
                     // Déplacer le fichier vers le répertoire de destination
-                    $file->move($directory, $passportOrIDPath);
+                    // $file->move($directory, $passportOrIDPath);
 
                     // Ajouter le chemin du fichier au tableau
-                    $passportOrIDPaths[] = $passportOrIDPath;
+                    $passportOrIDPaths[] = Upload::store($file, 'documents');
                 }
             }
 
 
-            $passportOrIDPathsJson = json_encode($passportOrIDPaths);
-            $passportOrIDPathsJson = str_replace('\/', '/', $passportOrIDPathsJson);
+            // $passportOrIDPathsJson = json_encode($passportOrIDPaths);
+            // $passportOrIDPathsJson = str_replace('\/', '/', $passportOrIDPathsJson);
 
             // Création du fournisseur
             $vendor = Vendor::create([
@@ -428,9 +430,9 @@ class AuthController extends Controller
                 'bankname2' => $validated['bankname2'] ?? null,
                 'bankaccount2' => $validated['bankaccount2'] ?? null,
                 'accountholdername' => $validated['accountholdername'] ?? null,
-                'businesscertificate' => $businessCertificatePathsJson,
-                'taxcertificate' => $taxCertificatePathsJson,
-                'passportorID' => $passportOrIDPathsJson,
+                'businesscertificate' => json_encode($businessCertificatePaths),
+                'taxcertificate' => json_encode($taxCertificatePaths),
+                'passportorID' => json_encode($passportOrIDPaths),
             ]);
 
             return back()->with('success', 'Vendor information saved successfully.');
@@ -445,7 +447,7 @@ class AuthController extends Controller
     {
         try {
             // Afficher les données envoyées avant la validation
-            //    dd($request->all()); 
+            //    dd($request->all());
 
             // Valider les champs d'entrée
             $validatedData = $request->validate([
@@ -611,12 +613,12 @@ class AuthController extends Controller
             if ($request->hasFile('avatar')) {
                 $avatar = $request->file('avatar');
                 $avatarName = time() . '_' . $avatar->getClientOriginalName();
-                $destinationPath = public_path('app/avatars');
-                if (!file_exists($destinationPath)) {
-                    mkdir($destinationPath, 0755, true);
-                }
-                $avatar->move($destinationPath, $avatarName);
-                $user->avatar = 'avatars/' . $avatarName;
+                // $destinationPath = public_path('app/avatars');
+                // if (!file_exists($destinationPath)) {
+                //     mkdir($destinationPath, 0755, true);
+                // }
+                $avatarPath = Upload::store($avatar, 'avatars'); // 'minio' est le nom de la configuration de disque
+                $user->avatar = $avatarPath;
             }
 
             if (!empty($validatedData['firstname'])) {
@@ -716,7 +718,7 @@ class AuthController extends Controller
     //             'password' => 'required|string|min:8|different:currentpassword|confirmed',
     //         ]);
 
-    //         $user = Auth::user(); 
+    //         $user = Auth::user();
     //         if (!$user) {
     //             return response()->json([
     //                 'success' => false,

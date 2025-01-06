@@ -39,7 +39,7 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            'url' => env('APP_URL') . '/storage',
             'visibility' => 'public',
             'throw' => false,
         ],
@@ -54,6 +54,16 @@ return [
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
             'throw' => false,
+        ],
+
+        'minio' => [
+            'driver' => 's3',
+            'key' => env('MINIO_ACCESS_KEY'), // Clé d'accès MinIO
+            'secret' => env('MINIO_SECRET_KEY'), // Clé secrète MinIO
+            'region' => env('MINIO_REGION', 'us-east-1'), // Région de votre serveur MinIO
+            'bucket' => env('MINIO_BUCKET'), // Nom du bucket
+            'endpoint' => env('MINIO_ENDPOINT'), // URL de votre serveur MinIO (par exemple http://localhost:9000)
+            'use_path_style_endpoint' => true, // Si vous utilisez un endpoint MinIO personnalisé
         ],
 
     ],

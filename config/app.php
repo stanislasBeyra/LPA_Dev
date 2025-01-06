@@ -18,6 +18,10 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+    // 'upload_bills_bucket' => env('UPLOAD_BILLS_BUCKET','bills'),
+
+    // 'upload_cni_bucket' => env('UPLOAD_CNI_BUCKET','cni'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment
@@ -170,8 +174,10 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\BroadcastServiceProvider::class,
 
-        
-        
+        App\Providers\MinioServiceProvider::class,
+
+
+
     ])->toArray(),
 
     /*

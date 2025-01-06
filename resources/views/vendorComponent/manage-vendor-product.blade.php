@@ -262,7 +262,7 @@
                     </div>
 
 
-                 
+
 
                     <!-- Submit button -->
 
@@ -468,7 +468,7 @@
         const productData = JSON.parse(button.getAttribute('data-edit-product'));
         console.log('edit::', productData)
 
-        // ajout des element au formulaire 
+        // ajout des element au formulaire
         document.querySelector("#productId").value=productData.id;
         document.querySelector("#EditProductName").value = productData.product_name;
         document.querySelector("#EditProductPrice").value = productData.price;

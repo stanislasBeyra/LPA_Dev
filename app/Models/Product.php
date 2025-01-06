@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Http\Controllers\Upload;
+
 
 
 class Product extends Model
@@ -32,7 +34,15 @@ class Product extends Model
         return $this->belongsTo(User::class, 'vendor_id'); // Ajoutez cette ligne pour la relation avec le vendeur
     }
     public function orderItems()
-{
-    return $this->hasMany(order_items::class);
-}
+    {
+        return $this->hasMany(order_items::class);
+    }
+
+    public function getImageUrl($imageField)
+    {
+        if ($this->$imageField) {
+            return Upload::getAbosoluteUrl($this->$imageField);
+        }
+        return null; // Si aucune image n'est disponible
+    }
 }

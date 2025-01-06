@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
 
+use App\Http\Controllers\Upload;
+
+
 
 class ProductController extends Controller
 {
@@ -40,6 +43,79 @@ class ProductController extends Controller
     }
 
 
+    // public function storevendorproduct(Request $request)
+    // {
+    //     try {
+    //         $uservendor = Auth::user(); // Récupère l'utilisateur connecté (le vendeur)
+
+    //         // Validation des champs
+    //         $validatedData = $request->validate([
+    //             'productname' => 'required|string|max:255',
+    //             'productprice' => 'required|numeric|min:0',
+    //             'stock' => 'required|integer|min:1',
+    //             'categorie' => 'required|integer',
+    //             'produdetail' => 'required|string',
+    //             'ProductImage' => 'nullable|array|max:3', // Maximum 3 images
+    //             'ProductImage.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Validation pour chaque image
+    //         ]);
+
+    //         // Vérifier si le dossier des images existe, sinon le créer
+    //         $directory = public_path('app/public/product_images');
+    //         if (!file_exists($directory)) {
+    //             mkdir($directory, 0755, true); // Crée le dossier s'il n'existe pas
+    //         }
+
+    //         // Initialisation des variables d'images
+    //         $imagePaths = [
+    //             'product_images1' => null,
+    //             'product_images2' => null,
+    //             'product_images3' => null
+    //         ];
+
+    //         // Vérification et déplacement des images
+    //         if ($request->hasFile('ProductImage')) {
+    //             $images = $request->file('ProductImage');
+    //             $index = 1; // Pour suivre l'index des images et les enregistrer dans les colonnes appropriées
+
+    //             foreach ($images as $image) {
+    //                 // Renommage de l'image avec un timestamp et extension correcte
+    //                 $imageExtension = $image->getClientOriginalExtension(); // Récupère l'extension de l'image
+    //                 $imageName = time() . '_' . uniqid() . '.' . $imageExtension; // Ajout d'un identifiant unique pour éviter les conflits
+    //                 $imagePath = 'product_images/' . $imageName; // Chemin relatif de l'image
+    //                 $image->move(public_path('app/public/product_images'), $imageName); // Déplacement de l'image dans le dossier
+
+    //                 Upload::store($image, 'products');
+
+    //                 // Enregistrer le chemin de l'image dans la colonne appropriée
+    //                 if ($index <= 3) {
+    //                     $imagePaths['product_images' . $index] = $imagePath; // Assignation au champ correspondant
+    //                     $index++;
+    //                 }
+
+    //                 // dd('ok');
+    //             }
+    //         }
+
+    //         // Création du produit avec les chemins des images dans les champs distincts
+    //         $product = Product::create([
+    //             'product_name' => $validatedData['productname'],
+    //             'product_description' => $validatedData['produdetail'],
+    //             'stock' => $validatedData['stock'],
+    //             'price' => $validatedData['productprice'],
+    //             'vendor_id' => $uservendor->id,
+    //             'categorie_id' => $validatedData['categorie'],
+    //             'product_images1' => $imagePaths['product_images1'], // Chemin de la première image
+    //             'product_images2' => $imagePaths['product_images2'], // Chemin de la deuxième image
+    //             'product_images3' => $imagePaths['product_images3'], // Chemin de la troisième image
+    //         ]);
+
+    //         return redirect()->back()->with('success', 'Product added successfully.');
+    //     } catch (\Exception $e) {
+    //         Log::error('Exception occurred', ['exception' => $e]);
+    //         return back()->with('error', 'An unexpected error occurred. Please try again later.');
+    //     }
+    // }
+
     public function storevendorproduct(Request $request)
     {
         try {
@@ -56,12 +132,6 @@ class ProductController extends Controller
                 'ProductImage.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Validation pour chaque image
             ]);
 
-            // Vérifier si le dossier des images existe, sinon le créer
-            $directory = public_path('app/public/product_images');
-            if (!file_exists($directory)) {
-                mkdir($directory, 0755, true); // Crée le dossier s'il n'existe pas
-            }
-
             // Initialisation des variables d'images
             $imagePaths = [
                 'product_images1' => null,
@@ -69,17 +139,14 @@ class ProductController extends Controller
                 'product_images3' => null
             ];
 
-            // Vérification et déplacement des images
+            // Vérification et téléchargement des images dans MinIO
             if ($request->hasFile('ProductImage')) {
                 $images = $request->file('ProductImage');
                 $index = 1; // Pour suivre l'index des images et les enregistrer dans les colonnes appropriées
 
                 foreach ($images as $image) {
-                    // Renommage de l'image avec un timestamp et extension correcte
-                    $imageExtension = $image->getClientOriginalExtension(); // Récupère l'extension de l'image
-                    $imageName = time() . '_' . uniqid() . '.' . $imageExtension; // Ajout d'un identifiant unique pour éviter les conflits
-                    $imagePath = 'product_images/' . $imageName; // Chemin relatif de l'image
-                    $image->move(public_path('app/public/product_images'), $imageName); // Déplacement de l'image dans le dossier
+                    // Téléchargement dans MinIO
+                    $imagePath = Upload::store($image, 'products'); // Renvoie le chemin relatif
 
                     // Enregistrer le chemin de l'image dans la colonne appropriée
                     if ($index <= 3) {
@@ -108,6 +175,22 @@ class ProductController extends Controller
             return back()->with('error', 'An unexpected error occurred. Please try again later.');
         }
     }
+
+
+
+    public function testuploading(Request $request)
+    {
+        $file = $request->file('img');
+
+        if ($file) {
+            $path = Upload::store($file, 'products');
+
+            return response()->json(["path : " => $path]);
+        } else {
+            dd($request->file);
+        }
+    }
+
 
 
     public function getallvendorcoonectproduct()
@@ -382,28 +465,28 @@ class ProductController extends Controller
                 ->orderBy('id', 'desc')
                 ->get();
 
-                $vendorProducts = $vendorproduct->map(function ($product) {
-                    return [
-                        'id' => $product->id,
-                        'created_at' => $product->created_at,
-                        'product_name' => $product->product_name,
-                        'product_description' => $product->product_description,
-                        'productstock' => $product->stock,
-                        'productstatus' => $product->status,
-                        'productprice' => $product->price,
-                        'product_images1' => $product->product_images1 ?? null,
-                        'product_images2' => $product->product_images2 ?? null,
-                        'product_images3' => $product->product_images3 ?? null,
-                        'category_name' => $product->category->categories_name,
-                        'category_description' => $product->category->categories_description,
-                        'vendor_name' => $product->vendor->firstname . ' ' . $product->vendor->lastname,
-                        'vendor_username' => $product->vendor->username,
-                        'vendor_email' => $product->vendor->email,
-                        'vendor_mobile' => $product->vendor->mobile,
-    
-    
-                    ];
-                });
+            $vendorProducts = $vendorproduct->map(function ($product) {
+                return [
+                    'id' => $product->id,
+                    'created_at' => $product->created_at,
+                    'product_name' => $product->product_name,
+                    'product_description' => $product->product_description,
+                    'productstock' => $product->stock,
+                    'productstatus' => $product->status,
+                    'productprice' => $product->price,
+                    'product_images1' => $product->product_images1 ?? null,
+                    'product_images2' => $product->product_images2 ?? null,
+                    'product_images3' => $product->product_images3 ?? null,
+                    'category_name' => $product->category->categories_name,
+                    'category_description' => $product->category->categories_description,
+                    'vendor_name' => $product->vendor->firstname . ' ' . $product->vendor->lastname,
+                    'vendor_username' => $product->vendor->username,
+                    'vendor_email' => $product->vendor->email,
+                    'vendor_mobile' => $product->vendor->mobile,
+
+
+                ];
+            });
 
             return response()->json([
                 'success' => true,
