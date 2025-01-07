@@ -456,47 +456,95 @@ class ProductController extends Controller
     //     }
     // }
 
+    // public function getNewallvendorProducts()
+    // {
+    //     try {
+    //         $vendorproduct = Product::with(['category', 'vendor'])
+    //             ->orderBy('id', 'desc')
+    //             ->get();
+
+            
+    //         $vendorProducts = $vendorproduct->map(function ($product) {
+
+                
+    //             return [
+    //                 'id' => $product->id ?? null,
+    //                 'created_at' => $product->created_at ?? null,
+    //                 'product_name' => $product->product_name ?? null,
+    //                 'product_description' => $product->product_description ?? null,
+    //                 'productstock' => $product->stock ?? null,
+    //                 'productstatus' => $product->status ?? null,
+    //                 'productprice' => $product->price ?? null,
+    //                 'product_images1' => $product->product_images1 ?? null,
+    //                 'product_images2' => $product->product_images2 ?? null,
+    //                 'product_images3' => $product->product_images3 ?? null,
+    //                 'category_name' => $product->category->categories_name ?? null,
+    //                 'category_description' => $product->category->categories_description ?? null,
+    //                 'vendor_name' => $product->vendor->firstname . ' ' . $product->vendor->lastname ?? null,
+    //                 'vendor_username' => $product->vendor->username ?? null,
+    //                 'vendor_email' => $product->vendor->email ?? null,
+    //                 'vendor_mobile' => $product->vendor->mobile ?? null,
+
+
+    //             ];
+    //         });
+
+    //         dd($vendorProducts);
+
+    //         if (!$vendorProducts || $vendorProducts->isEmpty()) {
+    //             $vendorProducts = [];
+    //         }
+
+
+
+    //         return $vendorProducts;
+    //     } catch (\Exception $e) {
+    //         back()->with('error', 'An occurred error' . $e->getMessage());
+    //     }
+    // }
+
     public function getNewallvendorProducts()
-    {
-        try {
-            $vendorproduct = Product::with(['category', 'vendor'])
-                ->orderBy('id', 'desc')
-                ->get();
-               // dd($vendorproduct);
+{
+    try {
+        $vendorproduct = Product::with(['category', 'vendor'])
+            ->orderBy('id', 'desc')
+            ->get();
 
-            $vendorProducts = $vendorproduct->map(function ($product) {
-                return [
-                    'id' => $product->id,
-                    'created_at' => $product->created_at,
-                    'product_name' => $product->product_name,
-                    'product_description' => $product->product_description,
-                    'productstock' => $product->stock,
-                    'productstatus' => $product->status,
-                    'productprice' => $product->price,
-                    'product_images1' => $product->product_images1 ?? null,
-                    'product_images2' => $product->product_images2 ?? null,
-                    'product_images3' => $product->product_images3 ?? null,
-                    'category_name' => $product->category->categories_name,
-                    'category_description' => $product->category->categories_description,
-                    'vendor_name' => $product->vendor->firstname . ' ' . $product->vendor->lastname,
-                    'vendor_username' => $product->vendor->username,
-                    'vendor_email' => $product->vendor->email,
-                    'vendor_mobile' => $product->vendor->mobile,
+        $vendorProducts = $vendorproduct->map(function ($product) {
+            return [
+                'id' => $product->id ?? null,
+                'created_at' => $product->created_at ?? null,
+                'product_name' => $product->product_name ?? null,
+                'product_description' => $product->product_description ?? null,
+                'productstock' => $product->stock ?? null,
+                'productstatus' => $product->status ?? null,
+                'productprice' => $product->price ?? null,
+                'product_images1' => $product->product_images1 ?? null,
+                'product_images2' => $product->product_images2 ?? null,
+                'product_images3' => $product->product_images3 ?? null,
+                'category_name' => $product->category->categories_name ?? null,
+                'category_description' => $product->category->categories_description ?? null,
+                'vendor_name' => ($product->vendor->firstname ?? '') . ' ' . ($product->vendor->lastname ?? ''),
+                'vendor_username' => $product->vendor->username ?? null,
+                'vendor_email' => $product->vendor->email ?? null,
+                'vendor_mobile' => $product->vendor->mobile ?? null,
+            ];
+        });
 
-
-                ];
-            });
-
-            if (!$vendorProducts || $vendorProducts->isEmpty()) {
-                $vendorProducts = [];
-            }
-
-
-            return $vendorProducts;
-        } catch (\Exception $e) {
-            back()->with('error', 'An occurred error' . $e->getMessage());
+        // Vérification finale avant de retourner
+        if (!$vendorProducts || $vendorProducts->isEmpty()) {
+            return [];
         }
+
+        return $vendorProducts;
+
+    } catch (\Exception $e) {
+        back()->with('error', 'An occurred error' . $e->getMessage());
+        // En cas d'erreur, retourner un tableau vide
+        return [];
     }
+}
+
 
     public function getNewallvendorProductsajax()
     {
@@ -505,8 +553,8 @@ class ProductController extends Controller
                 ->orderBy('id', 'desc')
                 ->get();
 
-              
-                // dd($vendorproduct);
+
+            // dd($vendorproduct);
             $vendorProducts = $vendorproduct->map(function ($product) {
                 return [
                     'id' => $product->id,
