@@ -202,18 +202,14 @@
         // Fonction pour récupérer les données via AJAX
         function fetchOrderCounts() {
             $.ajax({
-                url: "{{ route('count.adminorder') }}", // Route Laravel
+                url: "{{ route('count.adminorder') }}", // Route Laravel pour récupérer les comptes
                 type: "GET",
                 dataType: "json",
                 success: function(response) {
-                    console.log('reponse de count', response)
-                    // Mettre à jour chaque badge avec la valeur reçue
-                    $('#my-orders-badge').text(response.orders);
+                    // Mettre à jour les badges avec les données reçues
                     $('#vendor-order-badge').text(response.orders);
                     $('#vendor-order-badge-2').text(response.orders);
                 },
-
-
                 error: function(xhr, status, error) {
                     console.error("Erreur lors du chargement des données :", error);
                 }
