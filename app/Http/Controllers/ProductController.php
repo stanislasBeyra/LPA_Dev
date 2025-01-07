@@ -462,7 +462,7 @@ class ProductController extends Controller
             $vendorproduct = Product::with(['category', 'vendor'])
                 ->orderBy('id', 'desc')
                 ->get();
-                dd($vendorproduct->vendor);
+               // dd($vendorproduct);
 
             $vendorProducts = $vendorproduct->map(function ($product) {
                 return [

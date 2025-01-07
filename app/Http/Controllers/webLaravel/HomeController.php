@@ -243,6 +243,7 @@ class HomeController extends Controller
 
         // get vendor product for admin
         $vendorProducts = $this->productController->getNewallvendorProducts();
+        dd($vendorProducts);
         $vendororders = $this->orderController->admingetvendororder();
 
         // employeee
