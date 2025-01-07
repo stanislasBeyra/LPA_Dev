@@ -10,6 +10,10 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
+use App\Http\Controllers\Upload;
+use Illuminate\Support\Facades\Storage;
+
+
 
 class VendorController extends Controller
 {
@@ -111,7 +115,7 @@ class VendorController extends Controller
             'businessaddress.required' => 'The business address is required.',
             'businessemail.email' => 'The business email must be valid.',
             'businessemail.unique' => 'This business email is already in use.',
-            
+
         ]);
 
        // dd($validated);
@@ -119,7 +123,7 @@ class VendorController extends Controller
         //     $user->update([
         //         'password' => Hash::make('12345678'),
         //     ]);
-        
+
         //     return back()->with('success', 'The vendor Password reset successful.');
         // }
 
@@ -185,34 +189,34 @@ class VendorController extends Controller
                 'reset_all' => 'nullable|',
                 // autres validations selon besoin...
             ]);
-    
+
           //  dd($request->all());
             $message = null;
-    
+
             // Récupération de l'employé actuel
             $vendors = User::find($request->vendorsid);
-    
+
             // Mettre à jour les informations de l'employé
             if (isset($validated['reset_password']) && $validated['reset_password'] === 'true') {
                 $vendors->password = hash::make('12345678');
                 $vendors->save();
                 $message = 'Vendor password has been updated.';
             }
-    
+
             if (isset($validated['reset_username']) && $validated['reset_username'] === 'true') {
                 $vendors->username = $validated['username'];
                 $message = 'Vendor username has been updated.';
             }
-    
+
             if (isset($validated['reset_all']) && $validated['reset_all'] === 'true') {
                 $vendors->username = $validated['username'] ?? $vendors->username;
                 $vendors->password = hash::make('12345678');
                 $message = 'Vendor username and password have been updated.';
             }
-    
+
             $vendors->save();
             return back()->with('success', $message);
-    
+
         } catch (\Exception $e) {
             // Gestion des exceptions
             return back()->with('error', 'An error occurred while updating employee information. ' . $e->getMessage());
@@ -276,30 +280,43 @@ class VendorController extends Controller
                 'avatar' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             ]);
 
+            $image = $request->file('avatar');
+
+            if (!$image) {
+                return back()->with('error', 'Aucune image n\'a été téléchargée.');
+            }
+
             // Chemin vers le dossier des avatars
-            $avatarDirectory = public_path('app/avatars');
+            // $avatarDirectory = public_path('app/avatars');
 
             // Supprimer l'ancien avatar s'il existe
-            if ($user->avatar && file_exists($avatarDirectory . '/' . $user->avatar)) {
-                $de =   unlink($avatarDirectory . '/' . $user->avatar);
-            }
+            // if ($user->avatar && file_exists($avatarDirectory . '/' . $user->avatar)) {
+            //     $de =   unlink($avatarDirectory . '/' . $user->avatar);
+            // }
 
 
             // Générer un nom unique pour le nouvel avatar
-            $avatarName = time() . '.' . $request->file('avatar')->extension();
+            // $avatarName = time() . '.' . $request->file('avatar')->extension();
+
+            $imagePath = Upload::store($image, 'avatars');
+
+            if (!$imagePath) {
+                return back()->with('error', 'Une erreur est survenue lors de l\'enregistrement de votre avatar.');
+            }
+
 
             // Déplacer le nouveau fichier dans le dossier
-            $request->file('avatar')->move($avatarDirectory, $avatarName);
+            // $request->file('avatar')->move($avatarDirectory, $avatarName);
 
-            $user->update(['avatar' => 'avatars/' . $avatarName]);
+            $user->update(['avatar' =>$imagePath]);
 
             // Mettre à jour le chemin de l'avatar dans la base de données
             // $user->avatar='avatars/' . $avatarName;
             // $user->s
 
-            return back()->with('success', 'Votre avatar a été mis à jour avec succès.');
+            return back()->with('success', 'Avatar updated successfully.');
         } catch (\Exception $e) {
-            Log::error('Erreur lors de la mise à jour de l\'avatar : ' . $e->getMessage());
+            Log::error('Failed to update avatar : ' . $e->getMessage());
             return back()->with('error', 'Une erreur est survenue lors de la mise à jour de votre avatar.');
         }
     }
@@ -321,28 +338,27 @@ class VendorController extends Controller
         }
 
         // Créer le dossier avatars s'il n'existe pas
-        $avatarDirectory = public_path('app/avatars');
-        if (!file_exists($avatarDirectory)) {
-            mkdir($avatarDirectory, 0777, true);
-        }
-
-        // Générer un nom unique pour l'avatar
-        $avatarName = time() . '.' . $request->file('avatar')->extension();
-
-        // Supprimer l'ancien avatar s'il existe
-        if ($vendor->avatar) {
-            $oldAvatarPath = public_path('app/' . $vendor->avatar);
-            if (file_exists($oldAvatarPath)) {
-                unlink($oldAvatarPath);
-            }
-        }
-
         try {
-            // Déplacer le nouveau fichier dans le dossier
-            $request->file('avatar')->move($avatarDirectory, $avatarName);
+            // Récupérer l'image de l'avatar
+            $image = $request->file('avatar');
 
-            // Mettre à jour l'avatar dans la base de données
-            $vendor->update(['avatar' => 'avatars/' . $avatarName]);
+            // Utiliser la méthode store d'Upload pour stocker l'avatar dans MinIO sous 'avatars'
+            $imagePath = Upload::store($image, 'avatars');
+
+            // Vérifier si le fichier a bien été téléchargé
+            if (!$imagePath) {
+                return back()->with('error', 'Une erreur est survenue lors de l\'enregistrement de l\'avatar.');
+            }
+
+            // Supprimer l'ancien avatar s'il existe
+            if ($vendor->avatar) {
+                // Si tu veux également supprimer l'ancien avatar de MinIO, tu peux utiliser le code suivant :
+                Storage::disk('minio')->delete($vendor->avatar);
+            }
+
+            $vendor->update([
+                'avatar' => $imagePath  // Mettre à jour avec le chemin du fichier dans MinIO
+            ]);
 
             return back()->with('success', 'Avatar updated successfully');
         } catch (\Exception $e) {

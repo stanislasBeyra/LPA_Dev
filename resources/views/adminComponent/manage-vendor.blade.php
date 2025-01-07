@@ -259,12 +259,13 @@
                         <th scope="col">Email</th>
                         <th scope="col">Status</th>
                         <th scope="col">Action</th>
-                       
+
 
                      </tr>
                   </thead>
                   <tbody>
                      @foreach($vendors as $key => $user)
+                    
 
                      <tr>
                         <!-- Affichage de l'index de la ligne -->
@@ -284,7 +285,7 @@
 
                         </td>
 
-                       
+
                         <td>
                            <a href="{{ url('/vendors-detail/' . $user->id) }}"
                               class="btn btn-info btn-sm">
@@ -306,7 +307,7 @@
                            </button>
                             @endif
                         </td>
-                       
+
 
 
                      </tr>
@@ -670,10 +671,10 @@
                                        <i class="fas fa-eye"></i>
                                   </a>
                                     <button type="button"
-                                        data-mdb-button-init 
+                                        data-mdb-button-init
                                         data-mdb-ripple-init
                                         class="btn btn-outline-primary btn-sm edit-role"
-                                        data-mdb-modal-init 
+                                        data-mdb-modal-init
                                         data-mdb-target="#staticBackdrop1"
                                        data-user="${vendorJson}"
                                         onclick="handleButtonClick(this)"

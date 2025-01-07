@@ -98,10 +98,29 @@ class Upload
     }
 
 
-    public static function getAbosoluteUrl(String $filename)
+    // public static function getAbosoluteUrl(String $filename)
+    // {
+    //     return "https://lpa.softsolutionsdev.com/api/uploads/{$filename}";
+    // }
+
+    public static function getAbosoluteUrl(String $bucket, ?String $filename)
     {
-        return "https://lpa.softsolutionsdev.com/api/uploads/{$filename}";
+        if (!$filename) {
+            return '';  // Retourner une chaîne vide si le fichier est null
+        }
+
+        // Si l'URL doit être publique, on génère l'URL de manière simple
+        $baseUrl = env('MINIO_ENDPOINT');
+        $url = "{$baseUrl}/{$bucket}/{$filename}";
+
+        // Si tu veux une URL pré-signée, tu peux utiliser ceci :
+        // $minio = app('minio');
+        // $url = $minio->getObjectUrl($bucket, $filename, '+10 minutes');  // URL pré-signée valable 10 minutes
+
+        return $url;
     }
+
+
 
 
     public function deleteDocument($path, $disk = 'public')

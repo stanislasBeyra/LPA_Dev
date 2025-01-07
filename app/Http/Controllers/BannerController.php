@@ -164,6 +164,28 @@ class BannerController extends Controller
         }
     }
 
+//     public function getBannerforAdmin()
+// {
+//     try {
+//         // Récupérer les bannières depuis la base de données
+//         $banners = Banner::orderBy('id', 'desc')->get();
+
+//         // Pour chaque bannière, construire l'URL complète pour accéder au fichier stocké sur MinIO
+//         foreach ($banners as $banner) {
+//             // Construire l'URL en utilisant Storage et le disque MinIO
+//             $banner->url = Storage::disk('minio')->url('banners/' . $banner->filename);
+//         }
+
+//         // Retourner les bannières avec l'URL d'accès
+//         return response()->json($banners);
+
+//     } catch (\Exception $e) {
+//         Log::info('An occurred error: ' . $e->getMessage());
+//         return back()->with('error', 'Occurred error: ' . $e->getMessage());
+//     }
+// }
+
+
     public function getBannerforEmployee()
     {
         try {
