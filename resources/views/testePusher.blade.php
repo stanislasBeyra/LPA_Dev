@@ -133,5 +133,6 @@
             $('#sendEventButton').on('click', sendEvent);
         });
     </script>
+
 </body>
 </html>

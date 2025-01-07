@@ -6,6 +6,7 @@ use App\Http\Controllers\AgenceController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BannerController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
@@ -68,6 +69,8 @@ Route::middleware('auth:web')->group(function () {
     // Route::get('/', function () {
     //     return view('index');
     // });
+    // Route::post('/save-token',[NotificationController::class,'saveToken']);
+    Route::post('/save-token', [NotificationController::class, 'saveToken']);
 
     Route::get('/',[AdminController::class,'index'])->name('index.home');
 
@@ -119,6 +122,9 @@ Route::middleware('auth:web')->group(function () {
     Route::post('NewAdminVendorValidateOrder', [OrderController::class, 'NewAdminVendorValidateOrder'])->name('AdminVendor.ValidateOrder');
     Route::get('/search/order',[OrderController::class,'searchOrder'])->name('search.order');
     Route::get('/orders/search', [OrderController::class, 'SearchgetOrders'])->name('vendororders.search');
+    //count orders
+    Route::get('countadminorder',[OrderController::class,'countadminorder'])->name('count.adminorder');
+    Route::get('countvendororder',[OrderController::class,'countvendororder'])->name('countvendor.order');
 
     //employee
     Route::post('employee/register', [EmployeeController::class, 'RegisterEmplyees'])->name('employee.register');

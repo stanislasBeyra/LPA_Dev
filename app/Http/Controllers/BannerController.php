@@ -6,6 +6,8 @@ use App\Models\Banner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\Auth;
+
 
 
 
@@ -21,6 +23,7 @@ class BannerController extends Controller
                 'banner_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
 
+            $user=Auth::user();
             $imagePath = null;
 
             // Chemin du répertoire de stockage des bannières
@@ -40,6 +43,9 @@ class BannerController extends Controller
                 'image_url' => $imagePath,
             ]);
 
+            $notification=new NotificationController();
+            $notification->sendNotification($user->id,"message de teste de notification push");
+
             // Retourner une réponse avec succès
             return back()->with('success', 'Banner uploaded successfully.');
         } catch (\Exception $e) {
@@ -48,107 +54,6 @@ class BannerController extends Controller
         }
     }
 
-//     public function storeBanner(Request $request)
-// {
-//     try {
-//         // Validation des champs
-//         $request->validate([
-//             'banner_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-//         ]);
-
-//         $imagePath = null;
-
-//         // Chemin du répertoire de stockage des bannières
-//         $directory = public_path('app/public/banners');
-
-//         // Créer le dossier s'il n'existe pas
-//         if (!file_exists($directory)) {
-//             mkdir($directory, 0755, true);
-//         }
-
-//         if ($request->hasFile('banner_image')) {
-//             $image = $request->file('banner_image');
-//             $imageName = 'Banner_' . time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
-
-//             // Redimensionner l'image avec Intervention Image
-//             $resizedImage = Image::make($image->getRealPath())
-//                 ->fit(1680, 480, function ($constraint) {
-//                     $constraint->upsize(); // Empêche d'agrandir une image plus petite
-//                 });
-
-//             // Enregistrer l'image redimensionnée
-//             $resizedImage->save($directory . '/' . $imageName);
-
-//             // Chemin relatif à enregistrer dans la base de données
-//             $imagePath = 'banners/' . $imageName;
-//         }
-
-//         // Créer une nouvelle entrée dans la base de données
-//         Banner::create([
-//             'image_url' => $imagePath,
-//         ]);
-
-//         // Retourner une réponse avec succès
-//         return back()->with('success', 'Banner uploaded and resized successfully.');
-//     } catch (\Exception $e) {
-//         // Log de l'erreur pour débogage
-//         Log::error('An error occurred: ' . $e->getMessage());
-
-//         return back()->with('error', 'An error occurred: ' . $e->getMessage());
-//     }
-// }
-
-    //     public function storeBanner(Request $request)
-    // {
-    //     try {
-    //         // Validation des champs
-    //         $request->validate([
-    //             'banner_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-    //         ]);
-
-    //         $imagePath = null;
-
-    //       //  dd($request->banner_image);
-    //         // Chemin du répertoire de stockage des bannières
-    //         $directory = public_path('app/public/banners');
-
-    //         if (!file_exists($directory)) {
-    //             mkdir($directory, 0755, true); // Crée le dossier si inexistant
-    //         }
-
-    //         if ($request->hasFile('banner_image')) {
-    //             $image = $request->file('banner_image');
-    //             $imageName = 'Banner_' . time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
-
-    //             // Redimensionner l'image avec Intervention Image
-    //             $resizedImage = Image::make($image)
-    //                 ->resize(1600, 480, function ($constraint) {
-    //                     $constraint->aspectRatio(); // Maintient le ratio d'aspect
-    //                     $constraint->upsize();      // Empêche d'agrandir une image plus petite
-    //                 });
-
-
-    //             // Enregistrer l'image redimensionnée
-    //             $resizedImage->save($directory . '/' . $imageName);
-
-    //             // Chemin relatif à enregistrer dans la base de données
-    //             $imagePath = 'banners/' . $imageName;
-    //         }
-
-    //         // Créer une nouvelle entrée dans la base de données
-    //         Banner::create([
-    //             'image_url' => $imagePath,
-    //         ]);
-
-    //         // Retourner une réponse avec succès
-    //         return back()->with('success', 'Banner uploaded and resized successfully.');
-    //     } catch (\Exception $e) {
-    //         // Log de l'erreur pour débogage
-    //         Log::error('An occurred error: ' . $e->getMessage());
-
-    //         return back()->with('error', 'An error occurred: ' . $e->getMessage());
-    //     }
-    // }
 
     public function getBannerforAdmin()
     {
@@ -176,31 +81,7 @@ class BannerController extends Controller
         }
     }
 
-    //     public function desactivebanner(Request $request)
-    // {
-    //     try {
-    //         // Trouver le banner avec l'ID passé en paramètre
-    //         $banner = Banner::find($request->bannerId);
-
-    //         // Vérifier si le banner existe
-    //         if (!$banner) {
-    //             return back()->with('error', 'Banner not found');
-    //         }
-
-    //         // Mettre à jour le statut du banner (0 ou 1)
-    //         $banner->update([
-    //             'is_active' => $request->is_active == 'on' ? 1 : 0
-    //         ]);
-
-    //         // Retourner un succès
-    //         return back()->with('success', 'Banner status updated successfully');
-
-    //     } catch (\Exception $e) {
-    //         // Logguer l'erreur et retourner un message d'erreur
-    //         Log::error('An error occurred: ' . $e->getMessage());
-    //         return back()->with('error', 'An error occurred: ' . $e->getMessage());
-    //     }
-    // }
+    
 
     public function desactivebanner(Request $request)
     {
@@ -208,6 +89,7 @@ class BannerController extends Controller
             // Trouver le banner avec l'ID passé en paramètre
             $banner = Banner::find($request->bannerId);
 
+            $user=Auth::user();
             // Vérifier si le banner existe
             if (!$banner) {
                 return response()->json([
@@ -222,6 +104,8 @@ class BannerController extends Controller
                 'is_active' => $newStatus
             ]);
 
+            $notification=new NotificationController();
+            $notification->sendNotification($user->id,"message de teste de notification push");
             // Retourner une réponse JSON de succès
             return response()->json([
                 'success' => true,

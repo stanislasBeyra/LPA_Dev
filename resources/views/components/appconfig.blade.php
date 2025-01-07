@@ -169,6 +169,132 @@
 
     </main>
 
+    <!-- <script type="module">
+        // Importer les fonctions nécessaires depuis les SDKs Firebase
+        import {
+            initializeApp
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import {
+            getMessaging,
+            getToken,
+            onMessage
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js";
+        import {
+            getAnalytics
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+
+        // Configuration de votre application web Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAPOFo63-C60VgjxGTKZVdqcS7kTJ78j8A",
+            authDomain: "lpadev.firebaseapp.com",
+            projectId: "lpadev",
+            storageBucket: "lpadev.appspot.com",
+            messagingSenderId: "813489438516",
+            appId: "1:813489438516:web:03b3c24d683adfdbc76f61",
+            measurementId: "G-D78HKCX5P8"
+        };
+
+        // Initialiser Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const messaging = getMessaging(app);
+
+        // Enregistrer le Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/firebase-messaging-sw.js')
+                .then((registration) => {
+                    console.log('Service Worker enregistré avec succès:', registration);
+
+                    // Après l'enregistrement du Service Worker, demander la permission
+                    Notification.requestPermission().then((permission) => {
+                        if (permission === 'granted') {
+                            console.log('Notification permission granted.');
+
+                            getToken(messaging, {
+                                    vapidKey: 'BIaGTk2wEpWRjpAHqtAxLnshrwY9ovAeSbJlaZe7sioESA2CEnT8a97ITFcoX5xwq9wruYMes4F4ZPliD0Uv80A',
+                                    serviceWorkerRegistration: registration
+                                })
+                                .then((currentToken) => {
+                                    if (currentToken) {
+                                        // Envoi du token au serveur
+                                        fetch('/save-token', {
+                                                method: 'POST',
+                                                headers: {
+                                                    'Content-Type': 'application/json',
+                                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                                                },
+                                                body: JSON.stringify({
+                                                    token: currentToken
+                                                })
+                                            })
+                                            .then(response => response.json())
+                                            .then(data => console.log('Token envoyé:', currentToken, ))
+                                            .catch(err => console.error('Erreur lors de l\'envoi du token:', err));
+                                    } else {
+                                        console.log('Aucun token d\'enregistrement disponible.');
+                                    }
+                                })
+                                .catch(err => console.error('Erreur lors de la récupération du token:', err));
+                        } else {
+                            console.log('Notification permission denied.');
+                        }
+                    });
+                })
+                .catch(err => console.error('Erreur lors de l\'enregistrement du Service Worker:', err));
+        }
+
+        
+
+        // Gestion des messages reçus
+        onMessage(messaging, (payload) => {
+            
+            console.log('Message reçu :', payload);
+
+            // Vérifier si la notification est présente dans le payload
+            if (!payload.notification) {
+                console.error('Pas de données de notification dans le payload');
+                return;
+            }
+
+            const {
+                title,
+                body,
+                icon
+            } = payload.notification;
+
+            // Vérifier si le navigateur supporte les notifications
+            if (!("Notification" in window)) {
+                console.error("Ce navigateur ne supporte pas les notifications desktop");
+                return;
+            }
+
+            // Vérifier la permission des notifications
+            if (Notification.permission === "granted") {
+                try {
+                    // Créer et afficher directement une nouvelle notification
+                    new Notification(title, {
+                        body: body,
+                        icon: icon,
+                        requireInteraction: true
+                    });
+                } catch (error) {
+                    console.error('Erreur lors de la création de la notification:', error);
+
+                    // Fallback : utiliser showNotification via le service worker
+                    navigator.serviceWorker.ready.then(registration => {
+                        registration.showNotification(title, {
+                            body: body,
+                            icon: icon,
+                            requireInteraction: true
+                        }).catch(err => console.error('Erreur showNotification:', err));
+                    });
+                }
+            } else {
+                console.warn('Permission de notification non accordée');
+            }
+        });
+    </script> -->
+
 
     <!-- JS and other necessary scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/8.0.0/mdb.min.js"></script>

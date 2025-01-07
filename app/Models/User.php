@@ -26,6 +26,7 @@ class User extends Authenticatable
         'avatar',
         'status',
         'net_salary',
+        'fcm_token',
         'role',
         'agencescode',
         'password',

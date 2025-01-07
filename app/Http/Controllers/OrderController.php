@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\MyEvent;
 use App\Models\Cart;
 use App\Models\order;
 use App\Models\order_items;
 use App\Models\payementperiodemode;
 use App\Models\payementsalaires;
 use App\Models\Product;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -232,6 +234,12 @@ class OrderController extends Controller
             // Vider le panier après la commande
             Cart::where('user_id', $user->id)->delete();
 
+            $data = [
+                'message' => 'New Order placed successfully',
+                // 'date'=>Carbon::now()
+            ];
+            event(new MyEvent($data));
+
             // Retourner une réponse JSON après la création réussie
             return response()->json([
                 'success' => true,
@@ -317,6 +325,12 @@ class OrderController extends Controller
 
             // Vider le panier après la commande
             Cart::where('user_id', $user->id)->delete();
+
+            $data = [
+                'message' => 'New Order placed successfully',
+                // 'date'=>Carbon::now()
+            ];
+            event(new MyEvent($data));
 
             // Retourner une réponse JSON après la création réussie
             return response()->json([
@@ -640,53 +654,34 @@ class OrderController extends Controller
         }
     }
 
-    // public function NewAdminVendorValidateOrder(Request $request)
-    // {
-    //     try {
 
+    public function countvendororder()
+    {
+        try {
+            $vendor = Auth::user();
 
-    //         // Récupérer le vendeur authentifié
-    //         $vendor = Auth::user();
+            // Vérifier si l'utilisateur est un vendor
+            if (!$vendor) {
+                return back()->with('error', 'Unauthorized access');
+            }
 
-    //         if (!$vendor) {
-    //             return back()->with('error', 'Unauthorized access');
-    //         }
+            $orderItems = order_items::where('vendor_id', $vendor->id)
+                ->count();
 
-    //         $order = Order::find($request->orderid);
+            return response()->json([
+                'success' => true,
+                'vendororders' => $orderItems
+            ]);
+        } catch (Exception $e) {
 
-
-    //         if (!$order) {
-    //             return back()->with('error', 'Order not found.');
-    //         }
-
-    //         if ($order->status == 3) {
-    //             return back()->with('error', 'The order has already been validated');
-    //         }
-
-    //         $allOrderItems = order_items::where('order_id', $order->id)->get();
-
-    //         $allOrderItemsHaveStatus2 = $allOrderItems->every(function ($orderItem) {
-    //             return $orderItem->status == 2;
-    //         });
-
-    //         if (!$allOrderItemsHaveStatus2) {
-    //             return back()->with('error', 'Validation failed because not all vendors have validated their products.');
-    //         }
-
-    //         $order->status = 3;
-    //         $order->save();
-
-    //         foreach ($allOrderItems as $item) {
-    //             $item->status = 3;
-    //             $item->save();
-    //         }
-
-    //         return back()->with('success', 'Order successfully processing.');
-    //     } catch (\Exception $e) {
-    //         Log::error('An error occurred: ' . $e->getMessage());
-    //         return back()->with('error', 'An error occurred: ' . $e->getMessage());
-    //     }
-    // }
+            Log::info(['An occured error' => $e]);
+            return response()->json([
+                'success' => true,
+                'message' => 'An ocuured error',
+                'error' => $e
+            ]);
+        }
+    }
 
 
 
@@ -752,6 +747,25 @@ class OrderController extends Controller
         } catch (\Exception $e) {
             Log::error('An error occurred: ' . $e->getMessage());
             return back()->with('error', 'An error occurred: ' . $e->getMessage());
+        }
+    }
+
+    public function countadminorder()
+    {
+        try {
+            $order = Order::where('status', '!=', 3)
+                ->count();
+            return response()->json([
+                'success' => true,
+                'orders' => $order
+            ]);
+        } catch (Exception $e) {
+            Log::info(['an occured error' => $e]);
+            return response()->json([
+                'success' => false,
+                'message' => 'An occured error',
+                'error' => $e,
+            ]);
         }
     }
 
@@ -979,81 +993,80 @@ class OrderController extends Controller
     }
 
     public function SearchgetOrders(Request $request)
-{
-    try {
-        // Récupérer l'utilisateur connecté (vendeur)
-        $vendor = Auth::user();
-        if (!$vendor) {
-            return back()->with('error', 'Unauthorized access');
-        }
+    {
+        try {
+            // Récupérer l'utilisateur connecté (vendeur)
+            $vendor = Auth::user();
+            if (!$vendor) {
+                return back()->with('error', 'Unauthorized access');
+            }
 
-        // Récupérer le terme de recherche depuis la requête
-        $searchTerm = $request->input('search');
+            // Récupérer le terme de recherche depuis la requête
+            $searchTerm = $request->input('search');
 
-        // Récupérer les IDs des commandes associées au vendeur
-        $orderIds = order_items::where('vendor_id', $vendor->id)->pluck('order_id');
+            // Récupérer les IDs des commandes associées au vendeur
+            $orderIds = order_items::where('vendor_id', $vendor->id)->pluck('order_id');
 
-        // Construire la requête pour récupérer les commandes
-        $query = Order::with([
-            'orderItems' => function ($query) use ($vendor) {
-                $query->where('vendor_id', $vendor->id);
-            },
-            'orderItems.product',
-            'employee.agence'
-        ])
-            ->whereIn('id', $orderIds)
-            ->when($searchTerm, function ($query, $searchTerm) {
-                $query->where(function ($query) use ($searchTerm) {
-                    $query->whereHas('orderItems.product', function ($q) use ($searchTerm) {
-                        $q->where('product_name', 'like', '%' . $searchTerm . '%');
-                    })
-                    ->orWhereHas('employee', function ($q) use ($searchTerm) {
-                        $q->where('mobile', 'like', '%' . $searchTerm . '%')
-                          ->orWhere('mobile2', 'like', '%' . $searchTerm . '%');
-                    })
-                    ->orWhere('ordercode', 'like', '%' . $searchTerm . '%');
+            // Construire la requête pour récupérer les commandes
+            $query = Order::with([
+                'orderItems' => function ($query) use ($vendor) {
+                    $query->where('vendor_id', $vendor->id);
+                },
+                'orderItems.product',
+                'employee.agence'
+            ])
+                ->whereIn('id', $orderIds)
+                ->when($searchTerm, function ($query, $searchTerm) {
+                    $query->where(function ($query) use ($searchTerm) {
+                        $query->whereHas('orderItems.product', function ($q) use ($searchTerm) {
+                            $q->where('product_name', 'like', '%' . $searchTerm . '%');
+                        })
+                            ->orWhereHas('employee', function ($q) use ($searchTerm) {
+                                $q->where('mobile', 'like', '%' . $searchTerm . '%')
+                                    ->orWhere('mobile2', 'like', '%' . $searchTerm . '%');
+                            })
+                            ->orWhere('ordercode', 'like', '%' . $searchTerm . '%');
+                    });
                 });
+
+            // Récupérer et trier les commandes
+            $orders = $query->orderBy('id', 'desc')->get();
+
+            // Formater les commandes
+            $formattedOrders = $orders->map(function ($order) {
+                return [
+                    "orderId" => $order->id,
+                    'orderTotal' => $order->total,
+                    'ordercode' => $order->ordercode,
+                    'orderStatus' => $order->status,
+                    'ordercreated' => $order->created_at,
+                    'employeefirstname' => $order->employee->firstname ?? null,
+                    'employeelastname' => $order->employee->lastname ?? null,
+                    'employeeusername' => $order->employee->username ?? null,
+                    'employeemiddlename' => $order->employee->middle_name ?? null,
+                    'employeeemail' => $order->employee->email ?? null,
+                    'employeemobile' => $order->employee->mobile ?? null,
+                    'employeemobile2' => $order->employee->mobile2 ?? null,
+                    'agence' => $order->employee->agence->agent_name ?? null,
+                    'orderItems' => $order->orderItems->map(function ($item) {
+                        return [
+                            'orderItemsId' => $item->id,
+                            'orderItemsStatus' => $item->status,
+                            'quantity' => $item->quantity,
+                            'productname' => $item->product->product_name ?? null,
+                            'productprice' => $item->product->price ?? null,
+                            'product_images1' => $item->product->product_images1 ?? null,
+                            'product_images2' => $item->product->product_images2 ?? null,
+                            'product_images3' => $item->product->product_images3 ?? null,
+                        ];
+                    }),
+                ];
             });
 
-        // Récupérer et trier les commandes
-        $orders = $query->orderBy('id', 'desc')->get();
-
-        // Formater les commandes
-        $formattedOrders = $orders->map(function ($order) {
-            return [
-                "orderId" => $order->id,
-                'orderTotal' => $order->total,
-                'ordercode' => $order->ordercode,
-                'orderStatus' => $order->status,
-                'ordercreated' => $order->created_at,
-                'employeefirstname' => $order->employee->firstname ?? null,
-                'employeelastname' => $order->employee->lastname ?? null,
-                'employeeusername' => $order->employee->username ?? null,
-                'employeemiddlename' => $order->employee->middle_name ?? null,
-                'employeeemail' => $order->employee->email ?? null,
-                'employeemobile' => $order->employee->mobile ?? null,
-                'employeemobile2' => $order->employee->mobile2 ?? null,
-                'agence' => $order->employee->agence->agent_name ?? null,
-                'orderItems' => $order->orderItems->map(function ($item) {
-                    return [
-                        'orderItemsId' => $item->id,
-                        'orderItemsStatus' => $item->status,
-                        'quantity' => $item->quantity,
-                        'productname' => $item->product->product_name ?? null,
-                        'productprice' => $item->product->price ?? null,
-                        'product_images1' => $item->product->product_images1 ?? null,
-                        'product_images2' => $item->product->product_images2 ?? null,
-                        'product_images3' => $item->product->product_images3 ?? null,
-                    ];
-                }),
-            ];
-        });
-
-        return response()->json(['orders'=>$formattedOrders]);
-    } catch (\Exception $e) {
-        Log::error('An error occurred: ' . $e->getMessage());
-        return back()->with('error', 'An error occurred while processing your request. Please try again.');
+            return response()->json(['orders' => $formattedOrders]);
+        } catch (\Exception $e) {
+            Log::error('An error occurred: ' . $e->getMessage());
+            return back()->with('error', 'An error occurred while processing your request. Please try again.');
+        }
     }
-}
-
 }
