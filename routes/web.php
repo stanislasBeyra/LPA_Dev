@@ -152,6 +152,8 @@ Route::middleware('auth:web')->group(function () {
 
     Route::get('/search/vendor/product',[ProductController::class,'searchvendorproduct'])->name('searvendor.product');
 
+    Route::get('/getNewallvendorProductsajax',[ProductController::class,'getNewallvendorProductsajax'])->name('admin.vendorproduct');
+
 
     // Route::get('/{page}', [HomeController::class, 'getContent'])->name('content.page');
     Route::get('/{page}', [HomeController::class, 'getContent'])->name('content.page')
