@@ -128,7 +128,7 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-<script>
+<!-- <script>
     $(document).ready(function() {
         // Fonction pour récupérer les données via AJAX
         function fetchOrderCounts() {
@@ -194,10 +194,10 @@
             alert('Erreur de connexion avec Pusher.');
         });
     });
-</script>
+</script> -->
 
 
-<!-- <script>
+<script>
     $(document).ready(function() {
         // Fonction pour récupérer les données via AJAX
         function fetchOrderCounts() {
@@ -206,14 +206,31 @@
                 type: "GET",
                 dataType: "json",
                 success: function(response) {
-                    console.log('reponse de count',response)
+                    console.log('reponse de count', response)
                     // Mettre à jour chaque badge avec la valeur reçue
                     $('#my-orders-badge').text(response.orders);
                     $('#vendor-order-badge').text(response.orders);
                     $('#vendor-order-badge-2').text(response.orders);
                 },
 
-                
+
+                error: function(xhr, status, error) {
+                    console.error("Erreur lors du chargement des données :", error);
+                }
+            });
+        }
+
+        function fetchVendorOrderCounts() {
+            $.ajax({
+                url: "{{ route('countvendor.order') }}", // Route Laravel pour récupérer les comptes
+                type: "GET",
+                dataType: "json",
+                success: function(response) {
+                    console.log('vendororderscount', response)
+                    // Mettre à jour les badges avec les données reçues
+                    $('#my-orders-badge').text(response.vendororders);
+
+                },
                 error: function(xhr, status, error) {
                     console.error("Erreur lors du chargement des données :", error);
                 }
@@ -222,11 +239,12 @@
 
         // Appel initial au chargement de la page
         fetchOrderCounts();
+        fetchVendorOrderCounts();
 
         // Rafraîchir automatiquement toutes les 10 secondes
         setInterval(fetchOrderCounts, 10000); // 10 000 ms = 10 secondes
     });
-</script> -->
+</script>
 
 
 
