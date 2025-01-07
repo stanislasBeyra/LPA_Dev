@@ -39,7 +39,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($vendorproducts as $key=>$product)
+                            @foreach($vendorProducts as $key=>$product)
                             <tr>
                                 <th scope="row">{{$key+1}}</th>
                                 <td>{{ $product['created_at']->format('m/d/Y, h:i:s A') }}</td>

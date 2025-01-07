@@ -242,7 +242,7 @@ class HomeController extends Controller
         $orders = $this->orderController->getOrders();
 
         // get vendor product for admin
-        $vendorproducts = $this->productController->getNewallvendorProducts();
+        $vendorProducts = $this->productController->getNewallvendorProducts();
         $vendororders = $this->orderController->admingetvendororder();
 
         // employeee
@@ -288,7 +288,7 @@ class HomeController extends Controller
             case 'manage-categories':
                 return view('adminComponent.manage-categorie', ['categories' => $categories]);
             case 'vendor-product':
-                return view('adminComponent.vendor-product', compact('vendorproducts'));
+                return view('adminComponent.vendor-product', compact('vendorProducts'));
             case 'vendor-order':
                 return view('adminComponent.vendor-order', compact('vendororders'));
 
