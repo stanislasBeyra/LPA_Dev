@@ -7,6 +7,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\Employee\EmployeeappController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\Paytou\apitesteController;
 use App\Http\Controllers\ProductController;
@@ -67,7 +68,8 @@ Route::get('getCutomerPaiement',[SalaryController::class,'getCutomerPaiement']);
 
 Route::middleware('auth:sanctum')->group(function () {
     // agences  info
-   
+    Route::post('/save-token', [NotificationController::class, 'saveToken']);
+
     //get Employyee Info
    
     //securite des route privé
