@@ -26,6 +26,7 @@ class employee extends Authenticatable
         'net_salary',
         'ministry_agency',
         'agencescode',
+        'fcm_token',
         'email_verified_at',
         'password',
         'role',

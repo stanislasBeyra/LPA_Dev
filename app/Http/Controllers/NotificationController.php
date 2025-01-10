@@ -27,7 +27,7 @@ class NotificationController extends Controller
         //     $user->update(['fcm_token' => $request->token]);
         //     return response()->json(['message' => 'Token enregistré avec succès.']);
         // }
-
+dd($request);
         $user->update(['fcm_token' => $request->token]);
         return response()->json(['message' => 'Token enregistré avec succès.'], 200);
 
