@@ -169,7 +169,7 @@
 
     </main>
 
-    <!-- <script type="module">
+    <script type="module">
         // Importer les fonctions nécessaires depuis les SDKs Firebase
         import {
             initializeApp
@@ -293,7 +293,7 @@
                 console.warn('Permission de notification non accordée');
             }
         });
-    </script> -->
+    </script>
 
 
     <!-- JS and other necessary scripts -->
