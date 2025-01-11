@@ -238,8 +238,8 @@ class OrderController extends Controller
                 'message' => 'New Order placed successfully',
                 // 'date'=>Carbon::now()
             ];
-            event(new MyEvent($data));
-
+            $notif=new NotificationController();
+            $notif->sendNotificationemployee($user->id,'vous avez passer une commande. veuillez patienter afin que les admin puisse valider vos commande. ');
             // Retourner une réponse JSON après la création réussie
             return response()->json([
                 'success' => true,
@@ -330,8 +330,9 @@ class OrderController extends Controller
                 'message' => 'New Order placed successfully',
                 // 'date'=>Carbon::now()
             ];
-            event(new MyEvent($data));
 
+            $notif=new NotificationController();
+            $notif->sendNotificationemployee($user->id,'vous avez passer une commande. veuillez patienter afin que les admin puisse valider vos commande. ');
             // Retourner une réponse JSON après la création réussie
             return response()->json([
                 'success' => true,

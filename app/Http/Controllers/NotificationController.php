@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\employee;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -45,6 +46,52 @@ class NotificationController extends Controller
 
         // Récupérer l'utilisateur par ID
         $userDevice = User::find($id);
+
+        // Vérifier si l'utilisateur existe et possède un token FCM
+        if ($userDevice && !empty($userDevice->fcm_token)) {
+            // Construire le message
+            $notificationMessage = CloudMessage::fromArray([
+                'notification' => [
+                    'title' => 'Lpa Admin',
+                    'body' => $message,
+                ],
+                'token' => $userDevice->fcm_token,
+            ]);
+
+            // Envoyer le message
+            $messaging->send($notificationMessage);
+
+            // Journaliser le succès
+            Log::info('Notification envoyée avec succès', [
+                'user_id' => $id,
+                'fcm_token' => $userDevice->fcm_token,
+            ]);
+        } else {
+            // Gérer les cas où l'utilisateur ou le token est manquant
+            Log::warning('Utilisateur introuvable ou token FCM manquant', [
+                'user_id' => $id,
+            ]);
+        }
+    } catch (\Exception $e) {
+        // Gérer les erreurs d'envoi de notification
+        Log::error('Erreur lors de l\'envoi de la notification', [
+            'error' => $e->getMessage(),
+        ]);
+    }
+}
+
+public function sendNotificationemployee($id, $message)
+{
+    try {
+        // Initialiser les informations d'authentification Firebase
+        $firebaseCredential = (new Factory)
+            ->withServiceAccount(base_path('lpadev-firebase-adminsdk-begb0-e39583b9d2.json'));
+
+        // Créer une instance de la messagerie Firebase
+        $messaging = $firebaseCredential->createMessaging();
+
+        // Récupérer l'utilisateur par ID
+        $userDevice = employee::find($id);
 
         // Vérifier si l'utilisateur existe et possède un token FCM
         if ($userDevice && !empty($userDevice->fcm_token)) {
