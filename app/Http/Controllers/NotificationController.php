@@ -85,7 +85,7 @@ public function sendNotificationemployee($id, $message)
     try {
         // Initialiser les informations d'authentification Firebase
         $firebaseCredential = (new Factory)
-            ->withServiceAccount(base_path('lpadev-firebase-adminsdk-begb0-e39583b9d2.json'));
+            ->withServiceAccount(base_path('lpadev-firebase-adminsdk-begb0-bfd189c0a9.json'));
 
         // Créer une instance de la messagerie Firebase
         $messaging = $firebaseCredential->createMessaging();
